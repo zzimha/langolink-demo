@@ -118,7 +118,7 @@ section{padding-block:72px}
 .switch button[aria-pressed="true"]::after{transform:translateX(18px)}
 .chat{display:flex;flex-direction:column;min-width:0;min-height:560px}
 .chat-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.avatar{width:38px;height:38px;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-weight:700;color:var(--navy);font-family:var(--font-display)}
+.avatar svg{width:100%;height:100%;display:block}.avatar{overflow:hidden;width:46px;height:46px;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-weight:700;color:var(--navy);font-family:var(--font-display)}
 :root[data-theme="dark"] .avatar{color:var(--ink)}
 .chat-head b{display:block;line-height:1.2}
 .chat-head small{color:var(--muted);font-size:13px}
@@ -493,7 +493,7 @@ function render(){
 function start(){
   var k=L[st.lang],o=k.op[st.scen];
   st.msgs=[{role:'p',t:o[0],r:o[1],e:o[2]}];st.fbi=0;st.busy=false;st.step=0;st.name='';st.item=null;st.stats=newStats();
-  $('#pName').textContent=k.who;$('#av').textContent=k.who[0];
+  $('#pName').textContent=k.who;$('#av').innerHTML=avatarSVG(st.lang);
   $('#pRole').textContent=k.n+' · '+SC[st.scen];
   $('#fbslot').innerHTML='';var hb=$('#help');if(hb)hb.innerHTML='';
   var av=$('#av');av.classList.remove('bump');void av.offsetWidth;av.classList.add('bump');
@@ -674,6 +674,30 @@ function dymItem(txt,k){
 var ASKN={zh:['你叫什么名字？','Nǐ jiào shénme míngzi?','What is your name?'],ja:['お名前は何ですか？','Onamae wa nan desu ka?','What is your name?'],ko:['이름이 뭐예요?','Ireumi mwoyeyo?','What is your name?'],es:['¿Cómo te llamas?','','What is your name?'],fr:['Comment tu t’appelles ?','','What is your name?'],en:['And what is your name?','','Could you tell me your name?']};
 var GREET=/^(hi|hello|hey|hola|buenas|bonjour|salut|你好|您好|嗨|こんにちは|はじめまして|안녕|안녕하세요|yo)\W*$/i;
 function bareName(t){t=t.trim().replace(/[.!！。]+$/,'');if(GREET.test(t))return '';if(/^[A-Za-zÀ-ÿ]{2,14}$/.test(t))return t[0].toUpperCase()+t.slice(1);if(st.lang==='zh'&&/^[\u4e00-\u9fff]{2,3}$/.test(t)&&!/^(我|你|他|她|请|谢|不|没|好|对)/.test(t))return t;if(st.lang==='ja'&&/^[\u3040-\u30ff\u4e00-\u9fff]{2,5}$/.test(t)&&!/^(はい|いいえ|ありがとう|すみません)/.test(t))return t;if(st.lang==='ko'&&/^[\uac00-\ud7af]{2,4}$/.test(t)&&!/(요|다|까|죠|네|아니)$/.test(t)&&!/^(네|아니|좋|감사|고마|괜찮|맞|안녕)/.test(t))return t;return ''}
+
+var AVC={
+ zh:{bg:'#FFE3D6',skin:'#F6D7BD',hair:'#1F1B26',shirt:'#E9675C',back:'M14 31 Q13 11 32 11 Q51 11 50 31 L50 45 Q50 47.5 46.5 47.5 L17.5 47.5 Q14 47.5 14 45 Z',front:'M17.5 29.5 Q15.5 12 32 12 Q48.5 12 46.5 29.5 L46 23.8 Q32 21 18 23.8 Z',extra:'<rect x="40.5" y="19.5" width="6" height="2.6" rx="1.3" fill="#F2B84B" transform="rotate(-18 43.5 20.8)"/>',brow:'#1F1B26'},
+ ja:{bg:'#E6E4FF',skin:'#F7DBC4',hair:'#2B2127',shirt:'#F3B6C8',back:'M14.5 31 Q14 11.5 32 11.5 Q50 11.5 49.5 31 L49 40 Q48 43 45 41 L19 41 Q16 43 15 40 Z M47 22 Q58 26 56 44 Q55 52 50 52 Q53 42 47 33 Z',front:'M15.5 30 Q14 12 32 12 Q50 12 48.5 30 Q47 21 36 18.5 Q26 21 21 28 Q18 30 15.5 30 Z',extra:'<circle cx="49" cy="23.5" r="2.4" fill="#E9675C"/>',brow:'#2B2127'},
+ ko:{bg:'#DDF3EA',skin:'#F5D6BB',hair:'#2A1E18',shirt:'#9FCDB4',back:'M14.5 31 Q14 11 32 11 Q50 11 49.5 31 L50 46 Q50 48 47 48 L17 48 Q14 48 14.5 46 Z',front:'M15 31 Q14.5 12.5 32 12.5 Q49.5 12.5 49 31 Q46 22 36.5 16.5 L32 17 L27.5 16.5 Q18 22 15 31 Z',extra:'<rect x="19" y="20" width="7" height="2.4" rx="1.2" fill="#F2B84B" transform="rotate(28 22.5 21.2)"/>',brow:'#2A1E18'},
+ es:{bg:'#FFF0C7',skin:'#DDA67E',hair:'#3A2113',shirt:'#F2B84B',back:'M13 32 Q12 10.5 32 10.5 Q52 10.5 51 32 Q53 40 50 47 Q46.5 53 51 55 L13 55 Q17.5 53 14 47 Q11 40 13 32 Z',front:'M15.5 30 Q15 12.5 32 12.5 Q49 12.5 48.5 30 Q44 20.5 32 20 Q20 20.5 15.5 30 Z',extra:'<circle cx="17.5" cy="43.5" r="2.4" fill="none" stroke="#F2B84B" stroke-width="1.3"/><circle cx="46.5" cy="43.5" r="2.4" fill="none" stroke="#F2B84B" stroke-width="1.3"/>',brow:'#3A2113'},
+ fr:{bg:'#DCE6FF',skin:'#F5D9C8',hair:'#8C4B2C',shirt:'#5C76D6',back:'M14 31 Q13 11 32 11 Q51 11 50 31 L50 41 Q50 44 46 44 L18 44 Q14 44 14 41 Z',front:'M15 31 Q14 12 32 12 Q50 12 49 31 Q45 20 35 17.5 Q27 24 15 31 Z',extra:'<path d="M23 49 Q32 54.5 41 49 L41 53 Q32 58 23 53 Z" fill="#F6F3EC"/>',brow:'#8C4B2C'},
+ en:{bg:'#D9F2EE',skin:'#BE8862',hair:'#1D1714',shirt:'#4CC9B0',back:'M15.5 27 Q15 10 32 10 Q49 10 48.5 27 Q48 18 32 17.5 Q16 18 15.5 27 Z',front:'M16 26 Q17 11 32 11 Q47 11 48 26 Q44 17.5 32 17.5 Q20 17.5 16 26 Z',extra:'<g fill="none" stroke="#1D1714" stroke-width="1.5"><circle cx="26.3" cy="32" r="4.6"/><circle cx="37.7" cy="32" r="4.6"/><path d="M30.9 31.6 L33.1 31.6"/></g>',brow:'#1D1714'}
+};
+function avatarSVG(l){
+  var c=AVC[l]||AVC.en;
+  return '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="'+c.bg+'"/>'+
+  '<path d="'+c.back+'" fill="'+c.hair+'"/>'+
+  '<path d="M6 66 Q9 49.5 32 48.5 Q55 49.5 58 66 Z" fill="'+c.shirt+'"/>'+
+  '<rect x="27.5" y="41" width="9" height="9" rx="3" fill="'+c.skin+'"/>'+
+  '<ellipse cx="32" cy="31" rx="14" ry="15.5" fill="'+c.skin+'"/>'+
+  '<ellipse cx="18" cy="33" rx="2.2" ry="3" fill="'+c.skin+'"/><ellipse cx="46" cy="33" rx="2.2" ry="3" fill="'+c.skin+'"/>'+
+  '<path d="'+c.front+'" fill="'+c.hair+'"/>'+c.extra+
+  '<ellipse cx="26.3" cy="32.5" rx="1.8" ry="2.2" fill="#2A2230"/><ellipse cx="37.7" cy="32.5" rx="1.8" ry="2.2" fill="#2A2230"/>'+
+  '<circle cx="26.9" cy="31.6" r=".6" fill="#fff"/><circle cx="38.3" cy="31.6" r=".6" fill="#fff"/>'+
+  '<path d="M23.5 28 Q26.3 26.4 29 28 M35 28 Q37.7 26.4 40.5 28" stroke="'+c.brow+'" stroke-width="1.2" fill="none" stroke-linecap="round"/>'+
+  '<circle cx="22.8" cy="37.6" r="2.6" fill="#F08A8A" opacity=".38"/><circle cx="41.2" cy="37.6" r="2.6" fill="#F08A8A" opacity=".38"/>'+
+  '<path d="M29 38.2 Q32 41.2 35 38.2" stroke="#8A3D3D" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
+}
 function newStats(){return {off:0,topic:0,mist:0,pol:0,help:0,n:0,cnt:0,len:0,issues:[],last:null}}
 function fm(a){return a[0]+(a[1]?' ('+a[1]+')':'')}
 function answerFor(sc,step){
@@ -791,6 +815,7 @@ $('#fbBtn').addEventListener('click',async function(){
     if(S.cnt>0&&S.len/S.cnt<(CJK.test(said[0].t)?4:10))sc5-=0.3;
     if(S.n<3&&st.step<3)sc5=Math.min(sc5,4.0);
     if(st.step===0)sc5=Math.min(sc5,2.0);else if(st.step===1)sc5=Math.min(sc5,3.4);
+    if(S.cnt===0)sc5=1.0;
     sc5=Math.max(1,Math.min(5,sc5));
     if(S.n>=1)g.push('You kept the chat going for '+S.n+' turn'+(S.n>1?'s':'')+'.');
     if(st.step>=3)g.push('You finished the whole situation.');
@@ -798,8 +823,8 @@ $('#fbBtn').addEventListener('click',async function(){
     if(st.name&&st.scen===1)g.push('You introduced yourself as '+st.name+'.');
     if(S.cnt>0&&!S.off&&!S.topic&&!S.mist&&!S.pol)g.push('Every reply was in '+lnm+', on topic and error-free.');
     if(S.help)g.push('You used help '+S.help+' time'+(S.help>1?'s':'')+', which is a good way to pick up new phrases.');
-    if(!g.length)g.push('You gave it a go in '+lnm+'.');
-    var fx=S.issues.length?'Work on: '+S.issues.slice(0,2).join(' '):'Next time, add one extra detail to each answer.';
+    if(!g.length)g.push(S.cnt===0?'Nothing to score yet. There was no real '+lnm+' sentence in this chat.':'You gave it a go in '+lnm+'.');
+    var fx=S.cnt===0?'Write a real sentence in '+lnm+'. Tap Need help? for a starter, or Show answer to see a model.':S.issues.length?'Work on: '+S.issues.slice(0,2).join(' '):'Next time, add one extra detail to each answer.';
     if(S.n<3&&st.step<3)fx+=' Chat for 3 or more turns to get a fuller score.';
     data={score:Math.round(sc5*10)/10,good:g.join(' '),fix:fx,better:S.last||kk.model[st.scen]};
   }
