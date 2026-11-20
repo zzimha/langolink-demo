@@ -124,6 +124,7 @@ section{padding-block:72px}
 .chat-head small{color:var(--muted);font-size:13px}
 .status{margin-left:auto;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--soft);color:var(--muted)}
 .status.live{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.goals{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:10px 22px;border-bottom:1px solid var(--line);font-size:13px}.goals b{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.goals .g{display:inline-flex;align-items:center;gap:6px;opacity:.8}.goals .g i{font-style:normal;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);font-size:11px;font-weight:700}.goals .g.done{opacity:1}.goals .g.done i{background:var(--blue);border-color:var(--blue);color:var(--blue-ink)}
 .log{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:12px;max-height:520px;scroll-behavior:smooth}
 .msg{max-width:min(520px,88%);animation:pop .3s ease both}
 @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -319,6 +320,7 @@ nav .navbtn:hover{color:var(--ink)}nav .navbtn:hover::after{transform:scaleX(1)}
     </aside>
     <div class="chat">
       <div class="chat-head"><div class="avatar" id="av">L</div><div><b id="pName">Lucía</b><small id="pRole">Your conversation partner</small></div><span class="status" id="status">Demo replies</span></div>
+      <div class="goals" id="goals" aria-label="Goals for this situation"></div>
       <div class="log" id="log" aria-live="polite"></div>
       <div id="fbslot"></div><div id="help"></div>
       <form class="compose" id="form"><input id="inp" autocomplete="off" placeholder="Type your reply here" aria-label="Your reply"><button type="button" class="round mic" id="mic" hidden aria-label="Speak">●</button><button class="round" aria-label="Send">&#8593;</button></form>
@@ -348,7 +350,7 @@ nav .navbtn:hover{color:var(--ink)}nav .navbtn:hover::after{transform:scaleX(1)}
 <section id="plans" class="wrap">
   <div class="sec-head"><p class="eyebrow">Free and pilot</p><h2>Try it free. Pay $3 for the full thing.</h2><p>The free preview shows how it feels. The pilot is where you actually build the habit.</p></div>
   <div class="diff">
-    <div class="card"><h3>Free preview</h3><ul class="plist"><li>All 7 languages</li><li>2 situations: order food, meet someone new</li><li>6 messages per visit</li><li>English meaning on every message</li><li>Score and what worked</li></ul><button class="btn ghost sm" data-go="try">Try it now</button></div>
+    <div class="card"><h3>Free preview</h3><ul class="plist"><li>All 6 languages</li><li>2 situations: order food, meet someone new</li><li>6 messages per visit</li><li>English meaning on every message</li><li>Score and what worked</li></ul><button class="btn ghost sm" data-go="try">Try it now</button></div>
     <div class="card hl"><h3>Pilot, $3 for 4 weeks</h3><ul class="plist"><li>All 4 situations now, more added during the beta, plus ones you request</li><li>Unlimited practice</li><li>Full feedback with a more natural line</li><li>A weekly recap from the builder</li><li>Partner match <span class="tag">Beta</span></li><li>Founding price locked in</li><li>Free if you refer 3 friends who pay</li></ul><button class="btn sm" data-go="join">Join the pilot</button></div>
   </div>
 </section>
@@ -480,7 +482,9 @@ function buildSetup(){
   LV.forEach(function(v){c.appendChild(chip(v,st.level===v,function(){st.level=v;buildSetup()}))});
 }
 function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function renderGoals(){var el=$('#goals');if(!el)return;var g=STEPTXT[st.scen],tr=!sampleFn;el.innerHTML='<b>Goals</b>'+g.map(function(t,i){var d=tr&&st.step>i;return '<span class="g'+(d?' done':'')+'"><i>'+(d?'\u2713':(i+1))+'</i>'+esc(t.replace(/\.$/,''))+'</span>'}).join('')}
 function render(){
+  renderGoals();
   var log=$('#log');
   log.innerHTML=st.msgs.map(function(m,i){
     if(m.role==='u')return '<div class="msg u"><div class="b">'+esc(m.t)+'</div>'+(m.tip?'<span class="tip">'+esc(m.tip)+'</span>':'')+'</div>';
@@ -492,7 +496,7 @@ function render(){
 }
 function start(){
   var k=L[st.lang],o=k.op[st.scen];
-  st.msgs=[{role:'p',t:o[0],r:o[1],e:o[2]}];st.fbi=0;st.busy=false;st.step=0;st.name='';st.item=null;st.stats=newStats();
+  st.msgs=[{role:'p',t:o[0],r:o[1],e:o[2]}];st.fbi=0;st.busy=false;st.step=0;st.fail=0;st.name='';st.item=null;st.stats=newStats();
   $('#pName').textContent=k.who;$('#av').innerHTML=avatarSVG(st.lang);
   $('#pRole').textContent=k.n+' · '+SC[st.scen];
   $('#fbslot').innerHTML='';var hb=$('#help');if(hb)hb.innerHTML='';
@@ -523,7 +527,7 @@ var KB={
  zh:{is:function(t){return /[一-鿿]/.test(t)},
   off:['不好意思，我听不懂。请用中文说。','Bù hǎoyìsi, wǒ tīng bù dǒng. Qǐng yòng Zhōngwén shuō.','Sorry, I do not understand. Please speak Chinese.'],
   model:[['老板，我要一份鸡饭，谢谢。','Lǎobǎn, wǒ yào yí fèn jīfàn, xièxie.','Boss, I would like one chicken rice, thanks.'],['你好，我叫小明。很高兴认识你。','Nǐ hǎo, wǒ jiào Xiǎomíng. Hěn gāoxìng rènshi nǐ.','Hi, I am Xiaoming. Nice to meet you.'],['一直走，然后在路口右转。','Yìzhí zǒu, ránhòu zài lùkǒu yòuzhuǎn.','Go straight, then turn right at the junction.'],['我是学生，我喜欢和人合作。','Wǒ shì xuésheng, wǒ xǐhuān hé rén hézuò.','I am a student and I like working with people.']],
-  items:[[/鸡饭/,'鸡饭','jīfàn','chicken rice'],[/炒饭/,'炒饭','chǎofàn','fried rice'],[/叻沙/,'叻沙','lèshā','laksa'],[/面/,'面','miàn','noodles'],[/咖啡/,'咖啡','kāfēi','coffee'],[/奶茶/,'奶茶','nǎichá','milk tea'],[/茶/,'茶','chá','tea']],
+  items:[[/鸡饭/,'鸡饭','jīfàn','chicken rice'],[/炒饭/,'炒饭','chǎofàn','fried rice'],[/叻沙/,'叻沙','lèshā','laksa'],[/面/,'面','miàn','noodles'],[/咖啡/,'咖啡','kāfēi','coffee'],[/奶茶/,'奶茶','nǎichá','milk tea'],[/米粉/,'米粉','mǐfěn','bee hoon'],[/肉骨茶/,'肉骨茶','ròugǔchá','bak kut teh'],[/茶/,'茶','chá','tea']],
   ok1:['好的，{i}。还要别的吗？','Hǎo de, {ir}. Hái yào bié de ma?','Okay, {ie}. Anything else?'],mid:['堂食还是打包？','Tángshí háishi dǎbāo?','Eat in or takeaway?'],end:['一共五块。谢谢，慢走！','Yígòng wǔ kuài. Xièxie, màn zǒu!','That is five dollars. Thank you, take care!'],
   unk:['你想吃什么？有鸡饭、炒饭和面。','Nǐ xiǎng chī shénme? Yǒu jīfàn, chǎofàn hé miàn.','What would you like? We have chicken rice, fried rice and noodles.'],bye:['好的，下次见！','Hǎo de, xià cì jiàn!','Okay, see you next time!'],
   polite:/请|谢|麻烦/,politeTip:'Add 请 or 谢谢 to sound polite: 请给我一份鸡饭。',
@@ -532,7 +536,7 @@ var KB={
   m0:['很高兴认识你，{n}！你是做什么的？','Hěn gāoxìng rènshi nǐ, {n}! Nǐ shì zuò shénme de?','Nice to meet you, {n}! What do you do?'],m0n:['很高兴认识你！你是做什么的？','Hěn gāoxìng rènshi nǐ! Nǐ shì zuò shénme de?','Nice to meet you! What do you do?'],nameTip:'Give your name with 我叫…: 我叫小明。',
   m1s:['原来你是学生！你喜欢新加坡吗？','Yuánlái nǐ shì xuésheng! Nǐ xǐhuān Xīnjiāpō ma?','So you are a student! Do you like Singapore?'],m1:['真不错！你喜欢新加坡吗？','Zhēn búcuò! Nǐ xǐhuān Xīnjiāpō ma?','Nice! Do you like Singapore?'],
   m2:['{n}，我也很喜欢。很高兴和你聊天！','{n}, wǒ yě hěn xǐhuān. Hěn gāoxìng hé nǐ liáotiān!','{n}, I like it too. Nice chatting with you!'],m2n:['我也很喜欢。很高兴和你聊天！','Wǒ yě hěn xǐhuān. Hěn gāoxìng hé nǐ liáotiān!','I like it too. Nice chatting with you!'],
-  dirs:[[/一直走|直走|直行/,'一直走','yìzhí zǒu','go straight'],[/右转|往右|右边/,'右转','yòuzhuǎn','turn right'],[/左转|往左|左边/,'左转','zuǒzhuǎn','turn left']],
+  dirs:[[/一直走|直走|直行|往前走|往前|向前|继续走|一直往前/,'一直走','yìzhí zǒu','go straight'],[/右转|往右|右边|向右|右手|右拐|右/,'右转','yòuzhuǎn','turn right'],[/左转|往左|左边|向左|左手|左拐|左/,'左转','zuǒzhuǎn','turn left']],
   d0:['{w}，对吗？远不远？','{wr}, duì ma? Yuǎn bù yuǎn?','{we}, right? Is it far?'],d0n:['不好意思，我不太明白。是左转还是右转？','Bù hǎoyìsi, wǒ bú tài míngbai. Shì zuǒzhuǎn háishi yòuzhuǎn?','Sorry, I do not quite follow. Left or right?'],d1:['走路大概几分钟？','Zǒulù dàgài jǐ fēnzhōng?','About how many minutes on foot?'],d2:['太好了，谢谢你！','Tài hǎo le, xièxie nǐ!','Great, thank you!'],
   i0s:['原来你是学生。你为什么想做这份工作？','Yuánlái nǐ shì xuésheng. Nǐ wèishénme xiǎng zuò zhè fèn gōngzuò?','So you are a student. Why do you want this job?'],i0:['你为什么想做这份工作？','Nǐ wèishénme xiǎng zuò zhè fèn gōngzuò?','Why do you want this job?'],i1:['很好。你有什么优点？','Hěn hǎo. Nǐ yǒu shénme yōudiǎn?','Good. What are your strengths?'],i2:['谢谢你来面试，我们会再联系你。','Xièxie nǐ lái miànshì, wǒmen huì zài liánxì nǐ.','Thanks for coming. We will be in touch.']},
  ja:{is:function(t){return /[぀-ヿ一-鿿]/.test(t)},
@@ -543,11 +547,11 @@ var KB={
   unk:['すみません、もう一度お願いします。ラーメン、カレー、寿司がありますよ。','Sumimasen, mō ichido onegai shimasu. Rāmen, karē, sushi ga arimasu yo.','Sorry, once more please. We have ramen, curry and sushi.'],bye:['またお越しください！','Mata okoshi kudasai!','Please come again!'],
   polite:/ください|お願い|ありがとう/,politeTip:'Add ください to order politely: ラーメンをください。',
   mist:[[/が欲しい|がほしい/,'欲しい sounds blunt when ordering. Use 〜をください or 〜をお願いします.'],[/(学生|です)だ[。.]?$|学生だ/,'Use です in polite speech: 学生です, not 学生だ.']],
-  name:function(t){var m=t.match(/(?:私は|わたしは|僕は|ぼくは|名前は)\s*([^\s、。です]{1,6})/);if(m)return m[1];m=t.match(/^([ぁ-んァ-ヶ一-龥ー]{1,5})(?:です|と申します)/);return m?m[1]:''},stud:/学生|大学/,
+  name:function(t){t=t.replace(/^(はじめまして|こんにちは|こんばんは)[、,！!\s]*/,'');var m=t.match(/(?:私は|わたしは|僕は|ぼくは|名前は)\s*([^\s、。です]{1,6})/);if(m)return m[1];m=t.match(/^([ぁ-んァ-ヶ一-龥ー]{1,5})(?:です|と申します)/);return m?m[1]:''},stud:/学生|大学/,
   m0:['{n}さん、よろしくお願いします！お仕事は何をされていますか？','{n}-san, yoroshiku onegai shimasu! Oshigoto wa nani o sarete imasu ka?','Pleased to meet you, {n}! What do you do?'],m0n:['はじめまして！お仕事は何をされていますか？','Hajimemashite! Oshigoto wa nani o sarete imasu ka?','Nice to meet you! What do you do?'],nameTip:'Give your name with 私は〜です: 私はたろうです。',
   m1s:['学生さんなんですね！シンガポールは好きですか？','Gakusei-san nan desu ne! Shingapōru wa suki desu ka?','You are a student! Do you like Singapore?'],m1:['いいですね！シンガポールは好きですか？','Ii desu ne! Shingapōru wa suki desu ka?','Nice! Do you like Singapore?'],
   m2:['{n}さん、私も大好きです。お話しできてうれしかったです！','{n}-san, watashi mo daisuki desu. Ohanashi dekite ureshikatta desu!','{n}, I love it too. I enjoyed talking!'],m2n:['私も大好きです。お話しできてうれしかったです！','Watashi mo daisuki desu. Ohanashi dekite ureshikatta desu!','I love it too. I enjoyed talking!'],
-  dirs:[[/まっすぐ|直進/,'まっすぐ','massugu','straight'],[/右/,'右','migi','right'],[/左/,'左','hidari','left']],
+  dirs:[[/まっすぐ|真っ直ぐ|直進|そのまま|道なり/,'まっすぐ','massugu','straight'],[/右/,'右','migi','right'],[/左/,'左','hidari','left']],
   d0:['{w}ですね。遠いですか？','{wr} desu ne. Tōi desu ka?','{we}, right? Is it far?'],d0n:['すみません、よくわかりません。右ですか、左ですか？','Sumimasen, yoku wakarimasen. Migi desu ka, hidari desu ka?','Sorry, I do not follow. Right or left?'],d1:['歩いて何分ぐらいですか？','Aruite nan-pun gurai desu ka?','About how many minutes on foot?'],d2:['わかりました。ありがとうございます！','Wakarimashita. Arigatō gozaimasu!','Got it. Thank you!'],
   i0s:['学生さんなんですね。なぜこの仕事を選びましたか？','Gakusei-san nan desu ne. Naze kono shigoto o erabimashita ka?','You are a student. Why did you choose this job?'],i0:['なぜこの仕事を選びましたか？','Naze kono shigoto o erabimashita ka?','Why did you choose this job?'],i1:['なるほど。あなたの強みは何ですか？','Naruhodo. Anata no tsuyomi wa nan desu ka?','I see. What are your strengths?'],i2:['ありがとうございました。また連絡します。','Arigatō gozaimashita. Mata renraku shimasu.','Thank you. We will be in touch.']},
  ko:{is:function(t){return /[가-힯]/.test(t)},
@@ -562,10 +566,10 @@ var KB={
   m0:['{n} 씨, 만나서 반가워요! 무슨 일을 하세요?','{n} ssi, mannaseo bangawoyo! Museun ireul haseyo?','Nice to meet you, {n}! What do you do?'],m0n:['만나서 반가워요! 무슨 일을 하세요?','Mannaseo bangawoyo! Museun ireul haseyo?','Nice to meet you! What do you do?'],nameTip:'Give your name with 저는 …예요: 저는 민수예요.',
   m1s:['학생이시군요! 싱가포르는 좋아하세요?','Haksaeng-isigunyo! Singgaporeuneun joahaseyo?','You are a student! Do you like Singapore?'],m1:['멋지네요! 싱가포르는 좋아하세요?','Meotjineyo! Singgaporeuneun joahaseyo?','Nice! Do you like Singapore?'],
   m2:['{n} 씨, 저도 좋아해요. 이야기해서 즐거웠어요!','{n} ssi, jeodo joahaeyo. Iyagihaeseo jeulgeowosseoyo!','{n}, I like it too. It was fun talking!'],m2n:['저도 좋아해요. 이야기해서 즐거웠어요!','Jeodo joahaeyo. Iyagihaeseo jeulgeowosseoyo!','I like it too. It was fun talking!'],
-  dirs:[[/직진|쭉|곧장/,'쭉','jjuk','straight'],[/오른쪽|우회전/,'오른쪽','oreunjjok','right'],[/왼쪽|좌회전/,'왼쪽','oenjjok','left']],
+  dirs:[[/직진|쭉|곧장|똑바로|계속 가/,'쭉','jjuk','straight'],[/오른쪽|우회전/,'오른쪽','oreunjjok','right'],[/왼쪽|좌회전/,'왼쪽','oenjjok','left']],
   d0:['{w}요? 알겠어요. 먼가요?','{wr}-yo? Algesseoyo. Meongayo?','{we}? Okay. Is it far?'],d0n:['죄송해요, 잘 모르겠어요. 오른쪽이에요, 왼쪽이에요?','Joesonghaeyo, jal moreugesseoyo. Oreunjjogieyo, oenjjogieyo?','Sorry, I do not follow. Right or left?'],d1:['걸어서 몇 분쯤 걸려요?','Georeoseo myeot bunjjeum geollyeoyo?','About how many minutes on foot?'],d2:['알겠어요. 감사합니다!','Algesseoyo. Gamsahamnida!','Got it. Thank you!'],
   i0s:['학생이시군요. 왜 이 일을 하고 싶어요?','Haksaeng-isigunyo. Wae i ireul hago sipeoyo?','You are a student. Why do you want this job?'],i0:['왜 이 일을 하고 싶어요?','Wae i ireul hago sipeoyo?','Why do you want this job?'],i1:['그렇군요. 본인의 장점은 뭐예요?','Geureokunyo. Bonin-ui jangjeomeun mwoyeyo?','I see. What are your strengths?'],i2:['면접 보러 와 주셔서 감사합니다. 연락드릴게요.','Myeonjeop boreo wa jusyeoseo gamsahamnida. Yeollakdeurilgeyo.','Thank you for coming. We will contact you.']},
- es:{is:function(t){return /[áéíóúñ¿¡]/i.test(t)||/(^|[\s,.!?])(el|la|los|las|un|una|quiero|quisiera|me|mi|por|favor|hola|gracias|soy|llamo|es|de|en|para|que|y|yo|muy|bien|buenas|estudio|trabajo|derecha|izquierda|recto|sigue|gira|café|agua|tengo|tu|con|al|del|paella|tortilla|sí|no|vale|ok|okay)([\s,.!?]|$)/i.test(t)},
+ es:{is:function(t){return /[áéíóúñ¿¡]/i.test(t)||/(^|[\s,.!?])(el|la|los|las|un|una|quiero|quisiera|me|mi|por|favor|hola|gracias|soy|llamo|es|de|en|para|que|y|yo|muy|bien|buenas|estudio|trabajo|derecha|izquierda|recto|sigue|gira|café|agua|tengo|tu|con|al|del|paella|tortilla|cinco|diez|tres|dos|cuatro|seis|minutos?|lejos|cerca|sí|no|vale|ok|okay)([\s,.!?]|$)/i.test(t)},
   off:['Perdona, no te entiendo. ¿Puedes hablar en español?','','Sorry, I do not understand. Can you speak Spanish?'],
   model:[['Quisiera una paella, por favor.','','I would like a paella, please.'],['Hola, me llamo Carlos. Mucho gusto.','','Hi, my name is Carlos. Nice to meet you.'],['Sigue todo recto y gira a la derecha.','','Go straight on and turn right.'],['Soy estudiante y me gusta trabajar en equipo.','','I am a student and I like teamwork.']],
   items:[[/paella/i,'una paella','','a paella'],[/tortilla/i,'una tortilla','','a tortilla'],[/bocadillo|sándwich|sandwich/i,'un bocadillo','','a sandwich'],[/café/i,'un café','','a coffee'],[/zumo|jugo/i,'un zumo','','a juice'],[/agua/i,'un agua','','a water'],[/tacos?/i,'unos tacos','','some tacos']],
@@ -580,7 +584,7 @@ var KB={
   dirs:[[/todo recto|recto|derecho/i,'todo recto','','straight on'],[/derecha/i,'a la derecha','','to the right'],[/izquierda/i,'a la izquierda','','to the left']],
   d0:['{w}, ¿verdad? ¿Está lejos?','','{we}, right? Is it far?'],d0n:['Perdona, no entiendo bien. ¿A la derecha o a la izquierda?','','Sorry, I do not follow well. Right or left?'],d1:['¿Cuántos minutos andando?','','How many minutes on foot?'],d2:['Vale, ¡muchas gracias!','','Okay, thank you very much!'],
   i0s:['Eres estudiante. ¿Por qué quieres este trabajo?','','You are a student. Why do you want this job?'],i0:['¿Por qué quieres este trabajo?','','Why do you want this job?'],i1:['Entiendo. ¿Cuáles son tus puntos fuertes?','','I see. What are your strengths?'],i2:['Gracias por venir. Te contactaremos pronto.','','Thanks for coming. We will contact you soon.']},
- fr:{is:function(t){return /[àâçéèêëîïôùûœ]/i.test(t)||/(^|[\s'’,.!?])(le|la|les|un|une|des|je|j|voudrais|veux|plaît|merci|bonjour|salut|suis|appelle|et|de|du|pour|avec|très|bien|moi|toi|étudiant|droite|gauche|droit|café|thé|croissant|crêpe|oui|non|ok|okay)([\s'’,.!?]|$)/i.test(t)},
+ fr:{is:function(t){return /[àâçéèêëîïôùûœ]/i.test(t)||/(^|[\s'’,.!?])(le|la|les|un|une|des|je|j|voudrais|veux|plaît|merci|bonjour|salut|suis|appelle|et|de|du|pour|avec|très|bien|moi|toi|étudiant|droite|gauche|droit|café|thé|croissant|crêpe|cinq|dix|trois|deux|quatre|six|minutes?|loin|près|oui|non|ok|okay)([\s'’,.!?]|$)/i.test(t)},
   off:['Pardon, je ne comprends pas. Tu peux parler en français ?','','Sorry, I do not understand. Can you speak French?'],
   model:[['Je voudrais un croissant, s’il vous plaît.','','I would like a croissant, please.'],['Bonjour, je m’appelle Marc. Enchanté.','','Hello, my name is Marc. Pleased to meet you.'],['Allez tout droit, puis tournez à droite.','','Go straight, then turn right.'],['Je suis étudiant et j’aime travailler en équipe.','','I am a student and I like teamwork.']],
   items:[[/croissant/i,'un croissant','','a croissant'],[/baguette/i,'une baguette','','a baguette'],[/crêpe|crepe/i,'une crêpe','','a crêpe'],[/café/i,'un café','','a coffee'],[/thé/i,'un thé','','a tea'],[/sandwich/i,'un sandwich','','a sandwich'],[/omelette/i,'une omelette','','an omelette']],
@@ -602,33 +606,33 @@ var KB={
   ok1:['Okay, {i}. Anything else?','','Confirming your order.'],mid:['Eat here or takeaway?','','In Singapore, “tapao” also means takeaway.'],end:['That is five dollars. Thank you, enjoy!','','Closing the order.'],
   unk:['Sorry, what would you like? We have chicken rice, laksa and kopi.','','Your partner did not catch the dish.'],bye:['See you again!','','A friendly goodbye.'],
   polite:/please|thank|can i have|could i|i would like|i\'d like/i,politeTip:'Add please or start with “Can I have…”: Can I have one chicken rice, please?',
-  mist:[[/i want/i,'“I want” sounds blunt. Try “Can I have…” or “I would like…”.'],[/i very like/i,'Say “I really like…” or “I like it very much”, not “I very like”.'],[/i am agree|i am agreed/i,'Say “I agree”, without “am”.']],
+  mist:[[/\\bi want (a|an|one|two|some|chicken|laksa|kopi|teh|milo|kaya)\\b/i,'“I want” sounds blunt when ordering. Try “Can I have…” or “I would like…”.'],[/i very like/i,'Say “I really like…” or “I like it very much”, not “I very like”.'],[/i am agree|i am agreed/i,'Say “I agree”, without “am”.']],
   name:function(t){var m=t.match(/(?:my name is|i am|i['’]m|call me|this is)\s+([A-Za-z]+)/i);if(!m)return '';var n=m[1];return /^(a|an|the|from|in|studying|working|so|very|good|fine|happy|student|new|here|just|not)$/i.test(n)?'':n[0].toUpperCase()+n.slice(1)},stud:/student|university|uni\b|school/i,
   m0:['Nice to meet you, {n}! What do you do?','','Using your name to sound friendly.'],m0n:['Nice to meet you! What do you do?','','Try telling your name.'],nameTip:'Give your name: My name is Aisha.',
   m1s:['A student! Do you like Singapore?','','Reacting to what you said.'],m1:['Cool! Do you like Singapore?','','Keeping the chat going.'],
   m2:['{n}, me too. It was great chatting with you!','','A friendly goodbye.'],m2n:['Me too. It was great chatting with you!','','A friendly goodbye.'],
-  dirs:[[/straight|go on/i,'straight','','straight'],[/right/i,'right','','right'],[/left/i,'left','','left']],
-  d0:['{w}, right? Is it far?','','Checking your direction.'],d0n:['Sorry, I am lost. Left or right?','','Your partner needs a clearer direction.'],d1:['How many minutes on foot?','','Asking how far.'],d2:['Okay, thank you so much!','','Thanking you.'],
+  dirs:[[/straight|go on|keep going|continue|forward|ahead|walk on/i,'straight','','straight'],[/right/i,'right','','right'],[/left/i,'left','','left']],
+  d0:['{w}, okay. Is it far?','','Checking your direction.'],d0n:['Sorry, I am lost. Left or right?','','Your partner needs a clearer direction.'],d1:['How many minutes on foot?','','Asking how far.'],d2:['Okay, thank you so much!','','Thanking you.'],
   i0s:['You are a student. Why do you want this job?','','Reacting to what you said.'],i0:['Why do you want this job?','','A classic interview question.'],i1:['I see. What are your strengths?','','Another classic question.'],i2:['Thank you for coming. We will contact you soon.','','Closing the interview.']}
 };
 
-KB.zh.far=/\d|[一二三四五六七八九十两]|分钟|远|近/;KB.zh.farM='走路大概五分钟。';
-KB.ja.far=/\d|[一二三四五六七八九十]|分|遠|近|すぐ/;KB.ja.farM='歩いて五分ぐらいです。';
-KB.ko.far=/\d|[일이삼사오육십]|분|멀|가까/;KB.ko.farM='걸어서 5분쯤 걸려요.';
+KB.zh.far=/\d|[一二三四五六七八九十两]|分钟|分|远|近|走路|很快|马上|半/;KB.zh.farM='走路大概五分钟。';
+KB.ja.far=/\d|[一二三四五六七八九十]|分|遠|近|すぐ|歩|少し|ちょっと|徒歩/;KB.ja.farM='歩いて五分ぐらいです。';
+KB.ko.far=/\d|[일이삼사오육십]|분|멀|가까|걸어|정도|금방|바로/;KB.ko.farM='걸어서 5분쯤 걸려요.';
 KB.es.far=/\d|cinco|diez|tres|minuto|lejos|cerca/i;KB.es.farM='Unos cinco minutos andando.';
 KB.fr.far=/\d|cinq|dix|trois|minute|loin|près/i;KB.fr.farM='C’est à cinq minutes à pied.';
-KB.en.far=/\d|five|ten|three|minute|far|near|close/i;KB.en.farM='About five minutes on foot.';
+KB.en.far=/\d|two|four|five|six|seven|eight|nine|ten|fifteen|twenty|three|min|half|few|far|near|close|short|long|quick|walk/i;KB.en.farM='About five minutes on foot.';
 var NICE=['Nice, that sounded natural.','Clear and polite. Keep going.','Good. Try a slightly longer sentence next time.'];
 function fill(a,v){return a.map(function(s){return s.replace(/\{(\w+)\}/g,function(_,k){return v[k]==null?'':v[k]})})}
 /* relevance checks + model answers per language */
-var TIME=/\d|[一二三四五六七八九十两일이삼사오육십]|minute|minuto|cinq|cinco|five|ten\b|diez|three|tres|dix|trois|分/i;
+var TIME=/\d|two|four|six|seven|eight|nine|fifteen|twenty|half an|a few|[一二三四五六七八九十两일이삼사오육십]|minute|minuto|cinq|cinco|five|ten\b|diez|three|tres|dix|trois|分/i;
 var RX={
- zh:{o1:/不用|不要|没有|没了|够了|就这|这样|再来|还要|再要|加|谢谢|好的|可以|行|要/,o2:/堂食|打包|带走|外带|这里|在这|堂/,m1:/学生|工作|上班|读书|老师|工程|医生|设计|学习|实习|公司|学校|大学|做/,m2:/喜欢|爱|不错|很好|还行|不喜欢|热|美食|漂亮|干净|好吃/,i1:/因为|喜欢|想|希望|学习|经验|兴趣|机会|热爱/,i2:/优点|擅长|善于|能|会|认真|负责|沟通|团队|细心|学得快|耐心/},
- ja:{o1:/大丈夫|結構|以上|いいえ|ありません|はい|お願い|追加|あと|ください|ありがとう/,o2:/店内|持ち帰り|持ち帰|テイクアウト|ここで|食べて/,m1:/学生|仕事|働|会社|先生|勉強|大学|エンジニア|デザイナー|医者|看護|インターン|アルバイト/,m2:/好き|大好き|いい|嫌い|暑|食べ物|おいしい|きれい|楽しい/,i1:/から|ので|好き|学び|経験|興味|したい|ため/,i2:/強み|得意|できる|責任|コミュニケーション|チーム|丁寧|頑張|学ぶ|真面目/},
- ko:{o1:/없어요|없습니다|괜찮아요|괜찮습니다|아니요|아뇨|네|예|추가|더|주세요|감사/,o2:/여기|포장|가져|먹고|매장/,m1:/학생|일|회사|직장|선생|공부|대학|엔지니어|디자이너|의사|근무|인턴/,m2:/좋아|싫|덥|음식|좋네|맛있|예뻐|깨끗/,i1:/때문|좋아|배우|경험|관심|싶|위해/,i2:/장점|잘해|잘하|책임|소통|팀|꼼꼼|열심|배우|성실/},
+ zh:{o1:/不用|不要|没有|没了|没啦|够了|就这|这样|再来|还要|再要|加|谢谢|好的|好|可以|行|要|不了|不需要|免了|没事|算了|ok|OK|对|是的|有|先这样/,o2:/堂食|打包|带走|外带|这里|在这|堂|这边|带回|拿走|dabao|tapao|takeaway/i,m1:/学生|工作|上班|读书|老师|工程|医生|设计|学习|实习|公司|学校|大学|做|老板|销售|零售|店员|服务员|厨师|经理|护士|会计|程序员|自由职业|当兵|在读|念书|研究生|本科|理工|职员|上课/,m2:/喜欢|爱|不错|很好|还行|不喜欢|热|美食|漂亮|干净|好吃|还可以|还好|一般|挺|方便|拥挤|贵|安全|舒服|棒|赞|好玩|美/,i1:/因为|喜欢|想|希望|学习|经验|兴趣|机会|热爱|需要|赚钱|挣钱|锻炼|练习|提高|提升|能力|有趣|附近|近/,i2:/优点|擅长|善于|能|会|认真|负责|沟通|团队|细心|学得快|耐心|勤奋|努力|诚实|可靠|友善|开朗|快|灵活|守时|细节|服务|积极/},
+ ja:{o1:/大丈夫|結構|以上|いいえ|ありません|ないです|なし|いらない|いりません|それだけ|それで|はい|うん|お願い|追加|あと|ください|ありがとう|ok|OK|十分|平気/i,o2:/店内|持ち帰|テイクアウト|ここで|食べて|ここ|店で|持って帰|お持ち|to go/i,m1:/学生|仕事|働|会社|先生|勉強|大学|エンジニア|デザイナー|医者|看護|インターン|アルバイト|バイト|販売|店員|会社員|営業|研究|大学院|院生|フリーター|自営|シェフ|マネージャー/,m2:/好き|大好き|いい|嫌い|暑|食べ物|おいしい|きれい|楽しい|まあまあ|普通|便利|蒸し暑|混|高い|安全|面白|素敵|最高|楽/,i1:/から|ので|好き|学び|経験|興味|したい|ため|知りたい|お金|稼|練習|成長|近い|やりたい/,i2:/強み|得意|できる|責任|コミュニケーション|チーム|丁寧|頑張|学ぶ|真面目|努力|誠実|正直|笑顔|柔軟|素早|細かい|接客|積極/},
+ ko:{o1:/없어요|없습니다|괜찮아요|괜찮습니다|아니요|아뇨|아니|네|예|응|추가|더|주세요|감사|됐어요|됐습니다|그게 다|그것만|충분|오케이|ok|OK/i,o2:/여기|포장|가져|먹고|매장|테이크아웃|안에서|가지고|들고/,m1:/학생|일|회사|직장|선생|공부|대학|엔지니어|디자이너|의사|근무|인턴|판매|알바|아르바이트|영업|간호사|연구|대학원|프리랜서|자영업|요리사|매니저|군대|병역/,m2:/좋아|싫|덥|음식|좋네|맛있|예뻐|깨끗|그냥|보통|괜찮|편리|습|복잡|비싸|안전|재미|멋|최고|살기/,i1:/때문|좋아|배우|경험|관심|싶|위해|알고|돈|벌|연습|성장|가까/,i2:/장점|잘해|잘하|책임|소통|팀|꼼꼼|열심|배우|성실|노력|정직|친절|유연|빠르|적극|세심|서비스/},
  es:{o1:/\bno\b|nada|eso es todo|sí|\bsi\b|gracias|también|más|otro|otra|por favor|vale/i,o2:/aquí|aqui|llevar|tomar|para/i,m1:/estudi|trabaj|empresa|profesor|ingenier|diseñ|médic|universidad|prácticas|soy/i,m2:/gusta|encanta|\bsí\b|\bno\b|calor|comida|bonit|genial/i,i1:/porque|me gusta|quiero|aprender|experiencia|interés|oportunidad|pasión/i,i2:/fuerte|responsable|equipo|comunic|aprendo|trabajador|organizad|soy/i},
  fr:{o1:/\bnon\b|rien|c['’]est tout|oui|merci|aussi|plus|encore|s['’]il/i,o2:/sur place|emporter|ici/i,m1:/étudi|travaill|entreprise|professeur|ingénieur|designer|médecin|université|fac|stage|je suis/i,m2:/aime|adore|oui|non|chaud|nourriture|joli|génial|cuisine|propre/i,i1:/parce|j['’]aime|je veux|apprendre|expérience|intérêt|opportunité|passion|car\b/i,i2:/point fort|points forts|responsable|équipe|communic|j['’]apprends|travailleur|organisé|sérieux|je suis/i},
- en:{o1:/\bno\b|that['’]?s all|that is all|nothing|yes|thanks|thank|also|more|another|please|okay|ok\b/i,o2:/here|takeaway|take away|take-away|tapao|dine|eat in|pack|go\b/i,m1:/student|work|job|engineer|teacher|design|doctor|study|university|intern|school/i,m2:/like|love|yes|\bno\b|hot|food|great|nice|good|clean|beautiful/i,i1:/because|like|want|learn|experience|interest|opportunity|passion/i,i2:/strength|good at|i am|i can|responsible|team|communic|learn|hard-working|organi[sz]ed|reliable/i}
+ en:{o1:/\bno\b|\bnope\b|\bnah\b|\bnone\b|dowan|do ?n[o'’]?t (want|need)|\bdont\b|\bdun\b|no need|no more|enough|that['’]?s (all|it)|that is all|nothing|\byes\b|\byeah\b|\byep\b|\byup\b|\bya\b|sure|thanks|thank|also|more|another|please|okay|\bok\b|\bcan\b|\badd\b|extra/i,o2:/here|takeaway|take away|take-away|tapao|tapau|dabao|dine|eat in|stay|pack|to go|\bgo\b/i,m1:/student|work|job|engineer|teacher|design|doctor|nurse|study|university|uni\b|intern|school|retail|sales|nus|ntu|smu|poly|army|nsf|waiter|chef|manager|freelanc|business|unemploy|between jobs|accountant|developer|coder|clerk|part.?time|full.?time/i,m2:/like|love|yes|\bno\b|hot|food|great|nice|good|clean|beautiful|\bok\b|okay|fine|not bad|so so|cool|humid|crowded|expensive|shiok|safe|small|busy/i,i1:/because|cause|\bcos\b|like|want|learn|experience|interest|opportunity|passion|need|money|earn|save|gain|skill|practi[sc]e|improve|love|enjoy|fun|near|close/i,i2:/strength|good at|i am|i can|responsible|team|communic|learn|hard.?working|organi[sz]ed|reliable|patient|friendly|fast learner|quick|diligent|honest|punctual|detail|flexible|adaptable|positive|careful|energetic|service|people|skills|try my best/i}
 };
 var MD={
  zh:{more:['不用了，谢谢。','Bú yòng le, xièxie.','No need, thanks.'],eat:['打包，谢谢。','Dǎbāo, xièxie.','Takeaway, thanks.'],job:['我是学生。','Wǒ shì xuésheng.','I am a student.'],like:['我很喜欢，这里的美食很多。','Wǒ hěn xǐhuān, zhèlǐ de měishí hěn duō.','I like it a lot, there is so much good food.'],reason:['因为我喜欢和人交流，也想学习新东西。','Yīnwèi wǒ xǐhuān hé rén jiāoliú, yě xiǎng xuéxí xīn dōngxi.','Because I like talking with people and want to learn new things.'],strength:['我的优点是认真负责，也善于沟通。','Wǒ de yōudiǎn shì rènzhēn fùzé, yě shànyú gōutōng.','My strength is that I am responsible and good at communicating.'],far:['走路大概五分钟。','Zǒulù dàgài wǔ fēnzhōng.','About five minutes on foot.']},
@@ -673,7 +677,7 @@ function dymItem(txt,k){
 
 var ASKN={zh:['你叫什么名字？','Nǐ jiào shénme míngzi?','What is your name?'],ja:['お名前は何ですか？','Onamae wa nan desu ka?','What is your name?'],ko:['이름이 뭐예요?','Ireumi mwoyeyo?','What is your name?'],es:['¿Cómo te llamas?','','What is your name?'],fr:['Comment tu t’appelles ?','','What is your name?'],en:['And what is your name?','','Could you tell me your name?']};
 var GREET=/^(hi|hello|hey|hola|buenas|bonjour|salut|你好|您好|嗨|こんにちは|はじめまして|안녕|안녕하세요|yo)\W*$/i;
-function bareName(t){t=t.trim().replace(/[.!！。]+$/,'');if(GREET.test(t))return '';if(/^[A-Za-zÀ-ÿ]{2,14}$/.test(t))return t[0].toUpperCase()+t.slice(1);if(st.lang==='zh'&&/^[\u4e00-\u9fff]{2,3}$/.test(t)&&!/^(我|你|他|她|请|谢|不|没|好|对)/.test(t))return t;if(st.lang==='ja'&&/^[\u3040-\u30ff\u4e00-\u9fff]{2,5}$/.test(t)&&!/^(はい|いいえ|ありがとう|すみません)/.test(t))return t;if(st.lang==='ko'&&/^[\uac00-\ud7af]{2,4}$/.test(t)&&!/(요|다|까|죠|네|아니)$/.test(t)&&!/^(네|아니|좋|감사|고마|괜찮|맞|안녕)/.test(t))return t;return ''}
+function bareName(t){t=t.trim().replace(/[.!！。]+$/,'');if(GREET.test(t))return '';if(/^[A-Za-zÀ-ÿ]{2,14}$/.test(t))return t[0].toUpperCase()+t.slice(1);if(st.lang==='zh'&&/^[\u4e00-\u9fff]{2,3}$/.test(t)&&!/^(我|你|他|她|请|谢|不|没|好|对|还|很|太|挺|可|一般|喜|爱|是|有|做|在|想|会|能|吧|啊|呢|嗯|行|也|学|工|上)/.test(t))return t;if(st.lang==='ja'&&/^[\u3040-\u30ff\u4e00-\u9fff]{2,5}$/.test(t)&&!/^(はい|いいえ|ありがとう|すみません)/.test(t))return t;if(st.lang==='ko'&&/^[\uac00-\ud7af]{2,4}$/.test(t)&&!/(요|다|까|죠|네|아니)$/.test(t)&&!/^(네|아니|좋|감사|고마|괜찮|맞|안녕)/.test(t))return t;return ''}
 
 var AVC={
  zh:{bg:'#FFE3D6',skin:'#F6D7BD',hair:'#1F1B26',shirt:'#E9675C',back:'M14 31 Q13 11 32 11 Q51 11 50 31 L50 45 Q50 47.5 46.5 47.5 L17.5 47.5 Q14 47.5 14 45 Z',front:'M17.5 29.5 Q15.5 12 32 12 Q48.5 12 46.5 29.5 L46 23.8 Q32 21 18 23.8 Z',extra:'<rect x="40.5" y="19.5" width="6" height="2.6" rx="1.3" fill="#F2B84B" transform="rotate(-18 43.5 20.8)"/>',brow:'#1F1B26'},
@@ -705,45 +709,57 @@ function answerFor(sc,step){
   var t=[[k.model[0],M.more,M.eat],[k.model[1],M.job,M.like],[k.model[2],M.far,M.far],[k.model[3],M.reason,M.strength]][sc];
   return t[Math.min(step,2)];
 }
+var NUMW=['one','two','three','four','five','six','seven','eight','nine','ten','fifteen','twenty'];
+var NOTYPO=['for','the','then','than','tea','too','ton','net','tan','see','sit','fine','fire','live','give','file','tree','free','sex','sir','tin','ate','nice','nine','one','won','own','tow','top','toe','tie','ten','tem'];
+var META=/^\s*(what|huh|sorry|pardon|hello|hmm+|eh|ha|help( me)?|stuck|repeat( please| that)?|(can|could) you (please )?(repeat|say (that )?again|say it slower|slow down|translate)|say (that )?again|(i )?(do ?n[o'’]?t|dun) (understand|get it|get that|know)|i have no idea|no idea|slow(er)?( please)?|meaning|what (does|do) (that|it|this) mean|what did you say|what is that|translate|in english( please)?|english( please)?)\s*[.!?]*\s*$/i;
+var DIRW=['straight','left','right','forward','ahead'];
+var DIRSTOP=['let','lets','lest','light','fight','might','night','sight','tight','eight','lift','loft','soft','less','list','rights','lefty','after','head','read','road'];
+function typoDir(t){var w=t.match(/[A-Za-z]+/g)||[];for(var j=0;j<w.length;j++){var l=w[j].toLowerCase();if(l.length<3||DIRW.indexOf(l)>=0||DIRSTOP.indexOf(l)>=0)continue;var c=[];for(var i=0;i<DIRW.length;i++){var n=DIRW[i];if(Math.abs(l.length-n.length)<=1&&lev(l,n)<=(n.length>=7?2:1))c.push(n)}if(c.length===1)return [w[j],c[0]]}return null}
+function typoNum(t){var w=t.match(/[A-Za-z]+/g)||[];for(var j=0;j<w.length;j++){var l=w[j].toLowerCase();if(l.length<3||NUMW.indexOf(l)>=0||(NOTYPO.indexOf(l)>=0&&l!=='tem'))continue;var c=[];for(var i=0;i<NUMW.length;i++){var n=NUMW[i];if(Math.abs(l.length-n.length)<=1&&lev(l,n)<=1)c.push(n)}if(c.length===1)return [w[j],c[0]]}return null}
 function demoReply(txt){
   var k=KB[st.lang],R=RX[st.lang],M=MD[st.lang],sc=st.scen,S=st.stats,step=st.step,tip='',line,adv=true,flag=false;
   function issue(t,m,kind){tip=t;flag=true;S[kind]++;if(S.issues.indexOf(t)<0)S.issues.push(t);if(m)S.last=m}
+  if(META.test(txt)&&!(/^\s*hello\s*[.!?]*\s*$/i.test(txt)&&st.step===0&&sc!==2)){var pm=st.msgs[st.msgs.length-3];if(pm&&pm.t){return {line:[pm.t,pm.r||'',pm.e||''],tip:'No problem. Here is the line again with the English meaning. Try replying in '+L[st.lang].n+', or tap Need help? for a starter.',meta:true,help:/help|know|idea|stuck/i.test(txt)}}}
   if(gib(txt)){S.off++;S.issues.push('Write a real sentence.');return {line:k.huh,tip:'That did not look like a real sentence. Tap Need help? if you are stuck.'}}
-  if(!k.is(txt)){S.off++;S.issues.push('Use '+L[st.lang].n+' in the chat.');S.last=k.model[sc];return {line:k.off,tip:'Try it in '+L[st.lang].n+'. A model line: '+fm(k.model[sc])}}
+  var rp=(!CJK.test(txt)&&!/[\u0B80-\u0BFF]/.test(txt))?txt.match(/(?:^|[^A-Za-z\u00C0-\u00FF])([A-Za-z\u00C0-\u00FF]{2,})\s+\1(?![A-Za-z\u00C0-\u00FF])/i):null;
+  if(rp&&!/^(very|bye|so|no|that|had|really|many|little|ha|haha|la|lah|wah|aiya|aiyo|ok|okay)$/i.test(rp[1])){S.mist++;S.cnt++;S.len+=txt.length;var rpi='You repeated “'+rp[1]+'”.';if(S.issues.indexOf(rpi)<0)S.issues.push(rpi);var pm2=st.msgs[st.msgs.length-3];return {line:pm2&&pm2.t?[pm2.t,pm2.r||'',pm2.e||'']:k.huh,tip:'You repeated “'+rp[1]+'”. Say each word once and use a short sentence. Tap Need help? for a model.'}}
+  if(sc===2&&st.step>=1&&st.lang==='en'){var tn=typoNum(txt);if(tn){S.mist++;S.cnt++;S.len+=txt.length;var ti='Spelling: did you mean “'+tn[1]+'”?';if(S.issues.indexOf(ti)<0)S.issues.push(ti);return {line:k.d1,tip:'Did you mean “'+tn[1]+'”? Check the spelling and try again.'}}}
+  if(sc===2&&st.step>=1&&/^\s*[\d௧-௯]+\s*\S{0,8}\s*$/.test(txt)){}else if(!k.is(txt)){S.off++;S.issues.push('Use '+L[st.lang].n+' in the chat.');S.last=k.model[sc];return {line:k.off,tip:'Try it in '+L[st.lang].n+'. A model line: '+fm(k.model[sc])}}
   S.cnt++;S.len+=txt.length;
   for(var i=0;i<k.mist.length;i++){if(k.mist[i][0].test(txt)){issue(k.mist[i][1],k.model[sc],'mist');break}}
   var nm=k.name(txt);if(nm&&k.stud.test(nm))nm='';
-  function off(re,reask,model,hint){
-    if(re.test(txt))return false;
+  function openOK(t){return CJK.test(t)?t.replace(/\s/g,'').length>=4:t.trim().split(/\s+/).length>=3}
+  function off(re,reask,model,hint,open){
+    if(re.test(txt)||(open&&openOK(txt)))return false;
     line=reask;adv=false;issue(hint+' Model: '+fm(model),model,'topic');return true}
   if(sc===0){
-    var it=null,typo=null,dym=null;for(var j=0;j<k.items.length;j++){if(k.items[j][0].test(txt)){it=k.items[j];break}}
-    if(!it&&sc===0&&step<=1){if(CJK.test(txt)&&st.lang!=='en'&&!/[a-z]/i.test(txt)){dym=dymItem(txt,k)}else{var fz=fuzzyItem(txt,k);if(fz){it=fz.it;typo=fz.base}}}
+    var it=null,typo=null,dym=null,typoW=null;for(var j=0;j<k.items.length;j++){if(k.items[j][0].test(txt)){it=k.items[j];break}}
+    if(!it&&sc===0&&step<=1){if(CJK.test(txt)&&st.lang!=='en'&&!/[a-z]/i.test(txt)){dym=dymItem(txt,k)}else{var fz=fuzzyItem(txt,k);if(fz){dym=fz.it;typoW=fz.base}}}
     if(step===0){
-      if(dym){line=k.unk;adv=false;issue('Did you mean '+dym[1]+(dym[2]?' ('+dym[2]+')':'')+'? Check the characters.',k.model[0],'topic')}
-      else if(it){st.item=it;line=fill(k.ok1,{i:it[1],ir:it[2],ie:it[3]});if(typo)issue('Spelling: it is "'+typo+'".',k.model[0],'mist');else if(!k.polite.test(txt)&&!flag){issue(k.politeTip,k.model[0],'pol')}}
+      if(dym){line=k.unk;adv=false;if(typoW)issue('Did you mean “'+dym[1]+'”? Check the spelling and try again.',k.model[0],'mist');else issue('Did you mean '+dym[1]+(dym[2]?' ('+dym[2]+')':'')+'? Check the characters.',k.model[0],'topic')}
+      else if(it){st.item=it;line=fill(k.ok1,{i:it[1],ir:it[2],ie:it[3]});if(R.o2.test(txt)&&!typo&&!flag){line=k.end;st.step+=2}if(typo)issue('Spelling: it is "'+typo+'".',k.model[0],'mist');else if(!k.polite.test(txt)&&!flag){issue(k.politeTip,k.model[0],'pol')}}
       else{line=k.unk;adv=false;issue('Name the dish you want. Model: '+fm(k.model[0]),k.model[0],'topic')}
     }else if(step===1){if(!it&&off(R.o1,(st.item?fill(k.ok1,{i:st.item[1],ir:st.item[2],ie:st.item[3]}):k.ok1),M.more,'Answer the question: anything else?'))adv=false;else line=k.mid}
     else if(step===2){if(off(R.o2,k.mid,M.eat,'Say eat in or takeaway.'))adv=false;else line=k.end}
     else line=k.bye;
   }else if(sc===1){
     if(step===0){if(!nm&&!flag)nm=bareName(txt);if(nm){st.name=nm;line=fill(k.m0,{n:nm})}else{line=ASKN[st.lang];adv=false;issue(k.nameTip,k.model[1],'topic')}}
-    else if(step===1){if(!off(R.m1,k.m0n,M.job,'Tell your partner what you do.'))line=k.stud.test(txt)?k.m1s:k.m1}
-    else if(step===2){if(!off(R.m2,k.m1,M.like,'Answer: do you like Singapore?'))line=fill(st.name?k.m2:k.m2n,{n:st.name})}
+    else if(step===1){if(!off(R.m1,(st.name?fill(k.m0,{n:st.name}):k.m0n),M.job,'Tell your partner what you do.',1))line=k.stud.test(txt)?k.m1s:k.m1}
+    else if(step===2){if(!off(R.m2,k.m1,M.like,'Answer: do you like Singapore?',1))line=fill(st.name?k.m2:k.m2n,{n:st.name})}
     else line=k.bye;
   }else if(sc===2){
-    var d=null;for(var q=0;q<k.dirs.length;q++){if(k.dirs[q][0].test(txt)){d=k.dirs[q];break}}
-    if(step===0){if(d)line=fill(k.d0,{w:d[1],wr:d[2],we:d[3]});else{line=k.d0n;adv=false;issue('Give a direction. Model: '+fm(k.model[2]),k.model[2],'topic')}}
+    var d=null,dl=[];for(var q=0;q<k.dirs.length;q++){if(k.dirs[q][0].test(txt)){dl.push(k.dirs[q])}}if(dl.length){d=dl[0];if(dl.length>1)d=[null,dl.map(function(x){return x[1]}).join(', '),dl.map(function(x){return x[2]}).join(', '),dl.map(function(x){return x[3]}).join(', ')]}
+    if(step===0){if(d)line=fill(k.d0,{w:d[1],wr:d[2],we:d[3]});else{line=k.d0n;adv=false;var tdr=st.lang==='en'?typoDir(txt):null;if(tdr)issue('Did you mean “'+tdr[1]+'”? Check the spelling and try again.',k.model[2],'mist');else issue('Give a direction. Model: '+fm(k.model[2]),k.model[2],'topic')}}
     else if(step===1){if(k.far.test(txt)){var tm=TIME.test(txt);line=tm?k.d2:k.d1;if(tm)st.step++}else{line=k.d1;adv=false;issue('Answer how far it is. Model: '+fm(M.far),M.far,'topic')}}
     else if(step===2){if(TIME.test(txt))line=k.d2;else{line=k.d1;adv=false;issue('Say how many minutes. Model: '+fm(M.far),M.far,'topic')}}
     else line=k.bye;
   }else{
     if(step===0)line=k.stud.test(txt)?k.i0s:k.i0;
-    else if(step===1){if(!off(R.i1,k.i0,M.reason,'Give a reason why you want the job.'))line=k.i1}
-    else if(step===2){if(!off(R.i2,k.i1,M.strength,'Tell your partner one strength.'))line=k.i2}
+    else if(step===1){if(!off(R.i1,k.i0,M.reason,'Give a reason why you want the job.',1))line=k.i1}
+    else if(step===2){if(!off(R.i2,k.i1,M.strength,'Tell your partner one strength.',1))line=k.i2}
     else line=k.bye;
   }
-  if(adv){st.step++;S.n++}
+  if(adv){st.step++;S.n++;st.fail=0}else{st.fail=(st.fail||0)+1}
   if(!tip){tip=txt.length<(CJK.test(txt)?5:14)?NICE[2]:NICE[S.n%2]}
   return {line:line,tip:tip};
 }
@@ -777,9 +793,11 @@ function showHelp(level){
 function fallback(){
   var u=st.msgs[st.msgs.length-2],p=st.msgs[st.msgs.length-1];
   var r=demoReply(u&&u.t?u.t:'');
-  p.t=r.line[0];p.r=r.line[1];p.e=r.line[2];
+  p.t=r.line[0];p.r=r.line[1];p.e=r.line[2];if(r.meta)p.show=true;
   if(u)u.tip=r.tip;
   render();
+  if(st.fail>=2&&st.step<3)showHelp(1);
+  if(r.help&&st.step<3)showHelp(1);
 }
 async function send(txt){
   txt=(txt||'').trim();if(!txt||st.busy)return;
@@ -836,9 +854,9 @@ $('#fbBtn').addEventListener('click',async function(){
       if(j&&typeof j==='object'){data={score:Number(j.score)||4.5,good:j.good||data.good,fix:j.fix||data.fix,better:j.better||''}}
     }catch(e){if(e&&e.code==='not_granted'){sampleFn=null;setStatus()}}
   }
-  var worked='<div><dt>What worked</dt><dd>'+esc(data.good)+'</dd></div>';
+  var goalsRow=sampleFn?'':'<div><dt>Goals reached: '+Math.min(st.step,3)+' of 3</dt><dd>'+STEPTXT[st.scen].map(function(t,i){return (st.step>i?'\u2713 ':'\u25CB ')+esc(t.replace(/\.$/,''))}).join('<br>')+'</dd></div>';var worked='<div><dt>What worked</dt><dd>'+esc(data.good)+'</dd></div>';
   var rest=GATED?'<div class="lock"><b>Full feedback is part of the pilot</b><span>See what to try next and a more natural way to say it.</span><button class="btn sm" type="button" id="fbJoin">Unlock for $3</button></div>':'<div><dt>Try next</dt><dd>'+esc(data.fix)+'</dd></div>'+(data.better?'<div><dt>A more natural line</dt><dd>'+(Array.isArray(data.better)?'<strong>'+esc(data.better[0])+'</strong>'+(data.better[1]?'<div class="fbr">'+esc(data.better[1])+'</div>':'')+(data.better[2]?'<div class="fbe">'+esc(data.better[2])+'</div>':''):esc(data.better))+'</dd></div>':'');
-  slot.innerHTML='<div class="fbcard"><div class="score">'+esc(data.score.toFixed(1))+'<small> / 5</small></div><dl>'+worked+rest+'</dl></div>';
+  slot.innerHTML='<div class="fbcard"><div class="score">'+esc(data.score.toFixed(1))+'<small> / 5</small></div><dl>'+goalsRow+worked+rest+'</dl></div>';
   var fj=$('#fbJoin');if(fj)fj.addEventListener('click',function(){go('join')});
   slot.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
 });
