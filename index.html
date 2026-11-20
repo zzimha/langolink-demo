@@ -790,6 +790,7 @@ $('#fbBtn').addEventListener('click',async function(){
     var sc5=5-0.8*S.off-0.5*S.topic-0.4*S.mist-0.3*S.pol-0.2*S.help;
     if(S.cnt>0&&S.len/S.cnt<(CJK.test(said[0].t)?4:10))sc5-=0.3;
     if(S.n<3&&st.step<3)sc5=Math.min(sc5,4.0);
+    if(st.step===0)sc5=Math.min(sc5,2.0);else if(st.step===1)sc5=Math.min(sc5,3.4);
     sc5=Math.max(1,Math.min(5,sc5));
     if(S.n>=1)g.push('You kept the chat going for '+S.n+' turn'+(S.n>1?'s':'')+'.');
     if(st.step>=3)g.push('You finished the whole situation.');
