@@ -152,6 +152,11 @@ section{padding-block:72px}
 .fbcard dl{margin:12px 0 0;display:grid;gap:10px}
 .fbcard dt{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .fbcard dd{margin:2px 0 0;font-size:15px}
+.fbcard .fbr{font-style:italic;color:var(--muted);font-size:13.5px;margin-top:2px}.fbcard .fbe{font-size:13.5px;color:var(--muted)}
+.helpcard{margin:0 18px 12px;padding:14px 16px;border-radius:18px;background:#FFF6DC;border:1px solid #F2D58A;animation:pop .3s ease both;font-size:14.5px}
+.helpcard p{margin:8px 0 0}.helpcard .ans span{color:var(--muted);font-size:13.5px}.helpcard .hr{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.helpcard .kws{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.helpcard .kw{background:#fff;border-radius:12px;padding:4px 10px;font-size:13px}.helpcard .kw em{color:var(--muted);font-style:normal}
+
 @media(max-width:860px){.panel{grid-template-columns:1fr}.setup{border-right:0;border-bottom:1px solid var(--line)}.chat{min-height:480px}}
 
 /* difference */
@@ -315,9 +320,9 @@ nav .navbtn:hover{color:var(--ink)}nav .navbtn:hover::after{transform:scaleX(1)}
     <div class="chat">
       <div class="chat-head"><div class="avatar" id="av">L</div><div><b id="pName">Lucía</b><small id="pRole">Your conversation partner</small></div><span class="status" id="status">Demo replies</span></div>
       <div class="log" id="log" aria-live="polite"></div>
-      <div id="fbslot"></div>
+      <div id="fbslot"></div><div id="help"></div>
       <form class="compose" id="form"><input id="inp" autocomplete="off" placeholder="Type your reply here" aria-label="Your reply"><button type="button" class="round mic" id="mic" hidden aria-label="Speak">●</button><button class="round" aria-label="Send">&#8593;</button></form>
-      <div class="under"><button class="btn ghost sm" id="fbBtn" type="button">Get feedback</button><button class="btn ghost sm" id="resetBtn" type="button">Start over</button><small id="hintline">Tap any partner message to see its English meaning.</small><small id="quota" class="quota"></small></div>
+      <div class="under"><button class="btn ghost sm" id="helpBtn" type="button">Need help?</button><button class="btn ghost sm" id="fbBtn" type="button">Get feedback</button><button class="btn ghost sm" id="resetBtn" type="button">Start over</button><small id="hintline">Tap any partner message to see its English meaning.</small><small id="quota" class="quota"></small></div>
     </div>
   </div>
 </section>
@@ -344,7 +349,7 @@ nav .navbtn:hover{color:var(--ink)}nav .navbtn:hover::after{transform:scaleX(1)}
   <div class="sec-head"><p class="eyebrow">Free and pilot</p><h2>Try it free. Pay $3 for the full thing.</h2><p>The free preview shows how it feels. The pilot is where you actually build the habit.</p></div>
   <div class="diff">
     <div class="card"><h3>Free preview</h3><ul class="plist"><li>All 7 languages</li><li>2 situations: order food, meet someone new</li><li>6 messages per visit</li><li>English meaning on every message</li><li>Score and what worked</li></ul><button class="btn ghost sm" data-go="try">Try it now</button></div>
-    <div class="card hl"><h3>Pilot, $3 for 4 weeks</h3><ul class="plist"><li>All 4 situations, plus ones you request</li><li>Unlimited practice</li><li>Full feedback with a more natural line</li><li>A weekly recap from the builder</li><li>Partner match <span class="tag">Beta</span></li><li>Founding price locked in</li><li>Free if you refer 3 friends who pay</li></ul><button class="btn sm" data-go="join">Join the pilot</button></div>
+    <div class="card hl"><h3>Pilot, $3 for 4 weeks</h3><ul class="plist"><li>All 4 situations now, more added during the beta, plus ones you request</li><li>Unlimited practice</li><li>Full feedback with a more natural line</li><li>A weekly recap from the builder</li><li>Partner match <span class="tag">Beta</span></li><li>Founding price locked in</li><li>Free if you refer 3 friends who pay</li></ul><button class="btn sm" data-go="join">Join the pilot</button></div>
   </div>
 </section>
 
@@ -463,7 +468,7 @@ var ORDER=['zh','ja','ko','en','es','fr'];
 var LV=['Beginner','Intermediate'];
 var st={lang:'zh',scen:0,level:'Beginner',hints:true,msgs:[],busy:false,fbi:0};
 var sampleFn=null;
-var FREE_MSGS=6,GATED=(location.hash!=='#full');st.used=0;st.step=0;st.name='';st.item=null;st.stats={off:0,mist:0,n:0,last:''};
+var FREE_MSGS=6,GATED=(location.hash!=='#full');st.used=0;st.step=0;st.name='';st.item=null;st.stats=newStats();
 function go(id){var t=document.getElementById(id);if(t)t.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}
 
 function chip(txt,pressed,fn,extra){var b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed',pressed);b.innerHTML=txt+(extra?'<small>'+extra+'</small>':'');b.addEventListener('click',fn);return b}
@@ -471,6 +476,7 @@ function buildSetup(){
   var a=$('#langs'),b=$('#scens'),c=$('#levels');a.innerHTML=b.innerHTML=c.innerHTML='';
   ORDER.forEach(function(k){a.appendChild(chip(L[k].n,st.lang===k,function(){st.lang=k;start()},''))});
   SC.forEach(function(s,i){var lk=GATED&&i>1;var c=chip(s,st.scen===i,function(){if(lk){showUpsell('situation')}else{st.scen=i;start()}},lk?'Pilot':'');if(lk)c.classList.add('locked');b.appendChild(c)});
+  var more=document.createElement('span');more.className='tag';more.style.cssText='align-self:center;margin-left:4px';more.textContent='More situations coming in beta';b.appendChild(more);
   LV.forEach(function(v){c.appendChild(chip(v,st.level===v,function(){st.level=v;buildSetup()}))});
 }
 function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
@@ -486,14 +492,14 @@ function render(){
 }
 function start(){
   var k=L[st.lang],o=k.op[st.scen];
-  st.msgs=[{role:'p',t:o[0],r:o[1],e:o[2]}];st.fbi=0;st.busy=false;st.step=0;st.name='';st.item=null;st.stats={off:0,mist:0,n:0,last:''};
+  st.msgs=[{role:'p',t:o[0],r:o[1],e:o[2]}];st.fbi=0;st.busy=false;st.step=0;st.name='';st.item=null;st.stats=newStats();
   $('#pName').textContent=k.who;$('#av').textContent=k.who[0];
   $('#pRole').textContent=k.n+' · '+SC[st.scen];
-  $('#fbslot').innerHTML='';
+  $('#fbslot').innerHTML='';var hb=$('#help');if(hb)hb.innerHTML='';
   var av=$('#av');av.classList.remove('bump');void av.offsetWidth;av.classList.add('bump');
   buildSetup();render();
 }
-function setStatus(){var s=$('#status');if(sampleFn){s.textContent='AI partner live';s.classList.add('live')}else{s.textContent='Demo replies';s.classList.remove('live')}}
+function setStatus(){var hbn=$('#helpBtn');if(hbn)hbn.hidden=!!sampleFn;var s=$('#status');if(sampleFn){s.textContent='AI partner live';s.classList.add('live')}else{s.textContent='Demo replies';s.classList.remove('live')}}
 
 function showUpsell(reason){
   var msg=reason==='situation'?'This situation is part of the pilot.':'Your '+FREE_MSGS+' free messages are used up.';
@@ -605,35 +611,144 @@ var KB={
   d0:['{w}, right? Is it far?','','Checking your direction.'],d0n:['Sorry, I am lost. Left or right?','','Your partner needs a clearer direction.'],d1:['How many minutes on foot?','','Asking how far.'],d2:['Okay, thank you so much!','','Thanking you.'],
   i0s:['You are a student. Why do you want this job?','','Reacting to what you said.'],i0:['Why do you want this job?','','A classic interview question.'],i1:['I see. What are your strengths?','','Another classic question.'],i2:['Thank you for coming. We will contact you soon.','','Closing the interview.']}
 };
+
+KB.zh.far=/\d|[一二三四五六七八九十两]|分钟|远|近/;KB.zh.farM='走路大概五分钟。';
+KB.ja.far=/\d|[一二三四五六七八九十]|分|遠|近|すぐ/;KB.ja.farM='歩いて五分ぐらいです。';
+KB.ko.far=/\d|[일이삼사오육십]|분|멀|가까/;KB.ko.farM='걸어서 5분쯤 걸려요.';
+KB.es.far=/\d|cinco|diez|tres|minuto|lejos|cerca/i;KB.es.farM='Unos cinco minutos andando.';
+KB.fr.far=/\d|cinq|dix|trois|minute|loin|près/i;KB.fr.farM='C’est à cinq minutes à pied.';
+KB.en.far=/\d|five|ten|three|minute|far|near|close/i;KB.en.farM='About five minutes on foot.';
 var NICE=['Nice, that sounded natural.','Clear and polite. Keep going.','Good. Try a slightly longer sentence next time.'];
 function fill(a,v){return a.map(function(s){return s.replace(/\{(\w+)\}/g,function(_,k){return v[k]==null?'':v[k]})})}
+/* relevance checks + model answers per language */
+var TIME=/\d|[一二三四五六七八九十两일이삼사오육십]|minute|minuto|cinq|cinco|five|ten\b|diez|three|tres|dix|trois|分/i;
+var RX={
+ zh:{o1:/不用|不要|没有|没了|够了|就这|这样|再来|还要|再要|加|谢谢|好的|可以|行|要/,o2:/堂食|打包|带走|外带|这里|在这|堂/,m1:/学生|工作|上班|读书|老师|工程|医生|设计|学习|实习|公司|学校|大学|做/,m2:/喜欢|爱|不错|很好|还行|不喜欢|热|美食|漂亮|干净|好吃/,i1:/因为|喜欢|想|希望|学习|经验|兴趣|机会|热爱/,i2:/优点|擅长|善于|能|会|认真|负责|沟通|团队|细心|学得快|耐心/},
+ ja:{o1:/大丈夫|結構|以上|いいえ|ありません|はい|お願い|追加|あと|ください|ありがとう/,o2:/店内|持ち帰り|持ち帰|テイクアウト|ここで|食べて/,m1:/学生|仕事|働|会社|先生|勉強|大学|エンジニア|デザイナー|医者|看護|インターン|アルバイト/,m2:/好き|大好き|いい|嫌い|暑|食べ物|おいしい|きれい|楽しい/,i1:/から|ので|好き|学び|経験|興味|したい|ため/,i2:/強み|得意|できる|責任|コミュニケーション|チーム|丁寧|頑張|学ぶ|真面目/},
+ ko:{o1:/없어요|없습니다|괜찮아요|괜찮습니다|아니요|아뇨|네|예|추가|더|주세요|감사/,o2:/여기|포장|가져|먹고|매장/,m1:/학생|일|회사|직장|선생|공부|대학|엔지니어|디자이너|의사|근무|인턴/,m2:/좋아|싫|덥|음식|좋네|맛있|예뻐|깨끗/,i1:/때문|좋아|배우|경험|관심|싶|위해/,i2:/장점|잘해|잘하|책임|소통|팀|꼼꼼|열심|배우|성실/},
+ es:{o1:/\bno\b|nada|eso es todo|sí|\bsi\b|gracias|también|más|otro|otra|por favor|vale/i,o2:/aquí|aqui|llevar|tomar|para/i,m1:/estudi|trabaj|empresa|profesor|ingenier|diseñ|médic|universidad|prácticas|soy/i,m2:/gusta|encanta|\bsí\b|\bno\b|calor|comida|bonit|genial/i,i1:/porque|me gusta|quiero|aprender|experiencia|interés|oportunidad|pasión/i,i2:/fuerte|responsable|equipo|comunic|aprendo|trabajador|organizad|soy/i},
+ fr:{o1:/\bnon\b|rien|c['’]est tout|oui|merci|aussi|plus|encore|s['’]il/i,o2:/sur place|emporter|ici/i,m1:/étudi|travaill|entreprise|professeur|ingénieur|designer|médecin|université|fac|stage|je suis/i,m2:/aime|adore|oui|non|chaud|nourriture|joli|génial|cuisine|propre/i,i1:/parce|j['’]aime|je veux|apprendre|expérience|intérêt|opportunité|passion|car\b/i,i2:/point fort|points forts|responsable|équipe|communic|j['’]apprends|travailleur|organisé|sérieux|je suis/i},
+ en:{o1:/\bno\b|that['’]?s all|that is all|nothing|yes|thanks|thank|also|more|another|please|okay|ok\b/i,o2:/here|takeaway|take away|take-away|tapao|dine|eat in|pack|go\b/i,m1:/student|work|job|engineer|teacher|design|doctor|study|university|intern|school/i,m2:/like|love|yes|\bno\b|hot|food|great|nice|good|clean|beautiful/i,i1:/because|like|want|learn|experience|interest|opportunity|passion/i,i2:/strength|good at|i am|i can|responsible|team|communic|learn|hard-working|organi[sz]ed|reliable/i}
+};
+var MD={
+ zh:{more:['不用了，谢谢。','Bú yòng le, xièxie.','No need, thanks.'],eat:['打包，谢谢。','Dǎbāo, xièxie.','Takeaway, thanks.'],job:['我是学生。','Wǒ shì xuésheng.','I am a student.'],like:['我很喜欢，这里的美食很多。','Wǒ hěn xǐhuān, zhèlǐ de měishí hěn duō.','I like it a lot, there is so much good food.'],reason:['因为我喜欢和人交流，也想学习新东西。','Yīnwèi wǒ xǐhuān hé rén jiāoliú, yě xiǎng xuéxí xīn dōngxi.','Because I like talking with people and want to learn new things.'],strength:['我的优点是认真负责，也善于沟通。','Wǒ de yōudiǎn shì rènzhēn fùzé, yě shànyú gōutōng.','My strength is that I am responsible and good at communicating.'],far:['走路大概五分钟。','Zǒulù dàgài wǔ fēnzhōng.','About five minutes on foot.']},
+ ja:{more:['以上でお願いします。','Ijō de onegai shimasu.','That is all, please.'],eat:['持ち帰りでお願いします。','Mochikaeri de onegai shimasu.','Takeaway, please.'],job:['私は学生です。','Watashi wa gakusei desu.','I am a student.'],like:['大好きです。食べ物がおいしいです。','Daisuki desu. Tabemono ga oishii desu.','I love it. The food is delicious.'],reason:['人と話すのが好きで、新しいことを学びたいからです。','Hito to hanasu no ga suki de, atarashii koto o manabitai kara desu.','Because I like talking with people and want to learn new things.'],strength:['私の強みは責任感があって、コミュニケーションが得意なことです。','Watashi no tsuyomi wa sekininkan ga atte, komyunikēshon ga tokui na koto desu.','My strength is that I am responsible and good at communicating.'],far:['歩いて五分ぐらいです。','Aruite gofun gurai desu.','About five minutes on foot.']},
+ ko:{more:['아니요, 괜찮아요.','Aniyo, gwaenchanayo.','No, that is fine.'],eat:['포장해 주세요.','Pojanghae juseyo.','Takeaway, please.'],job:['저는 학생이에요.','Jeoneun haksaeng-ieyo.','I am a student.'],like:['좋아해요. 음식이 맛있어요.','Joahaeyo. Eumsigi masisseoyo.','I like it. The food is tasty.'],reason:['사람들과 이야기하는 걸 좋아하고 새로운 걸 배우고 싶어서요.','Saramdeulgwa iyagihaneun geol joahago saeroun geol baeugo sipeoseoyo.','Because I like talking with people and want to learn new things.'],strength:['제 장점은 책임감이 있고 소통을 잘하는 거예요.','Je jangjeomeun chaegimgami itgo sotongeul jalhaneun geoyeyo.','My strength is that I am responsible and communicate well.'],far:['걸어서 5분쯤 걸려요.','Georeoseo obun jjeum geollyeoyo.','About five minutes on foot.']},
+ es:{more:['No, nada más, gracias.','','No, nothing else, thanks.'],eat:['Para llevar, por favor.','','To take away, please.'],job:['Soy estudiante.','','I am a student.'],like:['Me gusta mucho, la comida es muy buena.','','I like it a lot, the food is very good.'],reason:['Porque me gusta hablar con la gente y quiero aprender cosas nuevas.','','Because I like talking with people and want to learn new things.'],strength:['Mi punto fuerte es que soy responsable y trabajo bien en equipo.','','My strength is that I am responsible and work well in a team.'],far:['Unos cinco minutos andando.','','About five minutes on foot.']},
+ fr:{more:['Non, ce sera tout, merci.','','No, that will be all, thanks.'],eat:['À emporter, s’il vous plaît.','','To take away, please.'],job:['Je suis étudiant.','','I am a student.'],like:['J’aime beaucoup, la cuisine est très bonne.','','I like it a lot, the food is very good.'],reason:['Parce que j’aime parler avec les gens et je veux apprendre de nouvelles choses.','','Because I like talking with people and want to learn new things.'],strength:['Mon point fort est que je suis responsable et que je travaille bien en équipe.','','My strength is that I am responsible and work well in a team.'],far:['C’est à cinq minutes à pied.','','It is five minutes on foot.']},
+ en:{more:['No, that is all, thanks.','','Say you do not need anything else.'],eat:['Takeaway, please.','','Say you want it to go.'],job:['I am a student.','','Say what you do.'],like:['I like it a lot. The food is great.','','Say if you like Singapore.'],reason:['Because I enjoy talking to people and I want to learn new things.','','Give a reason for wanting the job.'],strength:['My strength is that I am responsible and I work well in a team.','','Name one strength.'],far:['About five minutes on foot.','','Say how far it is.']}
+};
+var STEPTXT=[['Order a dish politely.','Say if you want anything else.','Say eat in or takeaway.'],['Say hello and tell your name.','Say what you do, for example a student.','Say if you like Singapore.'],['Say which way to go: straight, left or right.','Say whether it is far.','Say how many minutes it takes.'],['Introduce yourself in one or two sentences.','Give a reason you want the job.','Say one strength you have.']];
+
+KB.zh.huh=['不好意思，我没听清楚，能再说一遍吗？','Bù hǎoyìsi, wǒ méi tīng qīngchu, néng zài shuō yí biàn ma?','Sorry, I did not catch that. Can you say it again?'];
+KB.ja.huh=['すみません、聞き取れませんでした。もう一度お願いします。','Sumimasen, kikitoremasen deshita. Mō ichido onegai shimasu.','Sorry, I did not catch that. Once more, please.'];
+KB.ko.huh=['죄송해요, 잘 못 들었어요. 다시 말씀해 주세요.','Joesonghaeyo, jal mot deureosseoyo. Dasi malsseumhae juseyo.','Sorry, I did not hear that well. Please say it again.'];
+KB.es.huh=['Perdona, no te he entendido. ¿Puedes repetirlo?','','Sorry, I did not understand. Can you repeat it?'];
+KB.fr.huh=['Pardon, je n’ai pas compris. Tu peux répéter ?','','Sorry, I did not understand. Can you repeat?'];
+KB.en.huh=['Sorry, I did not catch that. Can you say it again?','','Your partner could not read that.'];
+function gib(t){
+  t=t.trim();
+  if(!/[a-zà-ÿ\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af\d]/i.test(t))return true;
+  if(/(.)\1{3,}/.test(t))return true;
+  var tl=t.toLowerCase();
+  if(/asdf|qwer|zxcv|sdfg|dfgh|fghj|ghjk|hjkl|wert|erty|rtyu|qwrt/.test(tl))return true;
+  var w=tl.match(/[a-zà-ÿ]+/g)||[];
+  for(var i=0;i<w.length;i++){if(w[i].length>=4&&!/[aeiouyàâéèêëîïôùûáíóúñ]/.test(w[i]))return true;if(/[bcdfghjklmnpqrstvwxz]{6,}/.test(w[i]))return true}
+  return false;
+}
+function lev(a,b){var m=[],i,j;for(i=0;i<=a.length;i++){m[i]=[i]}for(j=1;j<=b.length;j++)m[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
+function fuzzyItem(txt,k){
+  var tk=txt.toLowerCase().match(/[a-zà-ÿ]+/g)||[];
+  for(var j=0;j<k.items.length;j++){
+    var base=k.items[j][1].toLowerCase().split(' ').filter(function(x){return !/^(un|una|unos|une|el|la|a|an)$/.test(x)})[0]||'';
+    if(base.length<5)continue;
+    for(var t=0;t<tk.length;t++){if(tk[t].length>=4&&lev(tk[t],base)<=(base.length>=8?2:1))return {it:k.items[j],base:base}}
+  }
+  return null;
+}
+function dymItem(txt,k){
+  for(var j=0;j<k.items.length;j++){var n=k.items[j][1];if(n.length<2)continue;var c=0;for(var x=0;x<n.length;x++){if(txt.indexOf(n[x])>=0)c++}if(c>=Math.ceil(n.length/2)&&c>0)return k.items[j]}
+  return null;
+}
+
+var ASKN={zh:['你叫什么名字？','Nǐ jiào shénme míngzi?','What is your name?'],ja:['お名前は何ですか？','Onamae wa nan desu ka?','What is your name?'],ko:['이름이 뭐예요?','Ireumi mwoyeyo?','What is your name?'],es:['¿Cómo te llamas?','','What is your name?'],fr:['Comment tu t’appelles ?','','What is your name?'],en:['And what is your name?','','Could you tell me your name?']};
+var GREET=/^(hi|hello|hey|hola|buenas|bonjour|salut|你好|您好|嗨|こんにちは|はじめまして|안녕|안녕하세요|yo)\W*$/i;
+function bareName(t){t=t.trim().replace(/[.!！。]+$/,'');if(GREET.test(t))return '';if(/^[A-Za-zÀ-ÿ]{2,14}$/.test(t))return t[0].toUpperCase()+t.slice(1);if(/^[\u4e00-\u9fff]{2,3}$/.test(t)||/^[\u3040-\u30ff\u4e00-\u9fff]{2,5}$/.test(t)||/^[\uac00-\ud7af]{2,4}$/.test(t))return t;return ''}
+function newStats(){return {off:0,topic:0,mist:0,pol:0,help:0,n:0,cnt:0,len:0,issues:[],last:null}}
+function fm(a){return a[0]+(a[1]?' ('+a[1]+')':'')}
+function answerFor(sc,step){
+  var k=KB[st.lang],M=MD[st.lang];
+  var t=[[k.model[0],M.more,M.eat],[k.model[1],M.job,M.like],[k.model[2],M.far,M.far],[k.model[3],M.reason,M.strength]][sc];
+  return t[Math.min(step,2)];
+}
 function demoReply(txt){
-  var k=KB[st.lang],sc=st.scen,S=st.stats,tip='',line,adv=true,v={};
-  if(!k.is(txt)){S.off++;line=k.off;tip='Try it in '+L[st.lang].n+'. A model line: '+k.model[sc][0];S.last=k.model[sc][0];return {line:line,tip:tip}}
-  var step=st.step;
-  /* mistakes first, then politeness, then a positive note */
-  for(var i=0;i<k.mist.length;i++){if(k.mist[i][0].test(txt)){tip=k.mist[i][1];S.mist++;break}}
+  var k=KB[st.lang],R=RX[st.lang],M=MD[st.lang],sc=st.scen,S=st.stats,step=st.step,tip='',line,adv=true,flag=false;
+  function issue(t,m,kind){tip=t;flag=true;S[kind]++;if(S.issues.indexOf(t)<0)S.issues.push(t);if(m)S.last=m}
+  if(gib(txt)){S.off++;S.issues.push('Write a real sentence.');return {line:k.huh,tip:'That did not look like a real sentence. Tap Need help? if you are stuck.'}}
+  if(!k.is(txt)){S.off++;S.issues.push('Use '+L[st.lang].n+' in the chat.');S.last=k.model[sc];return {line:k.off,tip:'Try it in '+L[st.lang].n+'. A model line: '+fm(k.model[sc])}}
+  S.cnt++;S.len+=txt.length;
+  for(var i=0;i<k.mist.length;i++){if(k.mist[i][0].test(txt)){issue(k.mist[i][1],k.model[sc],'mist');break}}
   var nm=k.name(txt);if(nm&&k.stud.test(nm))nm='';
+  function off(re,reask,model,hint){
+    if(re.test(txt))return false;
+    line=reask;adv=false;issue(hint+' Model: '+fm(model),model,'topic');return true}
   if(sc===0){
-    var it=null;for(var j=0;j<k.items.length;j++){if(k.items[j][0].test(txt)){it=k.items[j];break}}
+    var it=null,typo=null,dym=null;for(var j=0;j<k.items.length;j++){if(k.items[j][0].test(txt)){it=k.items[j];break}}
+    if(!it&&sc===0&&step<=1){if(CJK.test(txt)&&st.lang!=='en'&&!/[a-z]/i.test(txt)){dym=dymItem(txt,k)}else{var fz=fuzzyItem(txt,k);if(fz){it=fz.it;typo=fz.base}}}
     if(step===0){
-      if(it){st.item=it;v={i:it[1],ir:it[2],ie:it[3]};line=fill(k.ok1,v);if(!tip&&!k.polite.test(txt)){tip=k.politeTip;S.mist++}}
-      else{line=k.unk;adv=false;tip='Name the dish you want. Model: '+k.model[0][0];S.mist++}
-    }else if(step===1)line=k.mid;else if(step===2)line=k.end;else line=k.bye;
+      if(dym){line=k.unk;adv=false;issue('Did you mean '+dym[1]+(dym[2]?' ('+dym[2]+')':'')+'? Check the characters.',k.model[0],'topic')}
+      else if(it){st.item=it;line=fill(k.ok1,{i:it[1],ir:it[2],ie:it[3]});if(typo)issue('Spelling: it is "'+typo+'".',k.model[0],'mist');else if(!k.polite.test(txt)&&!flag){issue(k.politeTip,k.model[0],'pol')}}
+      else{line=k.unk;adv=false;issue('Name the dish you want. Model: '+fm(k.model[0]),k.model[0],'topic')}
+    }else if(step===1){if(!it&&off(R.o1,(st.item?fill(k.ok1,{i:st.item[1],ir:st.item[2],ie:st.item[3]}):k.ok1),M.more,'Answer the question: anything else?'))adv=false;else line=k.mid}
+    else if(step===2){if(off(R.o2,k.mid,M.eat,'Say eat in or takeaway.'))adv=false;else line=k.end}
+    else line=k.bye;
   }else if(sc===1){
-    if(step===0){if(nm)st.name=nm;line=fill(nm?k.m0:k.m0n,{n:nm});if(!nm&&!tip){tip=k.nameTip;S.mist++}}
-    else if(step===1)line=k.stud.test(txt)?k.m1s:k.m1;
-    else if(step===2)line=fill(st.name?k.m2:k.m2n,{n:st.name});else line=k.bye;
+    if(step===0){if(!nm&&!flag)nm=bareName(txt);if(nm){st.name=nm;line=fill(k.m0,{n:nm})}else{line=ASKN[st.lang];adv=false;issue(k.nameTip,k.model[1],'topic')}}
+    else if(step===1){if(!off(R.m1,k.m0n,M.job,'Tell your partner what you do.'))line=k.stud.test(txt)?k.m1s:k.m1}
+    else if(step===2){if(!off(R.m2,k.m1,M.like,'Answer: do you like Singapore?'))line=fill(st.name?k.m2:k.m2n,{n:st.name})}
+    else line=k.bye;
   }else if(sc===2){
     var d=null;for(var q=0;q<k.dirs.length;q++){if(k.dirs[q][0].test(txt)){d=k.dirs[q];break}}
-    if(step===0){if(d)line=fill(k.d0,{w:d[1],wr:d[2],we:d[3]});else{line=k.d0n;adv=false;tip='Give a direction. Model: '+k.model[2][0];S.mist++}}
-    else if(step===1)line=k.d1;else if(step===2)line=k.d2;else line=k.bye;
+    if(step===0){if(d)line=fill(k.d0,{w:d[1],wr:d[2],we:d[3]});else{line=k.d0n;adv=false;issue('Give a direction. Model: '+fm(k.model[2]),k.model[2],'topic')}}
+    else if(step===1){if(k.far.test(txt)){var tm=TIME.test(txt);line=tm?k.d2:k.d1;if(tm)st.step++}else{line=k.d1;adv=false;issue('Answer how far it is. Model: '+fm(M.far),M.far,'topic')}}
+    else if(step===2){if(TIME.test(txt))line=k.d2;else{line=k.d1;adv=false;issue('Say how many minutes. Model: '+fm(M.far),M.far,'topic')}}
+    else line=k.bye;
   }else{
-    if(step===0)line=k.stud.test(txt)?k.i0s:k.i0;else if(step===1)line=k.i1;else if(step===2)line=k.i2;else line=k.bye;
+    if(step===0)line=k.stud.test(txt)?k.i0s:k.i0;
+    else if(step===1){if(!off(R.i1,k.i0,M.reason,'Give a reason why you want the job.'))line=k.i1}
+    else if(step===2){if(!off(R.i2,k.i1,M.strength,'Tell your partner one strength.'))line=k.i2}
+    else line=k.bye;
   }
   if(adv){st.step++;S.n++}
-  if(!tip){tip=txt.length<(CJK.test(txt)?5:14)?NICE[2]:NICE[S.n%2]}else S.last=k.model[sc][0];
+  if(!tip){tip=txt.length<(CJK.test(txt)?5:14)?NICE[2]:NICE[S.n%2]}
   return {line:line,tip:tip};
+}
+/* help ladder: hint first, then reveal the answer */
+function startOf(a,roman){
+  var s=roman?a[1]:a[0];if(!s)return '';
+  if(CJK.test(a[0])&&!roman)return s.slice(0,Math.min(4,Math.ceil(s.length/3)+1))+'…';
+  var w=s.split(' ');return w.slice(0,Math.min(3,Math.max(1,Math.ceil(w.length/3)))).join(' ')+' …';
+}
+function showHelp(level){
+  var box=$('#help');
+  if(st.step>=3){box.innerHTML='<div class="helpcard"><b>You finished this situation.</b><p>Tap Get feedback to see your score.</p></div>';return}
+  var k=KB[st.lang],sc=st.scen,a=answerFor(sc,st.step),kw='';
+  if(level===1)st.stats.help++;
+  if(sc===0&&st.step===0)kw=k.items.slice(0,4).map(function(x){return '<span class="kw"><b>'+esc(x[1])+'</b>'+(x[2]?' '+esc(x[2]):'')+' <em>'+esc(x[3])+'</em></span>'}).join('');
+  if(sc===2&&st.step===0)kw=k.dirs.map(function(x){return '<span class="kw"><b>'+esc(x[1])+'</b>'+(x[2]?' '+esc(x[2]):'')+' <em>'+esc(x[3])+'</em></span>'}).join('');
+  var h='<div class="helpcard"><b>'+esc(STEPTXT[sc][Math.min(st.step,2)])+'</b>';
+  if(kw)h+='<div class="kws">'+kw+'</div>';
+  if(level===1){
+    h+='<p>Start with: <strong>'+esc(startOf(a))+'</strong>'+(a[1]?' <i>'+esc(startOf(a,true))+'</i>':'')+'</p>';
+    h+='<div class="hr"><button class="btn sm" type="button" id="hShow">Show answer</button><button class="btn ghost sm" type="button" id="hClose">Close</button></div>';
+  }else{
+    h+='<p class="ans"><strong>'+esc(a[0])+'</strong>'+(a[1]?'<br><i>'+esc(a[1])+'</i>':'')+'<br><span>'+esc(a[2])+'</span></p>';
+    h+='<div class="hr"><button class="btn sm" type="button" id="hUse">Use this answer</button><button class="btn ghost sm" type="button" id="hClose">Close</button></div>';
+  }
+  box.innerHTML=h+'</div>';
+  var c=$('#hClose');if(c)c.addEventListener('click',function(){box.innerHTML=''});
+  var s=$('#hShow');if(s)s.addEventListener('click',function(){showHelp(2)});
+  var u=$('#hUse');if(u)u.addEventListener('click',function(){$('#inp').value=a[0];box.innerHTML='';$('#inp').focus()});
 }
 function fallback(){
   var u=st.msgs[st.msgs.length-2],p=st.msgs[st.msgs.length-1];
@@ -645,7 +760,7 @@ function fallback(){
 async function send(txt){
   txt=(txt||'').trim();if(!txt||st.busy)return;
   if(GATED&&st.used>=FREE_MSGS){showUpsell('limit');return}
-  st.used++;
+  st.used++;var hb2=$('#help');if(hb2)hb2.innerHTML='';
   st.busy=true;
   st.msgs.push({role:'u',t:txt});st.msgs.push({role:'p',t:''});render();
   var k=L[st.lang];
@@ -663,6 +778,7 @@ async function send(txt){
 }
 $('#form').addEventListener('submit',function(e){e.preventDefault();var i=$('#inp'),v=i.value;i.value='';send(v)});
 
+$('#helpBtn').addEventListener('click',function(){if(!sampleFn)showHelp(1)});
 /* feedback */
 $('#fbBtn').addEventListener('click',async function(){
   var slot=$('#fbslot');
@@ -670,13 +786,21 @@ $('#fbBtn').addEventListener('click',async function(){
   if(!said.length){slot.innerHTML='<div class="fbcard">Say something first, then ask for feedback.</div>';return}
   var data={score:4.6,good:'You answered in full sentences and kept the conversation moving.',fix:'Add one more detail to each answer so your partner has more to react to.',better:''};
   if(!sampleFn){
-    var S=st.stats,kk=KB[st.lang],g=[];
-    var sc5=Math.max(2.5,Math.min(5,5-0.4*S.off-0.25*S.mist));
-    if(S.n>=1)g.push('You kept the chat going for '+S.n+' turn'+(S.n>1?'s':'')+(S.n>=3?', which is real practice.':'.'));
+    var S=st.stats,kk=KB[st.lang],g=[],lnm=L[st.lang].n;
+    var sc5=5-0.8*S.off-0.5*S.topic-0.4*S.mist-0.3*S.pol-0.2*S.help;
+    if(S.cnt>0&&S.len/S.cnt<(CJK.test(said[0].t)?4:10))sc5-=0.3;
+    if(S.n<3&&st.step<3)sc5=Math.min(sc5,4.0);
+    sc5=Math.max(1,Math.min(5,sc5));
+    if(S.n>=1)g.push('You kept the chat going for '+S.n+' turn'+(S.n>1?'s':'')+'.');
+    if(st.step>=3)g.push('You finished the whole situation.');
     if(st.item&&st.scen===0)g.push('You got your order across ('+st.item[3]+').');
     if(st.name&&st.scen===1)g.push('You introduced yourself as '+st.name+'.');
-    if(!g.length)g.push('You gave it a go in '+L[st.lang].n+'.');
-    data={score:Math.round(sc5*10)/10,good:g.join(' '),fix:S.last&&(S.off||S.mist)?'Next time try: '+S.last:'Try a slightly longer sentence next time, with one extra detail.',better:S.last||kk.model[st.scen][0]};
+    if(S.cnt>0&&!S.off&&!S.topic&&!S.mist&&!S.pol)g.push('Every reply was in '+lnm+', on topic and error-free.');
+    if(S.help)g.push('You used help '+S.help+' time'+(S.help>1?'s':'')+', which is a good way to pick up new phrases.');
+    if(!g.length)g.push('You gave it a go in '+lnm+'.');
+    var fx=S.issues.length?'Work on: '+S.issues.slice(0,2).join(' '):'Next time, add one extra detail to each answer.';
+    if(S.n<3&&st.step<3)fx+=' Chat for 3 or more turns to get a fuller score.';
+    data={score:Math.round(sc5*10)/10,good:g.join(' '),fix:fx,better:S.last||kk.model[st.scen]};
   }
   slot.innerHTML='<div class="fbcard"><span class="typing"><i></i><i></i><i></i></span></div>';
   if(sampleFn){
@@ -687,7 +811,7 @@ $('#fbBtn').addEventListener('click',async function(){
     }catch(e){if(e&&e.code==='not_granted'){sampleFn=null;setStatus()}}
   }
   var worked='<div><dt>What worked</dt><dd>'+esc(data.good)+'</dd></div>';
-  var rest=GATED?'<div class="lock"><b>Full feedback is part of the pilot</b><span>See what to try next and a more natural way to say it.</span><button class="btn sm" type="button" id="fbJoin">Unlock for $3</button></div>':'<div><dt>Try next</dt><dd>'+esc(data.fix)+'</dd></div>'+(data.better?'<div><dt>A more natural line</dt><dd>'+esc(data.better)+'</dd></div>':'');
+  var rest=GATED?'<div class="lock"><b>Full feedback is part of the pilot</b><span>See what to try next and a more natural way to say it.</span><button class="btn sm" type="button" id="fbJoin">Unlock for $3</button></div>':'<div><dt>Try next</dt><dd>'+esc(data.fix)+'</dd></div>'+(data.better?'<div><dt>A more natural line</dt><dd>'+(Array.isArray(data.better)?'<strong>'+esc(data.better[0])+'</strong>'+(data.better[1]?'<div class="fbr">'+esc(data.better[1])+'</div>':'')+(data.better[2]?'<div class="fbe">'+esc(data.better[2])+'</div>':''):esc(data.better))+'</dd></div>':'');
   slot.innerHTML='<div class="fbcard"><div class="score">'+esc(data.score.toFixed(1))+'<small> / 5</small></div><dl>'+worked+rest+'</dl></div>';
   var fj=$('#fbJoin');if(fj)fj.addEventListener('click',function(){go('join')});
   slot.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
