@@ -277,7 +277,7 @@ nav .navbtn:hover{color:var(--ink)}nav .navbtn:hover::after{transform:scaleX(1)}
 .plist li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--blue);transform:translateY(-1px)}
 .card.hl{border-color:var(--blue);background:linear-gradient(180deg,var(--soft),var(--surface))}
 .tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--amber);color:#2A1B00;letter-spacing:.04em;text-transform:uppercase}
-</style>
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ico{color:var(--ink)}}.helpcard{color:#2A2112}.helpcard .ans span,.helpcard .kw em{color:#6B5A32}.helpcard .kw{color:#2A2112}.helpcard .btn.ghost{color:#2A2112;border-color:#B9A25A;background:transparent}</style>
 </head><body>
 <nav><div class="wrap">
   <div class="logo"><i></i>LangoLink</div>
@@ -685,7 +685,7 @@ var AVC={
  ko:{bg:'#DDF3EA',skin:'#F5D6BB',hair:'#2A1E18',shirt:'#9FCDB4',back:'M14.5 31 Q14 11 32 11 Q50 11 49.5 31 L50 46 Q50 48 47 48 L17 48 Q14 48 14.5 46 Z',front:'M15 31 Q14.5 12.5 32 12.5 Q49.5 12.5 49 31 Q46 22 36.5 16.5 L32 17 L27.5 16.5 Q18 22 15 31 Z',extra:'<rect x="19" y="20" width="7" height="2.4" rx="1.2" fill="#F2B84B" transform="rotate(28 22.5 21.2)"/>',brow:'#2A1E18'},
  es:{bg:'#FFF0C7',skin:'#DDA67E',hair:'#3A2113',shirt:'#F2B84B',back:'M13 32 Q12 10.5 32 10.5 Q52 10.5 51 32 Q53 40 50 47 Q46.5 53 51 55 L13 55 Q17.5 53 14 47 Q11 40 13 32 Z',front:'M15.5 30 Q15 12.5 32 12.5 Q49 12.5 48.5 30 Q44 20.5 32 20 Q20 20.5 15.5 30 Z',extra:'<circle cx="17.5" cy="43.5" r="2.4" fill="none" stroke="#F2B84B" stroke-width="1.3"/><circle cx="46.5" cy="43.5" r="2.4" fill="none" stroke="#F2B84B" stroke-width="1.3"/>',brow:'#3A2113'},
  fr:{bg:'#DCE6FF',skin:'#F5D9C8',hair:'#8C4B2C',shirt:'#5C76D6',back:'M14 31 Q13 11 32 11 Q51 11 50 31 L50 41 Q50 44 46 44 L18 44 Q14 44 14 41 Z',front:'M15 31 Q14 12 32 12 Q50 12 49 31 Q45 20 35 17.5 Q27 24 15 31 Z',extra:'<path d="M23 49 Q32 54.5 41 49 L41 53 Q32 58 23 53 Z" fill="#F6F3EC"/>',brow:'#8C4B2C'},
- en:{bg:'#D9F2EE',skin:'#BE8862',hair:'#1D1714',shirt:'#4CC9B0',back:'M15.5 27 Q15 10 32 10 Q49 10 48.5 27 Q48 18 32 17.5 Q16 18 15.5 27 Z',front:'M16 26 Q17 11 32 11 Q47 11 48 26 Q44 17.5 32 17.5 Q20 17.5 16 26 Z',extra:'<g fill="none" stroke="#1D1714" stroke-width="1.5"><circle cx="26.3" cy="32" r="4.6"/><circle cx="37.7" cy="32" r="4.6"/><path d="M30.9 31.6 L33.1 31.6"/></g>',brow:'#1D1714'}
+ en:{bg:'#D9F2EE',skin:'#F6D9C3',hair:'#6B4A2B',shirt:'#4CC9B0',back:'M15.5 29 Q13.5 9 32 8.5 Q50.5 9 48.5 29 Q47.5 21 32 19 Q16.5 21 15.5 29 Z',front:'M16.5 27 Q14.5 10.5 32 9.5 Q49.5 10.5 47.5 27 Q46.5 20 44.5 17.5 L41.5 22.5 L38 18.5 L33.5 24 L29 18.5 L25 22.5 L21 18 Q18 20 16.5 27 Z',extra:'<g fill="none" stroke="#1D1714" stroke-width="1.5"><circle cx="26.3" cy="32" r="4.6"/><circle cx="37.7" cy="32" r="4.6"/><path d="M30.9 31.6 L33.1 31.6"/></g>',brow:'#1D1714'}
 };
 function avatarSVG(l){
   var c=AVC[l]||AVC.en;
