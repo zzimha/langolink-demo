@@ -673,7 +673,7 @@ function dymItem(txt,k){
 
 var ASKN={zh:['你叫什么名字？','Nǐ jiào shénme míngzi?','What is your name?'],ja:['お名前は何ですか？','Onamae wa nan desu ka?','What is your name?'],ko:['이름이 뭐예요?','Ireumi mwoyeyo?','What is your name?'],es:['¿Cómo te llamas?','','What is your name?'],fr:['Comment tu t’appelles ?','','What is your name?'],en:['And what is your name?','','Could you tell me your name?']};
 var GREET=/^(hi|hello|hey|hola|buenas|bonjour|salut|你好|您好|嗨|こんにちは|はじめまして|안녕|안녕하세요|yo)\W*$/i;
-function bareName(t){t=t.trim().replace(/[.!！。]+$/,'');if(GREET.test(t))return '';if(/^[A-Za-zÀ-ÿ]{2,14}$/.test(t))return t[0].toUpperCase()+t.slice(1);if(/^[\u4e00-\u9fff]{2,3}$/.test(t)||/^[\u3040-\u30ff\u4e00-\u9fff]{2,5}$/.test(t)||/^[\uac00-\ud7af]{2,4}$/.test(t))return t;return ''}
+function bareName(t){t=t.trim().replace(/[.!！。]+$/,'');if(GREET.test(t))return '';if(/^[A-Za-zÀ-ÿ]{2,14}$/.test(t))return t[0].toUpperCase()+t.slice(1);if(st.lang==='zh'&&/^[\u4e00-\u9fff]{2,3}$/.test(t)&&!/^(我|你|他|她|请|谢|不|没|好|对)/.test(t))return t;if(st.lang==='ja'&&/^[\u3040-\u30ff\u4e00-\u9fff]{2,5}$/.test(t)&&!/^(はい|いいえ|ありがとう|すみません)/.test(t))return t;if(st.lang==='ko'&&/^[\uac00-\ud7af]{2,4}$/.test(t)&&!/(요|다|까|죠|네|아니)$/.test(t)&&!/^(네|아니|좋|감사|고마|괜찮|맞|안녕)/.test(t))return t;return ''}
 function newStats(){return {off:0,topic:0,mist:0,pol:0,help:0,n:0,cnt:0,len:0,issues:[],last:null}}
 function fm(a){return a[0]+(a[1]?' ('+a[1]+')':'')}
 function answerFor(sc,step){
