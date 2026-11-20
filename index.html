@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LangoLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@500&display=swap">
+<style>
+body{margin:0}[hidden]{display:none!important}img{max-width:100%}
+/* Layout: sticky nav, split hero (copy + live demo card), interactive practice panel, difference grid, pilot offer */
+:root{
+  --bg:#F5F8FE; --surface:#FFFFFF; --ink:#101B34; --muted:#56637F; --line:#DAE2F4;
+  --blue:#2D6BEB; --blue-ink:#FFFFFF; --navy:#16254A; --teal:#D6EFF1; --amber:#F2A33A;
+  --partner:#E8EFFD; --good:#17855C; --soft:#EDF2FD;
+  --font-display:'Bricolage Grotesque','Inter',system-ui,sans-serif;
+  --font-body:'Inter','Noto Sans SC',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A1121; --surface:#121C34; --ink:#E8EEFC; --muted:#9AA8C9; --line:#23304F;
+  --blue:#5C91FF; --blue-ink:#0A1121; --navy:#0E1932; --teal:#12363F; --amber:#F5B25A;
+  --partner:#1A2745; --good:#46C795; --soft:#16213B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1121; --surface:#121C34; --ink:#E8EEFC; --muted:#9AA8C9; --line:#23304F;
+  --blue:#5C91FF; --blue-ink:#0A1121; --navy:#0E1932; --teal:#12363F; --amber:#F5B25A;
+  --partner:#1A2745; --good:#46C795; --soft:#16213B; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;overflow-x:hidden}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.05;margin:0;letter-spacing:-.02em}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1120px;margin:0 auto}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid transparent}
+nav .wrap{display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.03em;margin-right:auto}
+.logo i{width:30px;height:30px;border-radius:10px;background:var(--blue);position:relative;display:block}
+.logo i::before,.logo i::after{content:"";position:absolute;width:11px;height:11px;border:3px solid var(--blue-ink);border-radius:50%}
+.logo i::before{left:4px;top:7px}.logo i::after{right:4px;top:12px}
+nav .links{display:flex;gap:18px}
+nav a,nav .navbtn{background:none;border:0;color:var(--muted);font-weight:500;font-size:15px;padding:8px 4px;text-decoration:none}
+nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 22px;font-weight:600;font-size:16px;background:var(--blue);color:var(--blue-ink);transition:transform .15s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px -10px var(--blue)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{box-shadow:none;border-color:var(--blue)}
+.btn.sm{padding:9px 16px;font-size:14px}
+@media(max-width:720px){nav .links{display:none}}
+
+/* hero */
+.hero{position:relative;padding-block:56px 72px}
+.glyphs{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.glyphs span{position:absolute;font-family:var(--font-display);font-weight:800;color:var(--blue);opacity:.07;white-space:nowrap;animation:drift 18s ease-in-out infinite alternate}
+.glyphs span:nth-child(1){font-size:120px;left:-2%;top:6%}
+.glyphs span:nth-child(2){font-size:90px;right:4%;top:2%;animation-delay:-4s}
+.glyphs span:nth-child(3){font-size:110px;left:30%;bottom:-4%;animation-delay:-8s}
+.glyphs span:nth-child(4){font-size:80px;right:-2%;bottom:14%;animation-delay:-12s}
+@keyframes drift{from{transform:translate(0,0) rotate(-3deg)}to{transform:translate(26px,-18px) rotate(3deg)}}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(40px,6.2vw,76px);font-weight:800}
+.hero h1 em{font-style:normal;color:var(--blue);display:block}
+.hero p.lead{margin-top:22px;font-size:19px;color:var(--muted);max-width:34ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.proof{margin-top:28px;display:flex;flex-wrap:wrap;gap:8px}
+.proof span{font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.rise:nth-child(2){animation-delay:.08s}.rise:nth-child(3){animation-delay:.16s}.rise:nth-child(4){animation-delay:.24s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:36px}.hero{padding-block:36px 48px}}
+
+/* demo card */
+.demo{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:0 30px 60px -36px rgba(22,37,74,.45);min-width:0}
+.demo-top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--good);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--good) 20%,transparent)}}
+.demo-top b{font-size:14px}
+.demo-top small{margin-left:auto;color:var(--muted);font-size:12px}
+.demo-body{display:flex;flex-direction:column;gap:12px;min-height:250px}
+.bub{max-width:86%;padding:12px 16px;border-radius:20px;font-size:17px;line-height:1.4;opacity:0;transform:translateY(10px) scale(.98);transition:opacity .4s,transform .4s}
+.bub.in{opacity:1;transform:none}
+.bub.p{background:var(--partner);border-bottom-left-radius:6px;align-self:flex-start}
+.bub.u{background:var(--blue);color:var(--blue-ink);border-bottom-right-radius:6px;align-self:flex-end;min-height:46px}
+.fb{align-self:stretch;display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--teal);font-size:14px;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
+.fb.in{opacity:1;transform:none}
+.fb b{color:var(--good)}
+.caret::after{content:"";display:inline-block;width:2px;height:1em;background:currentColor;margin-left:2px;vertical-align:-2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* sections */
+section{padding-block:72px}
+.sec-head{max-width:640px;margin-bottom:32px}
+.sec-head h2{font-size:clamp(30px,4.4vw,48px);font-weight:800;margin-top:10px}
+.sec-head p{margin-top:14px;color:var(--muted);font-size:18px}
+
+/* practice panel */
+.panel{display:grid;grid-template-columns:300px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:28px;overflow:hidden;min-width:0}
+.setup{padding:22px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:20px;background:var(--soft)}
+.setup h3{font-size:13px;font-family:var(--font-body);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:500;transition:all .18s}
+.chip:hover{border-color:var(--blue)}
+.chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:var(--blue-ink)}
+.chip small{opacity:.7;margin-left:4px;font-size:12px}
+.scen{display:flex;flex-direction:column;gap:8px}
+.scen .chip{border-radius:14px;text-align:left}
+#langs,#levels{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#langs .chip,#levels .chip{text-align:center;padding-inline:8px}
+#langs .chip:last-child:nth-child(odd){grid-column:1/-1}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px}
+.switch button{width:44px;height:26px;border-radius:999px;border:0;background:var(--line);position:relative;transition:background .2s;flex:none}
+.switch button::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch button[aria-pressed="true"]{background:var(--blue)}
+.switch button[aria-pressed="true"]::after{transform:translateX(18px)}
+.chat{display:flex;flex-direction:column;min-width:0;min-height:560px}
+.chat-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-weight:700;color:var(--navy);font-family:var(--font-display)}
+:root[data-theme="dark"] .avatar{color:var(--ink)}
+.chat-head b{display:block;line-height:1.2}
+.chat-head small{color:var(--muted);font-size:13px}
+.status{margin-left:auto;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.status.live{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.log{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:12px;max-height:520px;scroll-behavior:smooth}
+.msg{max-width:min(520px,88%);animation:pop .3s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg .b{padding:12px 16px;border-radius:20px;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
+.msg.p{align-self:flex-start}.msg.p .b{background:var(--partner);border-bottom-left-radius:6px}
+.msg.u{align-self:flex-end}.msg.u .b{background:var(--blue);color:var(--blue-ink);border-bottom-right-radius:6px}
+.msg .r{font-size:13px;color:var(--muted);margin:5px 6px 0;font-style:italic}
+.msg .e{font-size:13px;color:var(--muted);margin:3px 6px 0}
+.msg .tip{display:inline-block;margin:6px 4px 0 auto;font-size:12.5px;padding:5px 10px;border-radius:12px;background:var(--teal);color:var(--ink)}
+.msg.u{display:flex;flex-direction:column;align-items:flex-end}
+.typing{display:inline-flex;gap:4px;padding:4px 0}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+.compose{display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--line);align-items:center}
+.compose input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:12px 18px;font:inherit;font-size:16px}
+.compose input:focus{outline:none;border-color:var(--blue)}
+.round{width:46px;height:46px;border-radius:50%;border:0;background:var(--blue);color:var(--blue-ink);display:grid;place-items:center;flex:none;font-size:18px;font-weight:700}
+.round.mic{background:var(--soft);color:var(--ink)}
+.round.mic.on{background:#E5484D;color:#fff;animation:pulse 1.2s infinite}
+.under{display:flex;align-items:center;gap:12px;padding:0 18px 16px;flex-wrap:wrap}
+.under small{color:var(--muted);font-size:13px}
+.fbcard{margin:0 18px 18px;padding:18px 20px;border-radius:20px;background:var(--teal);animation:pop .4s ease both}
+.fbcard .score{font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1}
+.fbcard .score small{font-size:16px;color:var(--muted);font-weight:600}
+.fbcard dl{margin:12px 0 0;display:grid;gap:10px}
+.fbcard dt{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fbcard dd{margin:2px 0 0;font-size:15px}
+@media(max-width:860px){.panel{grid-template-columns:1fr}.setup{border-right:0;border-bottom:1px solid var(--line)}.chat{min-height:480px}}
+
+/* difference */
+.diff{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:26px;min-width:0;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:var(--blue)}
+.card h3{font-size:24px;font-weight:800;margin:14px 0 8px}
+.card p{color:var(--muted)}
+.ico{width:44px;height:44px;border-radius:14px;background:var(--teal);display:grid;place-items:center;font-family:var(--font-display);font-weight:800;color:var(--navy);font-size:18px}
+:root[data-theme="dark"] .ico{color:var(--ink)}
+.table{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.row{display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:16px;padding:16px 24px;border-top:1px solid var(--line);align-items:start}
+.row:first-child{border-top:0;background:var(--soft);font-weight:600;font-size:14px}
+.row span:first-child{color:var(--muted);font-size:14px;font-weight:500}
+.row .us{font-weight:600}
+.row .us::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:8px}
+@media(max-width:720px){.diff{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:4px}.row:first-child{display:none}.row span:nth-child(3)::before{content:"Typical apps: ";color:var(--muted);font-weight:500}}
+
+/* pilot */
+.pilot{background:var(--navy);color:#EAF0FF;border-radius:32px;padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;position:relative;overflow:hidden;min-width:0}
+.pilot h2{font-size:clamp(30px,4.4vw,48px);font-weight:800}
+.pilot .eyebrow{color:#8FB4FF}
+.pilot p{color:#B9C6E6;margin-top:14px;font-size:17px}
+.pilot ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:10px}
+.pilot li{display:flex;gap:10px;font-size:16px}
+.pilot li::before{content:"";flex:none;width:18px;height:18px;border-radius:50%;background:var(--blue);margin-top:4px;box-shadow:inset 0 0 0 5px var(--navy),0 0 0 2px var(--blue)}
+.price{background:#fff;color:#101B34;border-radius:24px;padding:28px;text-align:center;min-width:0}
+.price .big{font-family:var(--font-display);font-weight:800;font-size:72px;line-height:1;letter-spacing:-.04em}
+.price .big sup{font-size:30px;vertical-align:top;position:relative;top:8px}
+.price .per{color:#56637F;margin-top:6px}
+.price s{color:#8A96B0}
+.price .btn{width:100%;margin-top:20px;background:#2D6BEB;color:#fff}
+.price .note{font-size:13px;color:#56637F;margin-top:12px}
+.price .ok{font-size:14px;color:#17855C;font-weight:600;min-height:20px;margin-top:10px}
+.spots{margin-top:16px;height:8px;background:#E3E9F7;border-radius:99px;overflow:hidden}
+.spots i{display:block;height:100%;width:0;background:#2D6BEB;border-radius:99px;animation:fill 1.6s .4s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes fill{to{width:100%}}
+.honest{margin-top:20px;font-size:14px;color:var(--muted);max-width:60ch}
+@media(max-width:860px){.pilot{grid-template-columns:1fr;gap:28px}}
+
+footer{padding-block:40px 56px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line)}
+.sr{position:absolute;left:-9999px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* join */
+.joinbox{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:clamp(22px,4vw,40px);max-width:640px;min-width:0}
+.jf{display:grid;gap:8px}
+.jf label{font-size:14px;font-weight:600;margin-top:10px}
+.jf label small{font-weight:400;color:var(--muted);margin-left:6px}
+.jf input,.jf select{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:13px 16px;font:inherit;font-size:16px;min-width:0;width:100%}
+.jf input:focus,.jf select:focus{outline:none;border-color:var(--blue)}
+.jf .btn{margin-top:18px;justify-self:start}
+.step{display:flex;gap:16px;margin-bottom:22px}
+.step>div{min-width:0;flex:1;display:grid;gap:8px;justify-items:start}
+.step .n{flex:none;width:32px;height:32px;border-radius:50%;background:var(--blue);color:var(--blue-ink);display:grid;place-items:center;font-weight:700}
+.mut{color:var(--muted);font-size:14px}
+textarea{width:100%;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 14px;font:inherit;font-size:14px;resize:none}
+.ref{background:var(--teal);border-radius:22px;padding:22px;display:grid;gap:12px;justify-items:start}
+.ref textarea{background:var(--surface)}
+.code{font-family:var(--font-display);font-weight:800;font-size:40px;letter-spacing:.04em;line-height:1.1}
+.dots{display:flex;gap:10px}
+.dots i{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--blue);display:block}
+.joinbox .ok{font-size:14px;color:var(--good);font-weight:600}
+
+/* touch and hover */
+.btn,.chip,.round{position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.96)}
+.chip{transition:transform .15s,border-color .18s,background .18s,box-shadow .2s}
+.chip:hover{transform:translateY(-2px);box-shadow:0 8px 18px -12px var(--blue)}
+.chip:active{transform:scale(.95)}
+.chip[aria-pressed="true"]{animation:chipPop .3s ease}
+@keyframes chipPop{0%{transform:scale(.92)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+.proof span{transition:transform .2s,background .2s,color .2s;cursor:default}
+.proof span:hover{transform:translateY(-3px) rotate(-1.5deg);background:var(--blue);color:var(--blue-ink)}
+.logo i{transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.logo:hover i{transform:rotate(-14deg) scale(1.1)}
+nav{transition:border-color .2s,box-shadow .2s}
+nav.scrolled{border-bottom-color:var(--line);box-shadow:0 10px 24px -22px rgba(22,37,74,.6)}
+nav .navbtn{position:relative;transition:color .2s}
+nav .navbtn::after{content:"";position:absolute;left:4px;right:4px;bottom:2px;height:2px;border-radius:2px;background:var(--blue);transform:scaleX(0);transition:transform .25s}
+nav .navbtn:hover{color:var(--ink)}nav .navbtn:hover::after{transform:scaleX(1)}
+.round{transition:transform .18s,box-shadow .2s}
+.round:hover{transform:scale(1.1);box-shadow:0 8px 16px -8px var(--blue)}
+.round:active{transform:scale(.9)}
+.switch button:hover{filter:brightness(.95)}
+.msg.p .b{cursor:pointer;transition:transform .15s,box-shadow .2s}
+.msg.p .b:hover{transform:translateX(3px);box-shadow:0 6px 16px -12px var(--blue)}
+.msg .tip{animation:pop .3s ease both}
+.avatar.bump{animation:bump .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bump{0%{transform:scale(.6) rotate(-12deg)}100%{transform:none}}
+.card{position:relative;overflow:hidden}
+.card>*{position:relative}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--blue) 14%,transparent),transparent 70%);opacity:0;transition:opacity .25s;pointer-events:none}
+.card:hover::before{opacity:1}
+.card:hover .ico{transform:rotate(-8deg) scale(1.1)}
+.ico{transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.row:not(:first-child){transition:background .2s,padding-left .2s}
+.row:not(:first-child):hover{background:var(--soft);padding-left:30px}
+.demo{transition:transform .25s ease-out,box-shadow .25s;will-change:transform}
+.price{transition:transform .25s}.price:hover{transform:translateY(-4px) rotate(-.6deg)}
+.pilot li{transition:transform .2s}.pilot li:hover{transform:translateX(5px)}
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.25;transform:scale(0);animation:rip .55s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+
+/* freemium */
+.chip.locked{opacity:.8;border-style:dashed}
+.chip.locked small{background:var(--blue);color:var(--blue-ink);opacity:1;border-radius:999px;padding:1px 8px;margin-left:8px;font-weight:600}
+.quota{margin-left:auto;font-weight:600;color:var(--blue)}
+.upsell{margin:0 18px 18px;padding:18px 20px;border-radius:20px;background:var(--navy);color:#EAF0FF;animation:pop .3s ease both}
+.upsell p{color:#B9C6E6;margin:6px 0 14px;font-size:15px}
+.upsell .ur{display:flex;gap:10px;flex-wrap:wrap}
+.upsell .btn.ghost{color:#EAF0FF;border-color:#3A4A74}
+.lock{display:grid;gap:8px;justify-items:start;padding:14px;border-radius:14px;background:var(--surface);border:1.5px dashed var(--blue)}
+.lock span{font-size:14px;color:var(--muted)}
+.plist{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:8px;color:var(--ink)}
+.plist li{display:flex;gap:10px;align-items:baseline}
+.plist li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--blue);transform:translateY(-1px)}
+.card.hl{border-color:var(--blue);background:linear-gradient(180deg,var(--soft),var(--surface))}
+.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--amber);color:#2A1B00;letter-spacing:.04em;text-transform:uppercase}
+</style>
+</head><body>
+<nav><div class="wrap">
+  <div class="logo"><i></i>LangoLink</div>
+  <span class="links">
+    <button class="navbtn" data-go="try">Try it</button>
+    <button class="navbtn" data-go="why">What's different</button>
+    <button class="navbtn" data-go="pilot">Founding pilot</button>
+    <button class="navbtn" data-go="join">Sign up</button>
+  </span>
+  <button class="btn sm" data-go="try">Start talking</button>
+</div></nav>
+
+<header class="hero"><div class="glyphs" aria-hidden="true"><span>你好</span><span>Hola</span><span>こんにちは</span><span>안녕</span></div>
+<div class="wrap hero-grid">
+  <div>
+    <p class="eyebrow rise">Speaking practice for real life</p>
+    <h1 class="rise" style="margin-top:14px">Real conversations.<em>Real choices.</em>Real fluency.</h1>
+    <p class="lead rise">Pick the moment you are nervous about, like ordering at a stall or a job interview, and practise it out loud before it happens.</p>
+    <div class="cta-row rise"><button class="btn" data-go="try">Try a conversation</button><button class="btn ghost" data-go="pilot">Join the $3 pilot</button></div>
+    <div class="proof rise"><span>Mandarin</span><span>Japanese</span><span>Korean</span><span>English</span><span>Spanish</span><span>French</span></div>
+  </div>
+  <div class="demo" aria-label="Example of a LangoLink conversation">
+    <div class="demo-top"><span class="dot"></span><b id="dLang">Spanish</b><small>Ordering a coffee</small></div>
+    <div class="demo-body">
+      <div class="bub p" id="dP"></div>
+      <div class="bub u" id="dU"></div>
+      <div class="fb" id="dF"><b>Feedback</b><span id="dFt"></span></div>
+    </div>
+  </div>
+</div></header>
+
+<section id="try" class="wrap">
+  <div class="sec-head"><p class="eyebrow">Try it now</p><h2>Choose a language. Choose a situation. Start talking.</h2><p>No lesson path to unlock. Your partner replies to what you actually say, and tells you how to sound more natural.</p></div>
+  <div class="panel">
+    <aside class="setup">
+      <div><h3>Language</h3><div class="chips" id="langs"></div></div>
+      <div><h3>Situation</h3><div class="scen" id="scens"></div></div>
+      <div><h3>Level</h3><div class="chips" id="levels"></div></div>
+      <div class="switch"><span>Show English meaning</span><button id="hintSw" aria-pressed="true" aria-label="Show English meaning"></button></div>
+    </aside>
+    <div class="chat">
+      <div class="chat-head"><div class="avatar" id="av">L</div><div><b id="pName">Lucía</b><small id="pRole">Your conversation partner</small></div><span class="status" id="status">Demo replies</span></div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <div id="fbslot"></div>
+      <form class="compose" id="form"><input id="inp" autocomplete="off" placeholder="Type your reply in the language you are practising" aria-label="Your reply"><button type="button" class="round mic" id="mic" hidden aria-label="Speak">●</button><button class="round" aria-label="Send">&#8593;</button></form>
+      <div class="under"><button class="btn ghost sm" id="fbBtn" type="button">Get feedback</button><button class="btn ghost sm" id="resetBtn" type="button">Start over</button><small id="hintline">Tap any partner message to see its English meaning.</small><small id="quota" class="quota"></small></div>
+    </div>
+  </div>
+</section>
+
+<section id="why" class="wrap">
+  <div class="sec-head"><p class="eyebrow">What's different</p><h2>Built around what you want to say, not a streak.</h2><p>Most apps teach you words in a fixed order. LangoLink starts from the situation in front of you.</p></div>
+  <div class="diff">
+    <div class="card"><div class="ico">1</div><h3>You choose the moment</h3><p>Kopitiam order, a work small talk, a trip next month. You pick it, and the conversation follows you.</p></div>
+    <div class="card"><div class="ico">2</div><h3>Private first, people second</h3><p>Practise with an AI partner where nobody is watching, then move to a real learner from another country when you are ready.</p></div>
+    <div class="card"><div class="ico">3</div><h3>Feedback on your own sentences</h3><p>Not a quiz score. You get what sounded good, what to fix, and a more natural way to say it.</p></div>
+    <div class="card"><div class="ico">4</div><h3>No streak guilt</h3><p>Progress is counted in conversations you have had. Miss a week and nothing is lost or reset.</p></div>
+  </div>
+  <div class="table" role="table">
+    <div class="row" role="row"><span></span><span>LangoLink</span><span>Typical lesson-and-streak apps</span></div>
+    <div class="row"><span>Where you start</span><span class="us">A situation you pick</span><span>A fixed unit order</span></div>
+    <div class="row"><span>What you practise</span><span class="us">Speaking full replies</span><span>Tapping and translating short items</span></div>
+    <div class="row"><span>If you are shy</span><span class="us">Private AI practice first</span><span>Little live speaking</span></div>
+    <div class="row"><span>Real people</span><span class="us">Matched partners (coming)</span><span>Mostly none</span></div>
+    <div class="row"><span>Feedback</span><span class="us">On what you actually said</span><span>Right or wrong per item</span></div>
+  </div>
+</section>
+
+<section id="plans" class="wrap">
+  <div class="sec-head"><p class="eyebrow">Free and pilot</p><h2>Try it free. Pay $3 for the full thing.</h2><p>The free preview shows how it feels. The pilot is where you actually build the habit.</p></div>
+  <div class="diff">
+    <div class="card"><h3>Free preview</h3><ul class="plist"><li>All 7 languages</li><li>2 situations: order food, meet someone new</li><li>6 messages per visit</li><li>English meaning on every message</li><li>Score and what worked</li></ul><button class="btn ghost sm" data-go="try">Try it now</button></div>
+    <div class="card hl"><h3>Pilot, $3 for 4 weeks</h3><ul class="plist"><li>All 4 situations, plus ones you request</li><li>Unlimited practice</li><li>Full feedback with a more natural line</li><li>A weekly recap from the builder</li><li>Partner match <span class="tag">Beta</span></li><li>Founding price locked in</li><li>Free if you refer 3 friends who pay</li></ul><button class="btn sm" data-go="join">Join the pilot</button></div>
+  </div>
+</section>
+
+<section id="pilot" class="wrap">
+  <div class="pilot">
+    <div>
+      <p class="eyebrow">Founding pilot</p>
+      <h2 style="margin-top:10px">Help shape it for $3.</h2>
+      <p>The first 15 learners get four weeks of full access and a direct line to the builder.</p>
+      <ul>
+        <li>Four weeks of AI speaking practice in every language above</li>
+        <li>Your feedback decides what gets built next</li>
+        <li>Refer 3 friends who join and your own pilot is free</li>
+      </ul>
+    </div>
+    <div class="price">
+      <div class="big"><sup>$</sup>3</div>
+      <div class="per">for 4 weeks <s>$9.99/month later</s></div>
+      <div class="spots" aria-hidden="true"><i></i></div>
+      <button class="btn" data-go="join">Join the pilot</button>
+      <div class="note">Pay only after you sign up. Friends must pay the $3 for a referral to count.</div>
+    </div>
+  </div>
+  <p class="honest">LangoLink is an early prototype. The AI conversation partner on this page is working now. Matching with real partners is being built with the first pilot learners.</p>
+</section>
+
+<section id="join" class="wrap">
+  <div class="sec-head"><p class="eyebrow">Sign up</p><h2>Save your spot in two steps.</h2><p>Tell us who you are, send one message, and pay the $3 when you get the PayNow details.</p></div>
+  <div class="joinbox">
+    <form id="joinForm" class="jf">
+      <label for="jn">Your name</label>
+      <input id="jn" required autocomplete="name" placeholder="e.g. Sam">
+      <label for="jl">Language you want to practise</label>
+      <select id="jl"><option>Mandarin</option><option>Japanese</option><option>Korean</option><option>English</option><option>Spanish</option><option>French</option></select>
+      <label for="jr">Who sent you? <small>Friend's name or code, optional</small></label>
+      <input id="jr" autocomplete="off" placeholder="e.g. HAM-482">
+      <button class="btn" type="submit">Get my spot</button>
+    </form>
+    <div id="joinDone" hidden>
+      <div class="step"><span class="n">1</span><div><b>Send this to whoever shared the page with you</b>
+        <textarea id="msgJoin" readonly rows="6" aria-label="Your join message"></textarea>
+        <button class="btn sm" type="button" data-copy="msgJoin">Copy message</button> <a class="btn sm" id="waBtn" hidden target="_blank" rel="noopener" style="text-decoration:none">Send on WhatsApp</a> <span class="ok" id="okJoin" role="status"></span></div></div>
+      <div class="step"><span class="n">2</span><div><b>Pay $3 once you get the PayNow details</b><p class="mut">Your spot is confirmed when the payment is received.</p></div></div>
+      <div class="ref">
+        <div><p class="eyebrow">Your referral code</p><div class="code" id="myCode">-</div>
+        <p class="mut">Refer 3 friends who join and pay $3 with your code, and your own pilot is free.</p></div>
+        <div class="dots" aria-label="Referral progress"><i></i><i></i><i></i></div>
+        <p class="mut">0 of 3 so far. Your count updates when your friends' payments are confirmed.</p>
+        <textarea id="msgRef" readonly rows="4" aria-label="Message to share with friends"></textarea>
+        <button class="btn sm" type="button" data-copy="msgRef">Copy message for friends</button> <span class="ok" id="okRef" role="status"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap"><span>LangoLink · built in Singapore</span><span>Real conversations. Real choices. Real fluency.</span></footer>
+
+<script>
+(function(){
+/* EDIT THIS: your WhatsApp number with country code, digits only, e.g. 6591234567. Leave empty to hide the WhatsApp button. */
+var WA_NUMBER='';
+var $=function(s){return document.querySelector(s)};
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* smooth in-page navigation without touching the hash */
+document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){
+  var t=document.getElementById(b.dataset.go);if(t)t.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});});
+
+/* ---------- hero demo ---------- */
+var demos=[
+ {l:'Mandarin',p:'你想喝点什么？',u:'我要一杯咖啡，谢谢。',f:'Clear. Add 请问 at the start to sound softer.'},
+ {l:'Japanese',p:'ご注文はお決まりですか？',u:'コーヒーをお願いします。',f:'Polite and exactly what staff expect.'},
+ {l:'Korean',p:'뭐 드릴까요?',u:'아메리카노 한 잔 주세요.',f:'Natural. Add 따뜻한 or 차가운 for hot or iced.'},
+ {l:'Spanish',p:'¿Qué le pongo?',u:'Un café con leche, por favor.',f:'Natural. Locals also say "Me pones un café con leche".'},
+ {l:'French',p:"Qu'est-ce que je vous sers ?",u:'Un café, s\'il vous plaît.',f:'Perfect. "Je voudrais un café" sounds more formal.'}
+];
+var di=0,dt=[];
+function later(fn,ms){dt.push(setTimeout(fn,ms))}
+function runDemo(){
+  var d=demos[di%demos.length];
+  var P=$('#dP'),U=$('#dU'),F=$('#dF');
+  [P,U,F].forEach(function(e){e.classList.remove('in','caret')});
+  $('#dLang').textContent=d.l;P.textContent=d.p;U.textContent='';$('#dFt').textContent=d.f;
+  if(reduce){P.classList.add('in');U.textContent=d.u;U.classList.add('in');F.classList.add('in');return}
+  later(function(){P.classList.add('in')},300);
+  later(function(){U.classList.add('in','caret');var i=0;(function type(){U.textContent=d.u.slice(0,++i);if(i<d.u.length)later(type,55)})();},1300);
+  var typed=1300+d.u.length*55+250;
+  later(function(){U.classList.remove('caret');F.classList.add('in')},typed);
+  later(function(){di++;runDemo()},typed+3200);
+}
+runDemo();
+
+/* ---------- practice data ---------- */
+var SC=['Order food','Meet someone new','Ask for directions','Job interview'];
+var L={
+ es:{n:'Spanish',nat:'Español',who:'Lucía',
+  op:[['Buenas tardes, ¿qué le pongo?','','Good afternoon, what can I get you?'],['¡Hola! Me llamo Lucía. ¿Cómo te llamas?','','Hi! I am Lucía. What is your name?'],['Perdona, ¿sabes dónde está la estación?','','Excuse me, do you know where the station is?'],['Cuéntame un poco sobre ti.','','Tell me a little about yourself.']],
+  fb:[['¡Muy bien! ¿Puedes decirme más?','','Very good! Can you tell me more?'],['Entiendo. ¿Y por qué?','','I see. And why?'],['¡Perfecto! Sigamos.','','Perfect! Let us go on.']]},
+ zh:{n:'Mandarin',nat:'中文',who:'Xiao Mei',
+  op:[['你好，请问想吃点什么？','Nǐ hǎo, qǐngwèn xiǎng chī diǎn shénme?','Hello, what would you like to eat?'],['你好！我叫小美，你叫什么名字？','Nǐ hǎo! Wǒ jiào Xiǎo Měi, nǐ jiào shénme míngzi?','Hi! I am Xiao Mei. What is your name?'],['不好意思，请问地铁站在哪里？','Bù hǎoyìsi, qǐngwèn dìtiě zhàn zài nǎlǐ?','Excuse me, where is the MRT station?'],['请先做个简单的自我介绍。','Qǐng xiān zuò gè jiǎndān de zìwǒ jièshào.','Please start with a short self-introduction.']],
+  fb:[['很好！你能多说一点吗？','Hěn hǎo! Nǐ néng duō shuō yìdiǎn ma?','Very good! Can you say a bit more?'],['我明白了。为什么呢？','Wǒ míngbái le. Wèishénme ne?','I see. Why is that?'],['太棒了，我们继续吧。','Tài bàng le, wǒmen jìxù ba.','Great, let us continue.']]},
+ fr:{n:'French',nat:'Français',who:'Camille',
+  op:[['Bonjour, qu\'est-ce que je vous sers ?','','Hello, what can I get you?'],['Salut ! Moi, c\'est Camille. Et toi, comment tu t\'appelles ?','','Hi! I am Camille. And you, what is your name?'],['Excusez-moi, où est la gare, s\'il vous plaît ?','','Excuse me, where is the train station, please?'],['Parlez-moi un peu de vous.','','Tell me a little about yourself.']],
+  fb:[['Très bien ! Tu peux m\'en dire plus ?','','Very good! Can you tell me more?'],['Je vois. Et pourquoi ?','','I see. And why?'],['Parfait, continuons.','','Perfect, let us continue.']]},
+ ja:{n:'Japanese',nat:'日本語',who:'Yui',
+  op:[['いらっしゃいませ。ご注文は何になさいますか？','Irasshaimase. Gochūmon wa nani ni nasaimasu ka?','Welcome. What would you like to order?'],['はじめまして。私はゆいです。お名前は？','Hajimemashite. Watashi wa Yui desu. Onamae wa?','Nice to meet you. I am Yui. What is your name?'],['すみません、駅はどこですか？','Sumimasen, eki wa doko desu ka?','Excuse me, where is the station?'],['まず、自己紹介をお願いします。','Mazu, jiko shōkai o onegaishimasu.','First, please introduce yourself.']],
+  fb:[['いいですね！もう少し教えてください。','Ii desu ne! Mō sukoshi oshiete kudasai.','Nice! Tell me a little more.'],['なるほど。どうしてですか？','Naruhodo. Dōshite desu ka?','I see. Why is that?'],['ありがとうございます。続けましょう。','Arigatō gozaimasu. Tsuzukemashō.','Thank you. Let us continue.']]},
+ ko:{n:'Korean',nat:'한국어',who:'Jimin',
+  op:[['어서 오세요. 뭘 드릴까요?','Eoseo oseyo. Mwol deurilkkayo?','Welcome. What can I get you?'],['안녕하세요! 저는 지민이에요. 이름이 뭐예요?','Annyeonghaseyo! Jeoneun Jimin-ieyo. Ireumi mwoyeyo?','Hello! I am Jimin. What is your name?'],['실례합니다, 지하철역이 어디예요?','Sillyehamnida, jihacheolyeogi eodiyeyo?','Excuse me, where is the subway station?'],['먼저 자기소개를 해 주세요.','Meonjeo jagisogaereul hae juseyo.','First, please introduce yourself.']],
+  fb:[['좋아요! 조금 더 말해 줄 수 있어요?','Joayo! Jogeum deo malhae jul su isseoyo?','Good! Can you say a bit more?'],['그렇군요. 왜요?','Geureokunyo. Waeyo?','I see. Why?'],['좋아요. 계속해요.','Joayo. Gyesokaeyo.','Good. Let us continue.']]},
+ en:{n:'English',nat:'English',who:'Sam',
+  op:[['Morning! Kopi or teh? What can I get you?','','A kopitiam uncle asks for your order.'],['Hi! I am Sam. What do you do, and what do you enjoy?','','A new coworker is making small talk.'],['Excuse me, how do I get to the MRT station from here?','','A visitor asks you for directions.'],['Thanks for coming in. Can you walk me through your background?','','An interviewer opens the conversation.']],
+  fb:[['That is clear. Can you tell me a bit more?','','Clear. Can you say a bit more?'],['I see. Why is that?','','Asking you to explain why.'],['Great, let us keep going.','','Keep the conversation moving.']]}
+};
+var ORDER=['zh','ja','ko','en','es','fr'];
+var LV=['Beginner','Intermediate'];
+var st={lang:'zh',scen:0,level:'Beginner',hints:true,msgs:[],busy:false,fbi:0};
+var sampleFn=null;
+var FREE_MSGS=6,GATED=(location.hash!=='#full');st.used=0;
+function go(id){var t=document.getElementById(id);if(t)t.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}
+
+function chip(txt,pressed,fn,extra){var b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed',pressed);b.innerHTML=txt+(extra?'<small>'+extra+'</small>':'');b.addEventListener('click',fn);return b}
+function buildSetup(){
+  var a=$('#langs'),b=$('#scens'),c=$('#levels');a.innerHTML=b.innerHTML=c.innerHTML='';
+  ORDER.forEach(function(k){a.appendChild(chip(L[k].n,st.lang===k,function(){st.lang=k;start()},''))});
+  SC.forEach(function(s,i){var lk=GATED&&i>1;var c=chip(s,st.scen===i,function(){if(lk){showUpsell('situation')}else{st.scen=i;start()}},lk?'Pilot':'');if(lk)c.classList.add('locked');b.appendChild(c)});
+  LV.forEach(function(v){c.appendChild(chip(v,st.level===v,function(){st.level=v;buildSetup()}))});
+}
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function render(){
+  var log=$('#log');
+  log.innerHTML=st.msgs.map(function(m,i){
+    if(m.role==='u')return '<div class="msg u"><div class="b">'+esc(m.t)+'</div>'+(m.tip?'<span class="tip">'+esc(m.tip)+'</span>':'')+'</div>';
+    var body=m.t?esc(m.t):'<span class="typing"><i></i><i></i><i></i></span>';
+    return '<div class="msg p" data-i="'+i+'"><div class="b" title="Tap for English">'+body+'</div>'+(m.r?'<div class="r">'+esc(m.r)+'</div>':'')+((st.hints||m.show)&&m.e?'<div class="e">'+esc(m.e)+'</div>':'')+'</div>';
+  }).join('');
+  log.scrollTop=log.scrollHeight;
+  var q=$('#quota');if(q)q.textContent=GATED?Math.max(0,FREE_MSGS-st.used)+' of '+FREE_MSGS+' free messages left':'';
+}
+function start(){
+  var k=L[st.lang],o=k.op[st.scen];
+  st.msgs=[{role:'p',t:o[0],r:o[1],e:o[2]}];st.fbi=0;st.busy=false;
+  $('#pName').textContent=k.who;$('#av').textContent=k.who[0];
+  $('#pRole').textContent=k.n+' · '+SC[st.scen];
+  $('#fbslot').innerHTML='';
+  var av=$('#av');av.classList.remove('bump');void av.offsetWidth;av.classList.add('bump');
+  buildSetup();render();
+}
+function setStatus(){var s=$('#status');if(sampleFn){s.textContent='AI partner live';s.classList.add('live')}else{s.textContent='Demo replies';s.classList.remove('live')}}
+
+function showUpsell(reason){
+  var msg=reason==='situation'?'This situation is part of the pilot.':'Your '+FREE_MSGS+' free messages are used up.';
+  var slot=$('#fbslot');
+  slot.innerHTML='<div class="upsell"><b>'+msg+'</b><p>The $3 pilot gives you unlimited practice, all four situations, full feedback and a weekly recap.</p><div class="ur"><button class="btn sm" type="button" id="upJoin">Join the pilot</button><button class="btn ghost sm" type="button" id="upClose">Not now</button></div></div>';
+  $('#upJoin').addEventListener('click',function(){go('join')});
+  $('#upClose').addEventListener('click',function(){slot.innerHTML=''});
+  slot.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+}
+function transcript(){return st.msgs.filter(function(m){return m.t}).map(function(m){return (m.role==='u'?'Learner: ':'Partner: ')+m.t}).join('\n')}
+function applyReply(text,final){
+  var parts=text.split('||').map(function(s){return s.trim()});
+  var p=st.msgs[st.msgs.length-1];
+  p.t=parts[0]||'';p.r=(parts[1]&&parts[1]!=='-')?parts[1]:'';p.e=parts[2]||'';
+  if(parts[3]){var u=st.msgs[st.msgs.length-2];if(u&&u.role==='u')u.tip=parts[3]}
+  render();
+}
+function fallback(){
+  var f=L[st.lang].fb[st.fbi++%3],p=st.msgs[st.msgs.length-1];
+  p.t=f[0];p.r=f[1];p.e=f[2];
+  var u=st.msgs[st.msgs.length-2];if(u)u.tip='Add one more detail, like when, where or why.';
+  render();
+}
+async function send(txt){
+  txt=(txt||'').trim();if(!txt||st.busy)return;
+  if(GATED&&st.used>=FREE_MSGS){showUpsell('limit');return}
+  st.used++;
+  st.busy=true;
+  st.msgs.push({role:'u',t:txt});st.msgs.push({role:'p',t:''});render();
+  var k=L[st.lang];
+  if(!sampleFn){setTimeout(function(){fallback();st.busy=false},900);return}
+  var prompt='You are '+k.who+', a friendly '+k.n+' conversation partner for a '+st.level.toLowerCase()+' learner in Singapore. Scenario: '+SC[st.scen]+'. Stay in role and keep it natural. '+
+   'Reply with exactly four parts separated by " || ": (1) your next turn in '+k.n+', one or two short sentences, '+(st.level==='Beginner'?'simple words':'natural everyday phrasing')+'; (2) the romanization of part 1 for Mandarin, Japanese or Korean, otherwise a single hyphen; (3) the English meaning of part 1; (4) one short English tip on how the learner could have said their last message more naturally, or "Nice, that sounded natural." if it was fine. Plain text only, no markdown, no extra parts.\n\nConversation so far:\n'+transcript()+'\n\nWrite the partner\'s next turn now.';
+  try{
+    var r=await sampleFn(prompt,{cache:false,modelTier:'quick',onText:function(o){applyReply(o.text,false)}});
+    applyReply(r.text,true);
+  }catch(e){
+    if(e&&e.code==='not_granted'){sampleFn=null;setStatus()}
+    fallback();
+  }
+  st.busy=false;
+}
+$('#form').addEventListener('submit',function(e){e.preventDefault();var i=$('#inp'),v=i.value;i.value='';send(v)});
+
+/* feedback */
+$('#fbBtn').addEventListener('click',async function(){
+  var slot=$('#fbslot');
+  var said=st.msgs.filter(function(m){return m.role==='u'});
+  if(!said.length){slot.innerHTML='<div class="fbcard">Say something first, then ask for feedback.</div>';return}
+  var data={score:4.6,good:'You answered in full sentences and kept the conversation moving.',fix:'Add one more detail to each answer so your partner has more to react to.',better:''};
+  slot.innerHTML='<div class="fbcard"><span class="typing"><i></i><i></i><i></i></span></div>';
+  if(sampleFn){
+    try{
+      var k=L[st.lang];
+      var j=await sampleFn.json('A '+st.level.toLowerCase()+' learner practised '+k.n+' in this scenario: '+SC[st.scen]+'.\nConversation:\n'+transcript()+'\n\nGive feedback on the learner\'s lines only. Return JSON with keys: score (number from 1 to 5, one decimal), good (one sentence in English on what worked), fix (one sentence in English on the most useful thing to improve), better (the learner\'s last line rewritten more naturally in '+k.n+', or empty string if it was already natural).',{cache:false,modelTier:'quick'});
+      if(j&&typeof j==='object'){data={score:Number(j.score)||4.5,good:j.good||data.good,fix:j.fix||data.fix,better:j.better||''}}
+    }catch(e){if(e&&e.code==='not_granted'){sampleFn=null;setStatus()}}
+  }
+  var worked='<div><dt>What worked</dt><dd>'+esc(data.good)+'</dd></div>';
+  var rest=GATED?'<div class="lock"><b>Full feedback is part of the pilot</b><span>See what to try next and a more natural way to say it.</span><button class="btn sm" type="button" id="fbJoin">Unlock for $3</button></div>':'<div><dt>Try next</dt><dd>'+esc(data.fix)+'</dd></div>'+(data.better?'<div><dt>A more natural line</dt><dd>'+esc(data.better)+'</dd></div>':'');
+  slot.innerHTML='<div class="fbcard"><div class="score">'+esc(data.score.toFixed(1))+'<small> / 5</small></div><dl>'+worked+rest+'</dl></div>';
+  var fj=$('#fbJoin');if(fj)fj.addEventListener('click',function(){go('join')});
+  slot.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+});
+$('#resetBtn').addEventListener('click',start);
+$('#log').addEventListener('click',function(e){var b=e.target.closest('.msg.p');if(!b)return;var m=st.msgs[+b.dataset.i];if(m&&m.t){var top=this.scrollTop;m.show=!m.show;render();this.scrollTop=top}});
+$('#hintSw').addEventListener('click',function(){st.hints=!st.hints;this.setAttribute('aria-pressed',st.hints);render()});
+
+/* capabilities */
+try{
+  if(window.claude&&claude.use){
+    claude.use('sample').then(function(s){sampleFn=s||null;setStatus()}).catch(function(){});
+    claude.use('dictation').then(function(d){
+      if(!d)return;var mic=$('#mic');mic.hidden=false;
+      d.onFinal(function(o){var i=$('#inp');i.value=(i.value+' '+o.text).trim()});
+      d.onPartial(function(o){$('#inp').placeholder=o.text});
+      d.onState(function(o){mic.classList.toggle('on',o.state==='listening');if(o.state!=='listening')$('#inp').placeholder='Type your reply in the language you are practising'});
+      mic.addEventListener('click',function(){if(mic.classList.contains('on')){d.stop()}else{d.start().catch(function(){})}});
+    }).catch(function(){});
+  }
+}catch(e){}
+
+/* join flow */
+function codeFor(name){
+  var l=name.toUpperCase().replace(/[^A-Z]/g,'').slice(0,3);while(l.length<3)l+='L';
+  var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))%900;
+  return l+'-'+(h+100);
+}
+function copyFrom(id,okId){
+  var ta=$('#'+id),ok=$('#'+okId);
+  function done(){ok.textContent='Copied'}
+  function manual(){ta.select();try{document.execCommand('copy');done()}catch(e){ok.textContent='Select the text and copy it'}}
+  try{navigator.clipboard.writeText(ta.value).then(done,manual)}catch(e){manual()}
+}
+document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){copyFrom(b.dataset.copy,b.dataset.copy==='msgJoin'?'okJoin':'okRef')})});
+$('#joinForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=$('#jn').value.trim(),lang=$('#jl').value,ref=$('#jr').value.trim();
+  if(!name)return;
+  var code=codeFor(name);
+  $('#msgJoin').value='Hi, I am '+name+'. I would like to join the LangoLink founding pilot ($3 for 4 weeks) to practise '+lang+'.'+(ref?' Referred by: '+ref+'.':'')+' My referral code is '+code+'. Please send me the PayNow details.';
+  $('#myCode').textContent=code;
+  var wa=$('#waBtn');if(WA_NUMBER){wa.href='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent($('#msgJoin').value);wa.hidden=false}
+  $('#msgRef').value='I joined the LangoLink pilot to practise speaking '+lang+'. It is $3 for 4 weeks. If you join, put my code '+code+' as who sent you.';
+  $('#joinForm').hidden=true;$('#joinDone').hidden=false;
+  $('#joinDone').scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+});
+
+/* touch and hover feel */
+document.addEventListener('pointerdown',function(e){
+  var t=e.target.closest&&e.target.closest('.btn,.chip,.round');if(!t||reduce)return;
+  var r=t.getBoundingClientRect(),d=Math.max(r.width,r.height)*2,s=document.createElement('span');
+  s.className='rip';s.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
+  t.appendChild(s);setTimeout(function(){s.remove()},600);
+});
+document.querySelectorAll('.card').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')})});
+if(!reduce&&window.matchMedia&&matchMedia('(hover:hover)').matches){
+  var dm=$('.demo');
+  dm.addEventListener('pointermove',function(e){var r=dm.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;dm.style.transform='perspective(900px) rotateY('+(x*7)+'deg) rotateX('+(-y*7)+'deg)'});
+  dm.addEventListener('pointerleave',function(){dm.style.transform=''});
+}
+var navEl=$('nav');window.addEventListener('scroll',function(){navEl.classList.toggle('scrolled',window.scrollY>8)},{passive:true});
+
+start();setStatus();
+})();
+</script>
+</body></html>
