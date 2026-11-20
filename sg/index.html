@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LangoLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@500&display=swap">
+<style>
+body{margin:0}[hidden]{display:none!important}img{max-width:100%}
+/* Layout: sticky nav, split hero (copy + live demo card), interactive practice panel, difference grid, pilot offer */
+:root{
+  --bg:#F5F8FE; --surface:#FFFFFF; --ink:#101B34; --muted:#56637F; --line:#DAE2F4;
+  --blue:#2D6BEB; --blue-ink:#FFFFFF; --navy:#16254A; --teal:#D6EFF1; --amber:#F2A33A;
+  --partner:#E8EFFD; --good:#17855C; --soft:#EDF2FD;
+  --font-display:'Bricolage Grotesque','Inter',system-ui,sans-serif;
+  --font-body:'Inter','Noto Sans SC',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A1121; --surface:#121C34; --ink:#E8EEFC; --muted:#9AA8C9; --line:#23304F;
+  --blue:#5C91FF; --blue-ink:#0A1121; --navy:#0E1932; --teal:#12363F; --amber:#F5B25A;
+  --partner:#1A2745; --good:#46C795; --soft:#16213B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1121; --surface:#121C34; --ink:#E8EEFC; --muted:#9AA8C9; --line:#23304F;
+  --blue:#5C91FF; --blue-ink:#0A1121; --navy:#0E1932; --teal:#12363F; --amber:#F5B25A;
+  --partner:#1A2745; --good:#46C795; --soft:#16213B; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;overflow-x:hidden}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.05;margin:0;letter-spacing:-.02em}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1120px;margin:0 auto}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid transparent}
+nav .wrap{display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.03em;margin-right:auto}
+.logo i{width:30px;height:30px;border-radius:10px;background:var(--blue);position:relative;display:block}
+.logo i::before,.logo i::after{content:"";position:absolute;width:11px;height:11px;border:3px solid var(--blue-ink);border-radius:50%}
+.logo i::before{left:4px;top:7px}.logo i::after{right:4px;top:12px}
+nav .links{display:flex;gap:18px}
+nav a,nav .navbtn{background:none;border:0;color:var(--muted);font-weight:500;font-size:15px;padding:8px 4px;text-decoration:none}
+nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 22px;font-weight:600;font-size:16px;background:var(--blue);color:var(--blue-ink);transition:transform .15s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px -10px var(--blue)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{box-shadow:none;border-color:var(--blue)}
+.btn.sm{padding:9px 16px;font-size:14px}
+@media(max-width:720px){nav .links{display:none}}
+
+/* hero */
+.hero{position:relative;padding-block:56px 72px}
+.glyphs{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.glyphs span{position:absolute;font-family:var(--font-display);font-weight:800;color:var(--blue);opacity:.07;white-space:nowrap;animation:drift 18s ease-in-out infinite alternate}
+.glyphs span:nth-child(1){font-size:120px;left:-2%;top:6%}
+.glyphs span:nth-child(2){font-size:90px;right:4%;top:2%;animation-delay:-4s}
+.glyphs span:nth-child(3){font-size:110px;left:30%;bottom:-4%;animation-delay:-8s}
+.glyphs span:nth-child(4){font-size:80px;right:-2%;bottom:14%;animation-delay:-12s}
+@keyframes drift{from{transform:translate(0,0) rotate(-3deg)}to{transform:translate(26px,-18px) rotate(3deg)}}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(40px,6.2vw,76px);font-weight:800}
+.hero h1 em{font-style:normal;color:var(--blue);display:block}
+.hero p.lead{margin-top:22px;font-size:19px;color:var(--muted);max-width:34ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.proof{margin-top:28px;display:flex;flex-wrap:wrap;gap:8px}
+.proof span{font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.rise:nth-child(2){animation-delay:.08s}.rise:nth-child(3){animation-delay:.16s}.rise:nth-child(4){animation-delay:.24s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:36px}.hero{padding-block:36px 48px}}
+
+/* demo card */
+.demo{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:0 30px 60px -36px rgba(22,37,74,.45);min-width:0}
+.demo-top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--good);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--good) 20%,transparent)}}
+.demo-top b{font-size:14px}
+.demo-top small{margin-left:auto;color:var(--muted);font-size:12px}
+.demo-body{display:flex;flex-direction:column;gap:12px;min-height:250px}
+.bub{max-width:86%;padding:12px 16px;border-radius:20px;font-size:17px;line-height:1.4;opacity:0;transform:translateY(10px) scale(.98);transition:opacity .4s,transform .4s}
+.bub.in{opacity:1;transform:none}
+.bub.p{background:var(--partner);border-bottom-left-radius:6px;align-self:flex-start}
+.bub.u{background:var(--blue);color:var(--blue-ink);border-bottom-right-radius:6px;align-self:flex-end;min-height:46px}
+.fb{align-self:stretch;display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--teal);font-size:14px;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
+.fb.in{opacity:1;transform:none}
+.fb b{color:var(--good)}
+.caret::after{content:"";display:inline-block;width:2px;height:1em;background:currentColor;margin-left:2px;vertical-align:-2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* sections */
+section{padding-block:72px}
+.sec-head{max-width:640px;margin-bottom:32px}
+.sec-head h2{font-size:clamp(30px,4.4vw,48px);font-weight:800;margin-top:10px}
+.sec-head p{margin-top:14px;color:var(--muted);font-size:18px}
+
+/* practice panel */
+.panel{display:grid;grid-template-columns:300px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:28px;overflow:hidden;min-width:0}
+.setup{padding:22px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:20px;background:var(--soft)}
+.setup h3{font-size:13px;font-family:var(--font-body);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:500;transition:all .18s}
+.chip:hover{border-color:var(--blue)}
+.chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:var(--blue-ink)}
+.chip small{opacity:.7;margin-left:4px;font-size:12px}
+.scen{display:flex;flex-direction:column;gap:8px}
+.scen .chip{border-radius:14px;text-align:left}
+#langs,#levels{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#langs .chip,#levels .chip{text-align:center;padding-inline:8px}
+#langs .chip:last-child:nth-child(odd){grid-column:1/-1}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px}
+.switch button{width:44px;height:26px;border-radius:999px;border:0;background:var(--line);position:relative;transition:background .2s;flex:none}
+.switch button::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch button[aria-pressed="true"]{background:var(--blue)}
+.switch button[aria-pressed="true"]::after{transform:translateX(18px)}
+.chat{display:flex;flex-direction:column;min-width:0;min-height:560px}
+.chat-head{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.avatar svg{width:100%;height:100%;display:block}.avatar{overflow:hidden;width:46px;height:46px;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-weight:700;color:var(--navy);font-family:var(--font-display)}
+:root[data-theme="dark"] .avatar{color:var(--ink)}
+.chat-head b{display:block;line-height:1.2}
+.chat-head small{color:var(--muted);font-size:13px}
+.status{margin-left:auto;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.status.live{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.goals{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:10px 22px;border-bottom:1px solid var(--line);font-size:13px}.goals b{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.goals .g{display:inline-flex;align-items:center;gap:6px;opacity:.8}.goals .g i{font-style:normal;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);font-size:11px;font-weight:700}.goals .g.done{opacity:1}.goals .g.done i{background:var(--blue);border-color:var(--blue);color:var(--blue-ink)}
+.log{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:12px;max-height:520px;scroll-behavior:smooth}
+.msg{max-width:min(520px,88%);animation:pop .3s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg .b{padding:12px 16px;border-radius:20px;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
+.msg.p{align-self:flex-start}.msg.p .b{background:var(--partner);border-bottom-left-radius:6px}
+.msg.u{align-self:flex-end}.msg.u .b{background:var(--blue);color:var(--blue-ink);border-bottom-right-radius:6px}
+.msg .r{font-size:13px;color:var(--muted);margin:5px 6px 0;font-style:italic}
+.msg .e{font-size:13px;color:var(--muted);margin:3px 6px 0}
+.msg .tip{display:inline-block;margin:6px 4px 0 auto;font-size:12.5px;padding:5px 10px;border-radius:12px;background:var(--teal);color:var(--ink)}
+.msg.u{display:flex;flex-direction:column;align-items:flex-end}
+.typing{display:inline-flex;gap:4px;padding:4px 0}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+.compose{display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--line);align-items:center}
+.compose input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:12px 18px;font:inherit;font-size:16px}
+.compose input:focus{outline:none;border-color:var(--blue)}
+.round{width:46px;height:46px;border-radius:50%;border:0;background:var(--blue);color:var(--blue-ink);display:grid;place-items:center;flex:none;font-size:18px;font-weight:700}
+.round.mic{background:var(--soft);color:var(--ink)}
+.round.mic.on{background:#E5484D;color:#fff;animation:pulse 1.2s infinite}
+.under{display:flex;align-items:center;gap:12px;padding:0 18px 16px;flex-wrap:wrap}
+.under small{color:var(--muted);font-size:13px}
+.fbcard{margin:0 18px 18px;padding:18px 20px;border-radius:20px;background:var(--teal);animation:pop .4s ease both}
+.fbcard .score{font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1}
+.fbcard .score small{font-size:16px;color:var(--muted);font-weight:600}
+.fbcard dl{margin:12px 0 0;display:grid;gap:10px}
+.fbcard dt{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fbcard dd{margin:2px 0 0;font-size:15px}
+.fbcard .fbr{font-style:italic;color:var(--muted);font-size:13.5px;margin-top:2px}.fbcard .fbe{font-size:13.5px;color:var(--muted)}
+.helpcard{margin:0 18px 12px;padding:14px 16px;border-radius:18px;background:#FFF6DC;border:1px solid #F2D58A;animation:pop .3s ease both;font-size:14.5px}
+.helpcard p{margin:8px 0 0}.helpcard .ans span{color:var(--muted);font-size:13.5px}.helpcard .hr{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.helpcard .kws{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.helpcard .kw{background:#fff;border-radius:12px;padding:4px 10px;font-size:13px}.helpcard .kw em{color:var(--muted);font-style:normal}
+
+@media(max-width:860px){.panel{grid-template-columns:1fr}.setup{border-right:0;border-bottom:1px solid var(--line)}.chat{min-height:480px}}
+
+/* difference */
+.diff{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:26px;min-width:0;transition:transform .25s,border-color .25s}
+.card:hover{transform:translateY(-4px);border-color:var(--blue)}
+.card h3{font-size:24px;font-weight:800;margin:14px 0 8px}
+.card p{color:var(--muted)}
+.ico{width:44px;height:44px;border-radius:14px;background:var(--teal);display:grid;place-items:center;font-family:var(--font-display);font-weight:800;color:var(--navy);font-size:18px}
+:root[data-theme="dark"] .ico{color:var(--ink)}
+.table{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.row{display:grid;grid-template-columns:1fr 1.3fr 1.3fr;gap:16px;padding:16px 24px;border-top:1px solid var(--line);align-items:start}
+.row:first-child{border-top:0;background:var(--soft);font-weight:600;font-size:14px}
+.row span:first-child{color:var(--muted);font-size:14px;font-weight:500}
+.row .us{font-weight:600}
+.row .us::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:8px}
+@media(max-width:720px){.diff{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:4px}.row:first-child{display:none}.row span:nth-child(3)::before{content:"Typical apps: ";color:var(--muted);font-weight:500}}
+
+/* pilot */
+.pilot{background:var(--navy);color:#EAF0FF;border-radius:32px;padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;position:relative;overflow:hidden;min-width:0}
+.pilot h2{font-size:clamp(30px,4.4vw,48px);font-weight:800}
+.pilot .eyebrow{color:#8FB4FF}
+.pilot p{color:#B9C6E6;margin-top:14px;font-size:17px}
+.pilot ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:10px}
+.pilot li{display:flex;gap:10px;font-size:16px}
+.pilot li::before{content:"";flex:none;width:18px;height:18px;border-radius:50%;background:var(--blue);margin-top:4px;box-shadow:inset 0 0 0 5px var(--navy),0 0 0 2px var(--blue)}
+.price{background:#fff;color:#101B34;border-radius:24px;padding:28px;text-align:center;min-width:0}
+.price .big{font-family:var(--font-display);font-weight:800;font-size:72px;line-height:1;letter-spacing:-.04em}
+.price .big sup{font-size:30px;vertical-align:top;position:relative;top:8px}
+.price .per{color:#56637F;margin-top:6px}
+.price s{color:#8A96B0}
+.price .btn{width:100%;margin-top:20px;background:#2D6BEB;color:#fff}
+.price .note{font-size:13px;color:#56637F;margin-top:12px}
+.price .ok{font-size:14px;color:#17855C;font-weight:600;min-height:20px;margin-top:10px}
+.spots{margin-top:16px;height:8px;background:#E3E9F7;border-radius:99px;overflow:hidden}
+.spots i{display:block;height:100%;width:0;background:#2D6BEB;border-radius:99px;animation:fill 1.6s .4s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes fill{to{width:100%}}
+.honest{margin-top:20px;font-size:14px;color:var(--muted);max-width:60ch}
+@media(max-width:860px){.pilot{grid-template-columns:1fr;gap:28px}}
+
+footer{padding-block:40px 56px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--line)}
+.sr{position:absolute;left:-9999px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* join */
+.joinbox{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:clamp(22px,4vw,40px);max-width:640px;min-width:0}
+.jf{display:grid;gap:8px}
+.jf label{font-size:14px;font-weight:600;margin-top:10px}
+.jf label small{font-weight:400;color:var(--muted);margin-left:6px}
+.jf input,.jf select{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:13px 16px;font:inherit;font-size:16px;min-width:0;width:100%}
+.jf input:focus,.jf select:focus{outline:none;border-color:var(--blue)}
+.jf .btn{margin-top:18px;justify-self:start}
+.step{display:flex;gap:16px;margin-bottom:22px}
+.step>div{min-width:0;flex:1;display:grid;gap:8px;justify-items:start}
+.step .n{flex:none;width:32px;height:32px;border-radius:50%;background:var(--blue);color:var(--blue-ink);display:grid;place-items:center;font-weight:700}
+.mut{color:var(--muted);font-size:14px}
+textarea{width:100%;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 14px;font:inherit;font-size:14px;resize:none}
+.ref{background:var(--teal);border-radius:22px;padding:22px;display:grid;gap:12px;justify-items:start}
+.ref textarea{background:var(--surface)}
+.code{font-family:var(--font-display);font-weight:800;font-size:40px;letter-spacing:.04em;line-height:1.1}
+.dots{display:flex;gap:10px}
+.dots i{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--blue);display:block}
+.joinbox .ok{font-size:14px;color:var(--good);font-weight:600}
+
+/* touch and hover */
+.btn,.chip,.round{position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.96)}
+.chip{transition:transform .15s,border-color .18s,background .18s,box-shadow .2s}
+.chip:hover{transform:translateY(-2px);box-shadow:0 8px 18px -12px var(--blue)}
+.chip:active{transform:scale(.95)}
+.chip[aria-pressed="true"]{animation:chipPop .3s ease}
+@keyframes chipPop{0%{transform:scale(.92)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+.proof span{transition:transform .2s,background .2s,color .2s;cursor:default}
+.proof span:hover{transform:translateY(-3px) rotate(-1.5deg);background:var(--blue);color:var(--blue-ink)}
+.logo i{transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.logo:hover i{transform:rotate(-14deg) scale(1.1)}
+nav{transition:border-color .2s,box-shadow .2s}
+nav.scrolled{border-bottom-color:var(--line);box-shadow:0 10px 24px -22px rgba(22,37,74,.6)}
+nav .navbtn{position:relative;transition:color .2s}
+nav .navbtn::after{content:"";position:absolute;left:4px;right:4px;bottom:2px;height:2px;border-radius:2px;background:var(--blue);transform:scaleX(0);transition:transform .25s}
+nav .navbtn:hover{color:var(--ink)}nav .navbtn:hover::after{transform:scaleX(1)}
+.round{transition:transform .18s,box-shadow .2s}
+.round:hover{transform:scale(1.1);box-shadow:0 8px 16px -8px var(--blue)}
+.round:active{transform:scale(.9)}
+.switch button:hover{filter:brightness(.95)}
+.msg.p .b{cursor:pointer;transition:transform .15s,box-shadow .2s}
+.msg.p .b:hover{transform:translateX(3px);box-shadow:0 6px 16px -12px var(--blue)}
+.msg .tip{animation:pop .3s ease both}
+.avatar.bump{animation:bump .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bump{0%{transform:scale(.6) rotate(-12deg)}100%{transform:none}}
+.card{position:relative;overflow:hidden}
+.card>*{position:relative}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--blue) 14%,transparent),transparent 70%);opacity:0;transition:opacity .25s;pointer-events:none}
+.card:hover::before{opacity:1}
+.card:hover .ico{transform:rotate(-8deg) scale(1.1)}
+.ico{transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.row:not(:first-child){transition:background .2s,padding-left .2s}
+.row:not(:first-child):hover{background:var(--soft);padding-left:30px}
+.demo{transition:transform .25s ease-out,box-shadow .25s;will-change:transform}
+.price{transition:transform .25s}.price:hover{transform:translateY(-4px) rotate(-.6deg)}
+.pilot li{transition:transform .2s}.pilot li:hover{transform:translateX(5px)}
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.25;transform:scale(0);animation:rip .55s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+
+/* freemium */
+.chip.locked{opacity:.8;border-style:dashed}
+.chip.locked small{background:var(--blue);color:var(--blue-ink);opacity:1;border-radius:999px;padding:1px 8px;margin-left:8px;font-weight:600}
+.quota{margin-left:auto;font-weight:600;color:var(--blue)}
+.upsell{margin:0 18px 18px;padding:18px 20px;border-radius:20px;background:var(--navy);color:#EAF0FF;animation:pop .3s ease both}
+.upsell p{color:#B9C6E6;margin:6px 0 14px;font-size:15px}
+.upsell .ur{display:flex;gap:10px;flex-wrap:wrap}
+.upsell .btn.ghost{color:#EAF0FF;border-color:#3A4A74}
+.lock{display:grid;gap:8px;justify-items:start;padding:14px;border-radius:14px;background:var(--surface);border:1.5px dashed var(--blue)}
+.lock span{font-size:14px;color:var(--muted)}
+.plist{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:8px;color:var(--ink)}
+.plist li{display:flex;gap:10px;align-items:baseline}
+.plist li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--blue);transform:translateY(-1px)}
+.card.hl{border-color:var(--blue);background:linear-gradient(180deg,var(--soft),var(--surface))}
+.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--amber);color:#2A1B00;letter-spacing:.04em;text-transform:uppercase}
+.lvnote{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+.msg.p .hh{font-size:11.5px;color:var(--muted);opacity:.75;margin-top:3px}
+
+/* ===== Singapore edition ===== */
+.sgbtn{position:relative;display:inline-flex}
+.sgbtn button{width:44px;height:44px;padding:3px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);display:grid;place-items:center;transition:transform .2s cubic-bezier(.3,1.6,.5,1),box-shadow .2s;animation:sgPulse 2.4s ease-out 4}
+.sgbtn button:hover{transform:rotate(-7deg) scale(1.1)}
+.sgbtn button:active{transform:scale(.94)}
+@media(max-width:520px){.sgbtn .tip{right:-52px}.sgbtn .tip::before{right:70px}}
+.sgbtn .flagsvg{width:100%;height:100%;border-radius:50%;display:block}
+.sgbtn .tip{position:absolute;top:calc(100% + 10px);right:-4px;background:#D92D3B;color:#fff;font-size:13px;font-weight:700;padding:6px 13px;border-radius:999px;white-space:nowrap;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:0 8px 18px -8px rgba(217,45,59,.7)}
+.sgbtn .tip::before{content:"";position:absolute;top:-5px;right:22px;width:10px;height:10px;background:#D92D3B;transform:rotate(45deg);border-radius:2px}
+.sgbtn:hover .tip,.sgbtn button:focus-visible+.tip,.sgbtn.hint .tip{opacity:1;transform:none}
+.sgbtn.on button{border-color:#EF3340;box-shadow:0 0 0 3px rgba(239,51,64,.25);animation:none}
+@keyframes sgPulse{0%{box-shadow:0 0 0 0 rgba(239,51,64,.55)}70%{box-shadow:0 0 0 13px rgba(239,51,64,0)}100%{box-shadow:0 0 0 0 rgba(239,51,64,0)}}
+.sg-bar,.sg-deco,.sg-lion,.sgnote{display:none}
+.sg-bar .flagsvg{width:22px;height:15px;border-radius:3px}
+:root[data-sg="1"]{--bg:#FFF7F2;--surface:#FFFFFF;--ink:#1B1214;--muted:#6E5659;--line:#F3D9D4;--blue:#D92D3B;--blue-ink:#FFFFFF;--navy:#2B1015;--teal:#FDE6E2;--amber:#F2B705;--partner:#FFE9E4;--soft:#FFF0EC}
+@media (prefers-color-scheme:dark){:root[data-sg="1"]:not([data-theme="light"]){--bg:#160B0D;--surface:#221215;--ink:#FBEAE6;--muted:#D1A9A4;--line:#3A2024;--blue:#FF5A66;--blue-ink:#2A0B0F;--navy:#210E12;--teal:#3A1A1E;--amber:#F5C542;--partner:#3A1A1F;--soft:#2A1519}}
+:root[data-sg="1"][data-theme="dark"]{--bg:#160B0D;--surface:#221215;--ink:#FBEAE6;--muted:#D1A9A4;--line:#3A2024;--blue:#FF5A66;--blue-ink:#2A0B0F;--navy:#210E12;--teal:#3A1A1E;--amber:#F5C542;--partner:#3A1A1F;--soft:#2A1519}
+html[data-sg="1"] .sg-bar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 10px;background:#D92D3B;color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));text-align:center}
+html[data-sg="1"] .sg-bar .dotsep{opacity:.7}
+html[data-sg="1"] .sg-deco{display:block;position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;color:var(--blue)}
+html[data-sg="1"] .sg-stars{position:absolute;width:300px;opacity:.1}
+html[data-sg="1"] .sg-stars.s1{left:-30px;top:8px}html[data-sg="1"] .sg-stars.s2{right:-20px;top:46%;transform:scaleX(-1) rotate(8deg)}
+html[data-sg="1"] .sg-sky{position:absolute;left:0;right:0;bottom:0;height:90px;opacity:.09}
+html[data-sg="1"] .sg-sky svg{width:100%;height:100%;display:block}
+html[data-sg="1"] .hero{overflow:visible}
+html[data-sg="1"] .sg-lion{display:block;position:absolute;right:max(0px,calc(50% - 560px));bottom:-8px;width:190px;z-index:2;pointer-events:none;animation:lionBob 3.2s ease-in-out infinite}
+html[data-sg="1"] .sg-lion svg{width:100%;height:auto;display:block;overflow:visible}
+.sgflag{transform-origin:152px 56px;animation:flagWave 2.2s ease-in-out infinite}
+@keyframes lionBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes flagWave{0%,100%{transform:skewY(0)}50%{transform:skewY(-5deg)}}
+html[data-sg="1"] .hero{padding-bottom:110px}
+html[data-sg="1"] .sgnote{display:block;margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+html[data-sg="1"] .eyebrow{color:var(--blue)}
+html[data-sg="1"] .pilot,html[data-sg="1"] .upsell{color:#FFEDE9}
+html[data-sg="1"] .pilot .eyebrow{color:#FF9AA2}
+html[data-sg="1"] .pilot p,html[data-sg="1"] .upsell p{color:#F1C3C3}
+html[data-sg="1"] .upsell .btn.ghost{color:#FFEDE9;border-color:#6B3038}
+html[data-sg="1"] .spots{background:#F6DDD9}
+html[data-sg="1"] .spots i{background:#D92D3B}
+html[data-sg="1"] .price{color:#1B1214}
+html[data-sg="1"] .price .btn{background:#D92D3B;color:#fff}
+html[data-sg="1"] .price .per,html[data-sg="1"] .price .note{color:#6E5659}
+html[data-sg="1"] .price s{color:#A58B8E}
+html[data-sg="1"] .price .ok{color:#17855C}
+html[data-sg="1"] .demo{box-shadow:0 30px 60px -36px rgba(120,20,30,.45)}
+html[data-sg="1"] nav.scrolled{box-shadow:0 10px 24px -22px rgba(120,20,30,.6)}
+html[data-sg="1"] #langs .chip small{display:block;margin:2px 0 0;font-size:11.5px}
+.sgtoast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:#1B1214;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:60;max-width:calc(100vw - 32px);text-align:center}
+.sgtoast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:860px){html[data-sg="1"] .sg-lion{position:relative;right:auto;bottom:auto;width:140px;margin:6px auto -70px;display:block}html[data-sg="1"] .hero{padding-bottom:90px}}
+@media (prefers-reduced-motion:reduce){.sgbtn button,.sg-lion,.sgflag{animation:none!important}}
+</style>
+</head><body>
+<div class="sg-bar" aria-hidden="true"><svg class="flagsvg" viewBox="0 0 36 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="36" height="12" fill="#EF3340"/><rect y="12" width="36" height="12" fill="#fff"/><circle cx="9.6" cy="6" r="4.7" fill="#fff"/><circle cx="11.2" cy="6" r="4.1" fill="#EF3340"/><polygon points="15.00,0.35 15.28,1.21 16.19,1.21 15.45,1.75 15.73,2.61 15.00,2.08 14.27,2.61 14.55,1.75 13.81,1.21 14.72,1.21" fill="#fff"/><polygon points="20.37,4.25 19.64,4.79 19.92,5.65 19.18,5.12 18.45,5.65 18.73,4.79 18.00,4.25 18.90,4.25 19.18,3.39 19.47,4.25" fill="#fff"/><polygon points="18.32,10.57 17.59,10.04 16.85,10.57 17.13,9.71 16.40,9.17 17.31,9.17 17.59,8.31 17.87,9.17 18.78,9.17 18.04,9.71" fill="#fff"/><polygon points="11.68,10.57 11.96,9.71 11.22,9.17 12.13,9.17 12.41,8.31 12.69,9.17 13.60,9.17 12.87,9.71 13.15,10.57 12.41,10.04" fill="#fff"/><polygon points="9.63,4.25 10.53,4.25 10.82,3.39 11.10,4.25 12.00,4.25 11.27,4.79 11.55,5.65 10.82,5.12 10.08,5.65 10.36,4.79" fill="#fff"/></svg><span>Singapore Edition</span><span class="dotsep">·</span><span>English</span><span class="dotsep">·</span><span>华语</span><span class="dotsep">·</span><span>Bahasa Melayu</span><span class="dotsep">·</span><span>தமிழ்</span></div>
+<nav><div class="wrap">
+  <div class="logo"><i></i>LangoLink</div>
+  <span class="links">
+    <button class="navbtn" data-go="try">Try it</button>
+    <button class="navbtn" data-go="why">What's different</button>
+    <button class="navbtn" data-go="pilot">Founding pilot</button>
+    <button class="navbtn" data-go="join">Sign up</button>
+  </span>
+  <span class="sgbtn" id="sgWrap"><button type="button" id="sgBtn" aria-pressed="false" aria-label="Singapore edition: English, Chinese, Malay and Tamil"><svg class="flagsvg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><clipPath id="rf"><circle cx="20" cy="20" r="20"/></clipPath><g clip-path="url(#rf)"><rect width="40" height="20" fill="#EF3340"/><rect y="20" width="40" height="20" fill="#fff"/><circle cx="13.5" cy="11.5" r="7" fill="#fff"/><circle cx="16" cy="11.5" r="6" fill="#EF3340"/><polygon points="26.00,3.70 26.49,5.22 28.09,5.22 26.80,6.16 27.29,7.68 26.00,6.74 24.71,7.68 25.20,6.16 23.91,5.22 25.51,5.22" fill="#fff"/><polygon points="33.42,9.09 32.13,10.03 32.62,11.55 31.33,10.61 30.03,11.55 30.53,10.03 29.23,9.09 30.83,9.09 31.33,7.57 31.82,9.09" fill="#fff"/><polygon points="30.58,17.81 29.29,16.87 28.00,17.81 28.49,16.29 27.20,15.35 28.80,15.35 29.29,13.83 29.79,15.35 31.38,15.35 30.09,16.29" fill="#fff"/><polygon points="21.42,17.81 21.91,16.29 20.62,15.35 22.21,15.35 22.71,13.83 23.20,15.35 24.80,15.35 23.51,16.29 24.00,17.81 22.71,16.87" fill="#fff"/><polygon points="18.58,9.09 20.18,9.09 20.67,7.57 21.17,9.09 22.77,9.09 21.47,10.03 21.97,11.55 20.67,10.61 19.38,11.55 19.87,10.03" fill="#fff"/></g></svg></button><span class="tip" id="sgTip" role="status">Try me!</span></span>
+  <button class="btn sm" data-go="try">Start talking</button>
+</div></nav>
+
+<header class="hero"><div class="glyphs" aria-hidden="true"><span>你好</span><span>Hola</span><span>こんにちは</span><span>안녕</span></div>
+<div class="wrap hero-grid">
+  <div>
+    <p class="eyebrow rise">Speaking practice for real life</p>
+    <h1 class="rise" style="margin-top:14px">Real conversations.<em>Real choices.</em>Real fluency.</h1>
+    <p class="lead rise">Pick the moment you are nervous about, like ordering at a stall or a job interview, and practise it out loud before it happens.</p>
+    <div class="cta-row rise"><button class="btn" data-go="try">Try a conversation</button><button class="btn ghost" data-go="pilot">Join the $3 pilot</button></div>
+    <div class="proof rise"><span>Mandarin</span><span>Japanese</span><span>Korean</span><span>English</span><span>Spanish</span><span>French</span></div>
+  </div>
+  <div class="demo" aria-label="Example of a LangoLink conversation">
+    <div class="demo-top"><span class="dot"></span><b id="dLang">Spanish</b><small>Ordering a coffee</small></div>
+    <div class="demo-body">
+      <div class="bub p" id="dP"></div>
+      <div class="bub u" id="dU"></div>
+      <div class="fb" id="dF"><b>Feedback</b><span id="dFt"></span></div>
+    </div>
+  </div>
+<div class="sg-deco" aria-hidden="true"><div class="sg-stars s1"><svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor"><polygon points="60.00,44.00 63.59,55.06 75.22,55.06 65.81,61.89 69.40,72.94 60.00,66.11 50.60,72.94 54.19,61.89 44.78,55.06 56.41,55.06"/><polygon points="130.00,17.00 132.02,23.22 138.56,23.22 133.27,27.06 135.29,33.28 130.00,29.44 124.71,33.28 126.73,27.06 121.44,23.22 127.98,23.22"/><polygon points="36.00,118.00 38.25,124.91 45.51,124.91 39.63,129.18 41.88,136.09 36.00,131.82 30.12,136.09 32.37,129.18 26.49,124.91 33.75,124.91"/><polygon points="200.00,85.00 201.57,89.84 206.66,89.84 202.54,92.83 204.11,97.66 200.00,94.67 195.89,97.66 197.46,92.83 193.34,89.84 198.43,89.84"/><path d="M236 30a30 30 0 1 0 0 60a24 24 0 1 1 0-60z"/></svg></div><div class="sg-stars s2"><svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor"><polygon points="60.00,44.00 63.59,55.06 75.22,55.06 65.81,61.89 69.40,72.94 60.00,66.11 50.60,72.94 54.19,61.89 44.78,55.06 56.41,55.06"/><polygon points="130.00,17.00 132.02,23.22 138.56,23.22 133.27,27.06 135.29,33.28 130.00,29.44 124.71,33.28 126.73,27.06 121.44,23.22 127.98,23.22"/><polygon points="36.00,118.00 38.25,124.91 45.51,124.91 39.63,129.18 41.88,136.09 36.00,131.82 30.12,136.09 32.37,129.18 26.49,124.91 33.75,124.91"/><polygon points="200.00,85.00 201.57,89.84 206.66,89.84 202.54,92.83 204.11,97.66 200.00,94.67 195.89,97.66 197.46,92.83 193.34,89.84 198.43,89.84"/><path d="M236 30a30 30 0 1 0 0 60a24 24 0 1 1 0-60z"/></svg></div><div class="sg-sky"><svg viewBox="0 0 1200 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor"><rect x="0" y="58" width="50" height="32"/><rect x="54" y="26" width="34" height="64"/><rect x="68.0" y="14" width="6" height="12"/><rect x="100" y="26" width="34" height="64"/><rect x="114.0" y="14" width="6" height="12"/><rect x="138" y="38" width="60" height="52"/><rect x="165.0" y="26" width="6" height="12"/><rect x="202" y="38" width="70" height="52"/><rect x="234.0" y="26" width="6" height="12"/><rect x="284" y="58" width="34" height="32"/><rect x="330" y="26" width="34" height="64"/><rect x="368" y="66" width="42" height="24"/><rect x="414" y="38" width="50" height="52"/><rect x="436.0" y="26" width="6" height="12"/><rect x="468" y="50" width="70" height="40"/><rect x="550" y="66" width="42" height="24"/><rect x="604" y="50" width="42" height="40"/><rect x="622.0" y="38" width="6" height="12"/><rect x="658" y="26" width="34" height="64"/><rect x="672.0" y="14" width="6" height="12"/><rect x="696" y="14" width="60" height="76"/><rect x="764" y="26" width="60" height="64"/><rect x="832" y="58" width="50" height="32"/><rect x="894" y="66" width="42" height="24"/><rect x="948" y="50" width="60" height="40"/><rect x="1016" y="66" width="70" height="24"/><rect x="1048.0" y="54" width="6" height="12"/><rect x="1094" y="50" width="42" height="40"/><rect x="1112.0" y="38" width="6" height="12"/><rect x="1144" y="66" width="60" height="24"/></svg></div></div>
+<div class="sg-lion" aria-hidden="true"><svg viewBox="0 0 215 205" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LangoLink lion mascot waving a Singapore pennant">
+<path d="M132 160 Q172 160 178 126" fill="none" stroke="#1B1214" stroke-width="3.5" stroke-linecap="round"/><circle cx="179" cy="118" r="10" fill="#E8962B" stroke="#1B1214" stroke-width="3"/>
+<ellipse cx="100" cy="160" rx="36" ry="30" fill="#F6C469" stroke="#1B1214" stroke-width="3"/>
+<ellipse cx="80" cy="187" rx="14" ry="8" fill="#FFE2A8" stroke="#1B1214" stroke-width="3"/><ellipse cx="120" cy="187" rx="14" ry="8" fill="#FFE2A8" stroke="#1B1214" stroke-width="3"/>
+<g class="sgflag"><line x1="152" y1="38" x2="152" y2="176" stroke="#1B1214" stroke-width="4" stroke-linecap="round"/><clipPath id="fc"><rect x="152" y="34" width="62" height="42" rx="3"/></clipPath><g clip-path="url(#fc)"><rect x="152" y="34" width="62" height="21" fill="#EF3340"/><rect x="152" y="55" width="62" height="21" fill="#fff"/><circle cx="166" cy="44.5" r="7.2" fill="#fff"/><circle cx="168.4" cy="44.5" r="6.2" fill="#EF3340"/><polygon points="185.00,36.90 185.49,38.42 187.09,38.42 185.80,39.36 186.29,40.88 185.00,39.94 183.71,40.88 184.20,39.36 182.91,38.42 184.51,38.42" fill="#fff"/><polygon points="192.23,42.15 190.93,43.09 191.43,44.61 190.14,43.67 188.84,44.61 189.34,43.09 188.04,42.15 189.64,42.15 190.14,40.63 190.63,42.15" fill="#fff"/><polygon points="189.47,50.65 188.17,49.71 186.88,50.65 187.37,49.13 186.08,48.19 187.68,48.19 188.17,46.67 188.67,48.19 190.27,48.19 188.97,49.13" fill="#fff"/><polygon points="180.53,50.65 181.03,49.13 179.73,48.19 181.33,48.19 181.83,46.67 182.32,48.19 183.92,48.19 182.63,49.13 183.12,50.65 181.83,49.71" fill="#fff"/><polygon points="177.77,42.15 179.37,42.15 179.86,40.63 180.36,42.15 181.96,42.15 180.66,43.09 181.16,44.61 179.86,43.67 178.57,44.61 179.07,43.09" fill="#fff"/></g><rect x="152" y="34" width="62" height="42" rx="3" fill="none" stroke="#1B1214" stroke-width="3"/></g>
+<circle cx="146.0" cy="86.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="139.8" cy="109.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="123.0" cy="125.8" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="100.0" cy="132.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="77.0" cy="125.8" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="60.2" cy="109.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="54.0" cy="86.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="60.2" cy="63.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="77.0" cy="46.2" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="100.0" cy="40.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="123.0" cy="46.2" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="139.8" cy="63.0" r="21" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="100" cy="86" r="46" fill="#E8962B"/>
+<circle cx="70" cy="54" r="10" fill="#E8962B" stroke="#1B1214" stroke-width="3"/><circle cx="130" cy="54" r="10" fill="#E8962B" stroke="#1B1214" stroke-width="3"/>
+<circle cx="100" cy="90" r="35" fill="#FFE2A8" stroke="#1B1214" stroke-width="3"/>
+<path d="M82 86 q6 -8 12 0 M106 86 q6 -8 12 0" fill="none" stroke="#1B1214" stroke-width="3" stroke-linecap="round"/>
+<circle cx="79" cy="100" r="6" fill="#F58A8A" opacity=".65"/><circle cx="121" cy="100" r="6" fill="#F58A8A" opacity=".65"/>
+<path d="M94 97 h12 l-6 7z" fill="#1B1214"/><path d="M100 104 v5 M100 109 q-7 6 -13 0 M100 109 q7 6 13 0" fill="none" stroke="#1B1214" stroke-width="2.6" stroke-linecap="round"/>
+<ellipse cx="152" cy="132" rx="9" ry="8" fill="#FFE2A8" stroke="#1B1214" stroke-width="3"/>
+</svg></div></header>
+
+<section id="try" class="wrap">
+  <div class="sec-head"><p class="eyebrow">Try it now</p><h2>Choose a language. Choose a situation. Start talking.</h2><p>No lesson path to unlock. Your partner replies to what you actually say, and tells you how to sound more natural.</p></div>
+  <div class="panel">
+    <aside class="setup">
+      <div><h3>Language</h3><div class="chips" id="langs"></div><p class="sgnote">Every situation is set in Singapore. Malay and Tamil are in beta.</p></div>
+      <div><h3>Situation</h3><div class="scen" id="scens"></div></div>
+      <div><h3>Level</h3><div class="chips" id="levels"></div></div>
+      <div class="switch"><span>Show English meaning</span><button id="hintSw" aria-pressed="true" aria-label="Show English meaning"></button></div>
+    </aside>
+    <div class="chat">
+      <div class="chat-head"><div class="avatar" id="av">L</div><div><b id="pName">Lucía</b><small id="pRole">Your conversation partner</small></div><span class="status" id="status">Demo replies</span></div>
+      <div class="goals" id="goals" aria-label="Goals for this situation"></div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <div id="fbslot"></div><div id="help"></div>
+      <form class="compose" id="form"><input id="inp" autocomplete="off" placeholder="Type your reply here" aria-label="Your reply"><button type="button" class="round mic" id="mic" hidden aria-label="Speak">●</button><button class="round" aria-label="Send">&#8593;</button></form>
+      <div class="under"><button class="btn ghost sm" id="helpBtn" type="button">Need help?</button><button class="btn ghost sm" id="fbBtn" type="button">Get feedback</button><button class="btn ghost sm" id="resetBtn" type="button">Start over</button><small id="hintline">Tap any partner message to see its English meaning.</small><small id="quota" class="quota"></small></div>
+    </div>
+  </div>
+</section>
+
+<section id="why" class="wrap">
+  <div class="sec-head"><p class="eyebrow">What's different</p><h2>Built around what you want to say, not a streak.</h2><p>Most apps teach you words in a fixed order. LangoLink starts from the situation in front of you.</p></div>
+  <div class="diff">
+    <div class="card"><div class="ico">1</div><h3>You choose the moment</h3><p>Kopitiam order, a work small talk, a trip next month. You pick it, and the conversation follows you.</p></div>
+    <div class="card"><div class="ico">2</div><h3>Private first, people second</h3><p>Practise with an AI partner where nobody is watching, then move to a real learner from another country when you are ready.</p></div>
+    <div class="card"><div class="ico">3</div><h3>Feedback on your own sentences</h3><p>Not a quiz score. You get what sounded good, what to fix, and a more natural way to say it.</p></div>
+    <div class="card"><div class="ico">4</div><h3>No streak guilt</h3><p>Progress is counted in conversations you have had. Miss a week and nothing is lost or reset.</p></div>
+  </div>
+  <div class="table" role="table">
+    <div class="row" role="row"><span></span><span>LangoLink</span><span>Typical lesson-and-streak apps</span></div>
+    <div class="row"><span>Where you start</span><span class="us">A situation you pick</span><span>A fixed unit order</span></div>
+    <div class="row"><span>What you practise</span><span class="us">Speaking full replies</span><span>Tapping and translating short items</span></div>
+    <div class="row"><span>If you are shy</span><span class="us">Private AI practice first</span><span>Little live speaking</span></div>
+    <div class="row"><span>Real people</span><span class="us">Matched partners (coming)</span><span>Mostly none</span></div>
+    <div class="row"><span>Feedback</span><span class="us">On what you actually said</span><span>Right or wrong per item</span></div>
+  </div>
+</section>
+
+<section id="plans" class="wrap">
+  <div class="sec-head"><p class="eyebrow">Free and pilot</p><h2>Try it free. Pay $3 for the full thing.</h2><p>The free preview shows how it feels. The pilot is where you actually build the habit.</p></div>
+  <div class="diff">
+    <div class="card"><h3>Free preview</h3><ul class="plist"><li>All 7 languages</li><li>2 situations: order food, meet someone new</li><li>6 messages per visit</li><li>English meaning on every message</li><li>Score and what worked</li></ul><button class="btn ghost sm" data-go="try">Try it now</button></div>
+    <div class="card hl"><h3>Pilot, $3 for 4 weeks</h3><ul class="plist"><li>All 4 situations now, more added during the beta, plus ones you request</li><li>Unlimited practice</li><li>Full feedback with a more natural line</li><li>A weekly recap from the builder</li><li>Partner match <span class="tag">Beta</span></li><li>Founding price locked in</li><li>Free if you refer 3 friends who pay</li></ul><button class="btn sm" data-go="join">Join the pilot</button></div>
+  </div>
+</section>
+
+<section id="pilot" class="wrap">
+  <div class="pilot">
+    <div>
+      <p class="eyebrow">Founding pilot</p>
+      <h2 style="margin-top:10px">Help shape it for $3.</h2>
+      <p>The first 15 learners get four weeks of full access and a direct line to the builder.</p>
+      <ul>
+        <li>Four weeks of AI speaking practice in every language above</li>
+        <li>Your feedback decides what gets built next</li>
+        <li>Refer 3 friends who join and your own pilot is free</li>
+      </ul>
+    </div>
+    <div class="price">
+      <div class="big"><sup>$</sup>3</div>
+      <div class="per">for 4 weeks <s>$9.99/month later</s></div>
+      <div class="spots" aria-hidden="true"><i></i></div>
+      <button class="btn" data-go="join">Join the pilot</button>
+      <div class="note">Pay only after you sign up. Friends must pay the $3 for a referral to count.</div>
+    </div>
+  </div>
+  <p class="honest">LangoLink is an early prototype. The AI conversation partner on this page is working now. Matching with real partners is being built with the first pilot learners.</p>
+</section>
+
+<section id="join" class="wrap">
+  <div class="sec-head"><p class="eyebrow">Sign up</p><h2>Save your spot in two steps.</h2><p>Tell us who you are, send one message, and pay the $3 when you get the PayNow details.</p></div>
+  <div class="joinbox">
+    <form id="joinForm" class="jf">
+      <label for="jn">Your name</label>
+      <input id="jn" required autocomplete="name" placeholder="e.g. Sam">
+      <label for="jl">Language you want to practise</label>
+      <select id="jl"><option>Mandarin</option><option>Japanese</option><option>Korean</option><option>English</option><option>Spanish</option><option>French</option></select>
+      <label for="jr">Who sent you? <small>Friend's name or code, optional</small></label>
+      <input id="jr" autocomplete="off" placeholder="e.g. HAM-482">
+      <button class="btn" type="submit">Get my spot</button>
+    </form>
+    <div id="joinDone" hidden>
+      <div class="step"><span class="n">1</span><div><b>Send this to whoever shared the page with you</b>
+        <textarea id="msgJoin" readonly rows="6" aria-label="Your join message"></textarea>
+        <button class="btn sm" type="button" data-copy="msgJoin">Copy message</button> <a class="btn sm" id="waBtn" hidden target="_blank" rel="noopener" style="text-decoration:none">Send on WhatsApp</a> <span class="ok" id="okJoin" role="status"></span></div></div>
+      <div class="step"><span class="n">2</span><div><b>Pay $3 once you get the PayNow details</b><p class="mut">Your spot is confirmed when the payment is received.</p></div></div>
+      <div class="ref">
+        <div><p class="eyebrow">Your referral code</p><div class="code" id="myCode">-</div>
+        <p class="mut">Refer 3 friends who join and pay $3 with your code, and your own pilot is free.</p></div>
+        <div class="dots" aria-label="Referral progress"><i></i><i></i><i></i></div>
+        <p class="mut">0 of 3 so far. Your count updates when your friends' payments are confirmed.</p>
+        <textarea id="msgRef" readonly rows="4" aria-label="Message to share with friends"></textarea>
+        <button class="btn sm" type="button" data-copy="msgRef">Copy message for friends</button> <span class="ok" id="okRef" role="status"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap"><span>LangoLink · built in Singapore</span><span>Real conversations. Real choices. Real fluency.</span></footer>
+
+<script>
+(function(){
+/* EDIT THIS: your WhatsApp number with country code, digits only, e.g. 6591234567. Leave empty to hide the WhatsApp button. */
+var WA_NUMBER='';
+var $=function(s){return document.querySelector(s)};
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* smooth in-page navigation without touching the hash */
+document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){
+  var t=document.getElementById(b.dataset.go);if(t)t.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});});
+
+/* ---------- hero demo ---------- */
+var demos=[
+ {l:'Mandarin',p:'你想喝点什么？',u:'我要一杯咖啡，谢谢。',f:'Clear. Add 请问 at the start to sound softer.'},
+ {l:'Japanese',p:'ご注文はお決まりですか？',u:'コーヒーをお願いします。',f:'Polite and exactly what staff expect.'},
+ {l:'Korean',p:'뭐 드릴까요?',u:'아메리카노 한 잔 주세요.',f:'Natural. Add 따뜻한 or 차가운 for hot or iced.'},
+ {l:'Spanish',p:'¿Qué le pongo?',u:'Un café con leche, por favor.',f:'Natural. Locals also say "Me pones un café con leche".'},
+ {l:'French',p:"Qu'est-ce que je vous sers ?",u:'Un café, s\'il vous plaît.',f:'Perfect. "Je voudrais un café" sounds more formal.'}
+];
+var di=0,dt=[];
+function later(fn,ms){dt.push(setTimeout(fn,ms))}
+function runDemo(){
+  var d=demos[di%demos.length];
+  var P=$('#dP'),U=$('#dU'),F=$('#dF');
+  [P,U,F].forEach(function(e){e.classList.remove('in','caret')});
+  $('#dLang').textContent=d.l;P.textContent=d.p;U.textContent='';$('#dFt').textContent=d.f;
+  if(reduce){P.classList.add('in');U.textContent=d.u;U.classList.add('in');F.classList.add('in');return}
+  later(function(){P.classList.add('in')},300);
+  later(function(){U.classList.add('in','caret');var i=0;(function type(){U.textContent=d.u.slice(0,++i);if(i<d.u.length)later(type,55)})();},1300);
+  var typed=1300+d.u.length*55+250;
+  later(function(){U.classList.remove('caret');F.classList.add('in')},typed);
+  later(function(){di++;runDemo()},typed+3200);
+}
+runDemo();
+
+/* ---------- practice data ---------- */
+var SC=['Order food','Meet someone new','Ask for directions','Job interview'];
+var L={
+ es:{n:'Spanish',nat:'Español',who:'Lucía',
+  op:[['Buenas tardes, ¿qué le pongo?','','Good afternoon, what can I get you?'],['¡Hola! Me llamo Lucía. ¿Cómo te llamas?','','Hi! I am Lucía. What is your name?'],['Perdona, ¿sabes dónde está la estación?','','Excuse me, do you know where the station is?'],['Cuéntame un poco sobre ti.','','Tell me a little about yourself.']],
+  fb:[['¡Muy bien! ¿Puedes decirme más?','','Very good! Can you tell me more?'],['Entiendo. ¿Y por qué?','','I see. And why?'],['¡Perfecto! Sigamos.','','Perfect! Let us go on.']]},
+ zh:{n:'Mandarin',nat:'中文',who:'Xiao Mei',
+  op:[['你好，请问想吃点什么？','Nǐ hǎo, qǐngwèn xiǎng chī diǎn shénme?','Hello, what would you like to eat?'],['你好！我叫小美，你叫什么名字？','Nǐ hǎo! Wǒ jiào Xiǎo Měi, nǐ jiào shénme míngzi?','Hi! I am Xiao Mei. What is your name?'],['不好意思，请问地铁站在哪里？','Bù hǎoyìsi, qǐngwèn dìtiě zhàn zài nǎlǐ?','Excuse me, where is the MRT station?'],['请先做个简单的自我介绍。','Qǐng xiān zuò gè jiǎndān de zìwǒ jièshào.','Please start with a short self-introduction.']],
+  fb:[['很好！你能多说一点吗？','Hěn hǎo! Nǐ néng duō shuō yìdiǎn ma?','Very good! Can you say a bit more?'],['我明白了。为什么呢？','Wǒ míngbái le. Wèishénme ne?','I see. Why is that?'],['太棒了，我们继续吧。','Tài bàng le, wǒmen jìxù ba.','Great, let us continue.']]},
+ fr:{n:'French',nat:'Français',who:'Camille',
+  op:[['Bonjour, qu\'est-ce que je vous sers ?','','Hello, what can I get you?'],['Salut ! Moi, c\'est Camille. Et toi, comment tu t\'appelles ?','','Hi! I am Camille. And you, what is your name?'],['Excusez-moi, où est la gare, s\'il vous plaît ?','','Excuse me, where is the train station, please?'],['Parlez-moi un peu de vous.','','Tell me a little about yourself.']],
+  fb:[['Très bien ! Tu peux m\'en dire plus ?','','Very good! Can you tell me more?'],['Je vois. Et pourquoi ?','','I see. And why?'],['Parfait, continuons.','','Perfect, let us continue.']]},
+ ja:{n:'Japanese',nat:'日本語',who:'Yui',
+  op:[['いらっしゃいませ。ご注文は何になさいますか？','Irasshaimase. Gochūmon wa nani ni nasaimasu ka?','Welcome. What would you like to order?'],['はじめまして。私はゆいです。お名前は？','Hajimemashite. Watashi wa Yui desu. Onamae wa?','Nice to meet you. I am Yui. What is your name?'],['すみません、駅はどこですか？','Sumimasen, eki wa doko desu ka?','Excuse me, where is the station?'],['まず、自己紹介をお願いします。','Mazu, jiko shōkai o onegaishimasu.','First, please introduce yourself.']],
+  fb:[['いいですね！もう少し教えてください。','Ii desu ne! Mō sukoshi oshiete kudasai.','Nice! Tell me a little more.'],['なるほど。どうしてですか？','Naruhodo. Dōshite desu ka?','I see. Why is that?'],['ありがとうございます。続けましょう。','Arigatō gozaimasu. Tsuzukemashō.','Thank you. Let us continue.']]},
+ ko:{n:'Korean',nat:'한국어',who:'Jimin',
+  op:[['어서 오세요. 뭘 드릴까요?','Eoseo oseyo. Mwol deurilkkayo?','Welcome. What can I get you?'],['안녕하세요! 저는 지민이에요. 이름이 뭐예요?','Annyeonghaseyo! Jeoneun Jimin-ieyo. Ireumi mwoyeyo?','Hello! I am Jimin. What is your name?'],['실례합니다, 지하철역이 어디예요?','Sillyehamnida, jihacheolyeogi eodiyeyo?','Excuse me, where is the subway station?'],['먼저 자기소개를 해 주세요.','Meonjeo jagisogaereul hae juseyo.','First, please introduce yourself.']],
+  fb:[['좋아요! 조금 더 말해 줄 수 있어요?','Joayo! Jogeum deo malhae jul su isseoyo?','Good! Can you say a bit more?'],['그렇군요. 왜요?','Geureokunyo. Waeyo?','I see. Why?'],['좋아요. 계속해요.','Joayo. Gyesokaeyo.','Good. Let us continue.']]},
+ en:{n:'English',nat:'English',who:'Sam',
+  op:[['Morning! Kopi or teh? What can I get you?','','A kopitiam uncle asks for your order.'],['Hi! I am Sam. What do you do, and what do you enjoy?','','A new coworker is making small talk.'],['Excuse me, how do I get to the MRT station from here?','','A visitor asks you for directions.'],['Thanks for coming in. Can you walk me through your background?','','An interviewer opens the conversation.']],
+  fb:[['That is clear. Can you tell me a bit more?','','Clear. Can you say a bit more?'],['I see. Why is that?','','Asking you to explain why.'],['Great, let us keep going.','','Keep the conversation moving.']]}
+};
+L.ms={n:'Malay',nat:'Bahasa Melayu',who:'Aisyah',
+  op:[['Selamat pagi! Nak makan apa hari ini?','','Good morning! What would you like to eat today?'],['Hai! Saya Aisyah, jiran baru di sebelah. Siapa nama awak?','','Hi! I am Aisyah, your new neighbour. What is your name?'],['Maaf, di mana stesen MRT?','','Excuse me, where is the MRT station?'],['Terima kasih kerana datang ke kafe kami. Boleh ceritakan sedikit tentang diri awak?','','Thanks for coming to our cafe. Can you tell me a bit about yourself?']],
+  fb:[['Bagus! Boleh cerita lagi?','','Good! Can you tell me more?'],['Oh begitu. Kenapa?','','I see. Why?'],['Baik, mari kita teruskan.','','Okay, let us go on.']]};
+L.ta={n:'Tamil',nat:'தமிழ்',who:'Priya',
+  op:[['வணக்கம்! என்ன வேணும்? தோசை, இட்லி, பிரியாணி இருக்கு.','Vanakkam! Enna venum? Dosai, idli, biriyani irukku.','Hello! What would you like? We have dosa, idli and biryani.'],['வணக்கம்! நான் பிரியா, புதிய அண்டை வீட்டுக்காரர். உங்கள் பெயர் என்ன?','Vanakkam! Naan Priya, puthiya andai veettukkaarar. Ungal peyar enna?','Hello! I am Priya, your new neighbour. What is your name?'],['மன்னிக்கவும், MRT நிலையம் எங்கே இருக்கு?','Mannikkavum, MRT nilaiyam enge irukku?','Excuse me, where is the MRT station?'],['கஃபேக்கு வந்ததற்கு நன்றி. உங்களைப் பற்றி சொல்லுங்கள்.','Cafekku vandhadharku nandri. Ungalai pathi sollunga.','Thanks for coming to the cafe. Tell me about yourself.']],
+  fb:[['நல்லது! இன்னும் கொஞ்சம் சொல்லுங்கள்.','Nalladhu! Innum konjam sollunga.','Good! Tell me a little more.'],['சரி. ஏன்?','Sari. Aen?','I see. Why?'],['சிறப்பு! தொடரலாம்.','Sirappu! Thodarlaam.','Great! Let us continue.']]};
+var ORDER=['zh','ja','ko','en','es','fr'];
+var LV=['Beginner','Intermediate'];
+var st={lang:'zh',scen:0,level:'Beginner',hints:true,msgs:[],busy:false,fbi:0};
+var sampleFn=null;
+var FREE_MSGS=6,GATED=!/full/.test(location.hash);st.used=0;st.step=0;st.name='';st.item=null;st.stats=newStats();
+function go(id){var t=document.getElementById(id);if(t)t.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}
+
+function chip(txt,pressed,fn,extra){var b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed',pressed);b.innerHTML=txt+(extra?'<small>'+extra+'</small>':'');b.addEventListener('click',fn);return b}
+function buildSetup(){
+  var a=$('#langs'),b=$('#scens'),c=$('#levels');a.innerHTML=b.innerHTML=c.innerHTML='';
+  ORDER.forEach(function(k){a.appendChild(chip(L[k].n,st.lang===k,function(){st.lang=k;start()},(window.__sg&&window.__sg()?(SGNAT[k]||''):'')))});
+  SC.forEach(function(s,i){var lk=GATED&&i>1;var c=chip(s,st.scen===i,function(){if(lk){showUpsell('situation')}else{st.scen=i;start()}},lk?'Pilot':'');if(lk)c.classList.add('locked');b.appendChild(c)});
+  var more=document.createElement('span');more.className='tag';more.style.cssText='align-self:center;margin-left:4px';more.textContent='More situations coming in beta';b.appendChild(more);
+  LV.forEach(function(v){c.appendChild(chip(v,st.level===v,function(){st.level=v;st.hints=(v==='Beginner');var hs=$('#hintSw');if(hs)hs.setAttribute('aria-pressed',st.hints);buildSetup();render()}))});
+  var ln=$('#lvNote');if(!ln){ln=document.createElement('p');ln.id='lvNote';ln.className='lvnote';c.parentNode.appendChild(ln)}
+  ln.textContent=st.level==='Beginner'?'Beginner: romanisation and English shown under every message.':'Intermediate: romanisation and English are hidden. Tap a message when you need help.';
+}
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function renderGoals(){var el=$('#goals');if(!el)return;var g=STEPTXT[st.scen],tr=!sampleFn;el.innerHTML='<b>Goals</b>'+g.map(function(t,i){var d=tr&&st.step>i;return '<span class="g'+(d?' done':'')+'"><i>'+(d?'\u2713':(i+1))+'</i>'+esc(t.replace(/\.$/,''))+'</span>'}).join('')}
+function render(){
+  renderGoals();
+  var log=$('#log');
+  log.innerHTML=st.msgs.map(function(m,i){
+    if(m.role==='u')return '<div class="msg u"><div class="b">'+esc(m.t)+'</div>'+(m.tip?'<span class="tip">'+esc(m.tip)+'</span>':'')+'</div>';
+    var body=m.t?esc(m.t):'<span class="typing"><i></i><i></i><i></i></span>';
+    return '<div class="msg p" data-i="'+i+'"><div class="b" title="Tap for English">'+body+'</div>'+((st.level==='Beginner'||m.show)&&m.r?'<div class="r">'+esc(m.r)+'</div>':'')+((st.hints||m.show)&&m.e?'<div class="e">'+esc(m.e)+'</div>':'')+(st.level!=='Beginner'&&!m.show&&m.t&&(m.r||m.e)?'<div class="hh">Tap for help</div>':'')+'</div>';
+  }).join('');
+  log.scrollTop=log.scrollHeight;
+  var q=$('#quota');if(q)q.textContent=GATED?Math.max(0,FREE_MSGS-st.used)+' of '+FREE_MSGS+' free messages left':'';
+}
+function start(){
+  var k=L[st.lang],o=k.op[st.scen];
+  st.msgs=[{role:'p',t:o[0],r:o[1],e:o[2]}];st.fbi=0;st.busy=false;st.step=0;st.fail=0;st.name='';st.item=null;st.stats=newStats();
+  $('#pName').textContent=k.who;$('#av').innerHTML=avatarSVG(st.lang);
+  $('#pRole').textContent=k.n+' · '+SC[st.scen];
+  $('#fbslot').innerHTML='';var hb=$('#help');if(hb)hb.innerHTML='';
+  var av=$('#av');av.classList.remove('bump');void av.offsetWidth;av.classList.add('bump');
+  buildSetup();render();
+}
+function setStatus(){var hbn=$('#helpBtn');if(hbn)hbn.hidden=!!sampleFn;var s=$('#status');if(sampleFn){s.textContent='AI partner live';s.classList.add('live')}else{s.textContent='Demo replies';s.classList.remove('live')}}
+
+function showUpsell(reason){
+  var msg=reason==='situation'?'This situation is part of the pilot.':'Your '+FREE_MSGS+' free messages are used up.';
+  var slot=$('#fbslot');
+  slot.innerHTML='<div class="upsell"><b>'+msg+'</b><p>The $3 pilot gives you unlimited practice, all four situations, full feedback and a weekly recap.</p><div class="ur"><button class="btn sm" type="button" id="upJoin">Join the pilot</button><button class="btn ghost sm" type="button" id="upClose">Not now</button></div></div>';
+  $('#upJoin').addEventListener('click',function(){go('join')});
+  $('#upClose').addEventListener('click',function(){slot.innerHTML=''});
+  slot.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+}
+function transcript(){return st.msgs.filter(function(m){return m.t}).map(function(m){return (m.role==='u'?'Learner: ':'Partner: ')+m.t}).join('\n')}
+function applyReply(text,final){
+  var parts=text.split('||').map(function(s){return s.trim()});
+  var p=st.msgs[st.msgs.length-1];
+  p.t=parts[0]||'';p.r=(parts[1]&&parts[1]!=='-')?parts[1]:'';p.e=parts[2]||'';
+  if(parts[3]){var u=st.msgs[st.msgs.length-2];if(u&&u.role==='u')u.tip=parts[3]}
+  render();
+}
+/* ---------- demo partner: situation-aware, personalised replies ---------- */
+var CJK=/[一-鿿぀-ヿ가-힯]/;
+var KB={
+ zh:{is:function(t){return /[一-鿿]/.test(t)},
+  off:['不好意思，我听不懂。请用中文说。','Bù hǎoyìsi, wǒ tīng bù dǒng. Qǐng yòng Zhōngwén shuō.','Sorry, I do not understand. Please speak Chinese.'],
+  model:[['老板，我要一份鸡饭，谢谢。','Lǎobǎn, wǒ yào yí fèn jīfàn, xièxie.','Boss, I would like one chicken rice, thanks.'],['你好，我叫小明。很高兴认识你。','Nǐ hǎo, wǒ jiào Xiǎomíng. Hěn gāoxìng rènshi nǐ.','Hi, I am Xiaoming. Nice to meet you.'],['一直走，然后在路口右转。','Yìzhí zǒu, ránhòu zài lùkǒu yòuzhuǎn.','Go straight, then turn right at the junction.'],['我是学生，我喜欢和人合作。','Wǒ shì xuésheng, wǒ xǐhuān hé rén hézuò.','I am a student and I like working with people.']],
+  items:[[/鸡饭/,'鸡饭','jīfàn','chicken rice'],[/炒饭/,'炒饭','chǎofàn','fried rice'],[/叻沙/,'叻沙','lèshā','laksa'],[/面/,'面','miàn','noodles'],[/咖啡/,'咖啡','kāfēi','coffee'],[/奶茶/,'奶茶','nǎichá','milk tea'],[/米粉/,'米粉','mǐfěn','bee hoon'],[/肉骨茶/,'肉骨茶','ròugǔchá','bak kut teh'],[/茶/,'茶','chá','tea']],
+  ok1:['好的，{i}。还要别的吗？','Hǎo de, {ir}. Hái yào bié de ma?','Okay, {ie}. Anything else?'],mid:['堂食还是打包？','Tángshí háishi dǎbāo?','Eat in or takeaway?'],end:['一共五块。谢谢，慢走！','Yígòng wǔ kuài. Xièxie, màn zǒu!','That is five dollars. Thank you, take care!'],
+  unk:['你想吃什么？有鸡饭、炒饭和面。','Nǐ xiǎng chī shénme? Yǒu jīfàn, chǎofàn hé miàn.','What would you like? We have chicken rice, fried rice and noodles.'],bye:['好的，下次见！','Hǎo de, xià cì jiàn!','Okay, see you next time!'],
+  polite:/请|谢|麻烦/,politeTip:'Add 请 or 谢谢 to sound polite: 请给我一份鸡饭。',
+  mist:[[/一个(鸡饭|炒饭|面|叻沙|咖啡|奶茶|茶)/,'Count food with 份 and drinks with 杯: 一份鸡饭, 一杯咖啡.'],[/左边转|右边转/,'Say 左转 / 右转 (turn left / right) without 边.'],[/我是很|我是非常/,'Skip 是 before an adjective: 我很开心, not 我是很开心.']],
+  name:function(t){var m=t.match(/(?:我叫|叫我|我的名字是|我是)\s*([^\s，,。.！!？?]{1,6})/);return m?m[1]:''},stud:/学生|大学|读书/,
+  m0:['很高兴认识你，{n}！你是做什么的？','Hěn gāoxìng rènshi nǐ, {n}! Nǐ shì zuò shénme de?','Nice to meet you, {n}! What do you do?'],m0n:['很高兴认识你！你是做什么的？','Hěn gāoxìng rènshi nǐ! Nǐ shì zuò shénme de?','Nice to meet you! What do you do?'],nameTip:'Give your name with 我叫…: 我叫小明。',
+  m1s:['原来你是学生！你喜欢新加坡吗？','Yuánlái nǐ shì xuésheng! Nǐ xǐhuān Xīnjiāpō ma?','So you are a student! Do you like Singapore?'],m1:['真不错！你喜欢新加坡吗？','Zhēn búcuò! Nǐ xǐhuān Xīnjiāpō ma?','Nice! Do you like Singapore?'],
+  m2:['{n}，我也很喜欢。很高兴和你聊天！','{n}, wǒ yě hěn xǐhuān. Hěn gāoxìng hé nǐ liáotiān!','{n}, I like it too. Nice chatting with you!'],m2n:['我也很喜欢。很高兴和你聊天！','Wǒ yě hěn xǐhuān. Hěn gāoxìng hé nǐ liáotiān!','I like it too. Nice chatting with you!'],
+  dirs:[[/一直走|直走|直行|往前走|往前|向前|继续走|一直往前/,'一直走','yìzhí zǒu','go straight'],[/右转|往右|右边|向右|右手|右拐|右/,'右转','yòuzhuǎn','turn right'],[/左转|往左|左边|向左|左手|左拐|左/,'左转','zuǒzhuǎn','turn left']],
+  d0:['{w}，对吗？远不远？','{wr}, duì ma? Yuǎn bù yuǎn?','{we}, right? Is it far?'],d0n:['不好意思，我不太明白。是左转还是右转？','Bù hǎoyìsi, wǒ bú tài míngbai. Shì zuǒzhuǎn háishi yòuzhuǎn?','Sorry, I do not quite follow. Left or right?'],d1:['走路大概几分钟？','Zǒulù dàgài jǐ fēnzhōng?','About how many minutes on foot?'],d2:['太好了，谢谢你！','Tài hǎo le, xièxie nǐ!','Great, thank you!'],
+  i0s:['原来你是学生。你为什么想做这份工作？','Yuánlái nǐ shì xuésheng. Nǐ wèishénme xiǎng zuò zhè fèn gōngzuò?','So you are a student. Why do you want this job?'],i0:['你为什么想做这份工作？','Nǐ wèishénme xiǎng zuò zhè fèn gōngzuò?','Why do you want this job?'],i1:['很好。你有什么优点？','Hěn hǎo. Nǐ yǒu shénme yōudiǎn?','Good. What are your strengths?'],i2:['谢谢你来面试，我们会再联系你。','Xièxie nǐ lái miànshì, wǒmen huì zài liánxì nǐ.','Thanks for coming. We will be in touch.']},
+ ja:{is:function(t){return /[぀-ヿ一-鿿]/.test(t)},
+  off:['すみません、日本語でお願いします。','Sumimasen, Nihongo de onegai shimasu.','Sorry, please speak Japanese.'],
+  model:[['ラーメンを一つください。','Rāmen o hitotsu kudasai.','One ramen, please.'],['はじめまして。たろうです。よろしくお願いします。','Hajimemashite. Tarō desu. Yoroshiku onegai shimasu.','Nice to meet you. I am Taro. Pleased to meet you.'],['まっすぐ行って、右に曲がってください。','Massugu itte, migi ni magatte kudasai.','Go straight and turn right, please.'],['私は学生です。人と話すのが好きです。','Watashi wa gakusei desu. Hito to hanasu no ga suki desu.','I am a student. I like talking with people.']],
+  items:[[/ラーメン|らーめん/,'ラーメン','rāmen','ramen'],[/カレー/,'カレー','karē','curry'],[/寿司|すし|スシ/,'寿司','sushi','sushi'],[/うどん/,'うどん','udon','udon'],[/コーヒー|珈琲/,'コーヒー','kōhī','coffee'],[/お茶|紅茶|緑茶/,'お茶','ocha','tea']],
+  ok1:['{i}ですね。かしこまりました。ほかにご注文はありますか？','{ir} desu ne. Kashikomarimashita. Hoka ni gochūmon wa arimasu ka?','{ie}, got it. Anything else?'],mid:['店内でお召し上がりですか？お持ち帰りですか？','Tennai de omeshiagari desu ka? Omochikaeri desu ka?','Eating in or takeaway?'],end:['ありがとうございます。五百円です。','Arigatō gozaimasu. Gohyaku-en desu.','Thank you. That is 500 yen.'],
+  unk:['すみません、もう一度お願いします。ラーメン、カレー、寿司がありますよ。','Sumimasen, mō ichido onegai shimasu. Rāmen, karē, sushi ga arimasu yo.','Sorry, once more please. We have ramen, curry and sushi.'],bye:['またお越しください！','Mata okoshi kudasai!','Please come again!'],
+  polite:/ください|お願い|ありがとう/,politeTip:'Add ください to order politely: ラーメンをください。',
+  mist:[[/が欲しい|がほしい/,'欲しい sounds blunt when ordering. Use 〜をください or 〜をお願いします.'],[/(学生|です)だ[。.]?$|学生だ/,'Use です in polite speech: 学生です, not 学生だ.']],
+  name:function(t){t=t.replace(/^(はじめまして|こんにちは|こんばんは)[、,！!\s]*/,'');var m=t.match(/(?:私は|わたしは|僕は|ぼくは|名前は)\s*([^\s、。です]{1,6})/);if(m)return m[1];m=t.match(/^([ぁ-んァ-ヶ一-龥ー]{1,5})(?:です|と申します)/);return m?m[1]:''},stud:/学生|大学/,
+  m0:['{n}さん、よろしくお願いします！お仕事は何をされていますか？','{n}-san, yoroshiku onegai shimasu! Oshigoto wa nani o sarete imasu ka?','Pleased to meet you, {n}! What do you do?'],m0n:['はじめまして！お仕事は何をされていますか？','Hajimemashite! Oshigoto wa nani o sarete imasu ka?','Nice to meet you! What do you do?'],nameTip:'Give your name with 私は〜です: 私はたろうです。',
+  m1s:['学生さんなんですね！シンガポールは好きですか？','Gakusei-san nan desu ne! Shingapōru wa suki desu ka?','You are a student! Do you like Singapore?'],m1:['いいですね！シンガポールは好きですか？','Ii desu ne! Shingapōru wa suki desu ka?','Nice! Do you like Singapore?'],
+  m2:['{n}さん、私も大好きです。お話しできてうれしかったです！','{n}-san, watashi mo daisuki desu. Ohanashi dekite ureshikatta desu!','{n}, I love it too. I enjoyed talking!'],m2n:['私も大好きです。お話しできてうれしかったです！','Watashi mo daisuki desu. Ohanashi dekite ureshikatta desu!','I love it too. I enjoyed talking!'],
+  dirs:[[/まっすぐ|真っ直ぐ|直進|そのまま|道なり/,'まっすぐ','massugu','straight'],[/右/,'右','migi','right'],[/左/,'左','hidari','left']],
+  d0:['{w}ですね。遠いですか？','{wr} desu ne. Tōi desu ka?','{we}, right? Is it far?'],d0n:['すみません、よくわかりません。右ですか、左ですか？','Sumimasen, yoku wakarimasen. Migi desu ka, hidari desu ka?','Sorry, I do not follow. Right or left?'],d1:['歩いて何分ぐらいですか？','Aruite nan-pun gurai desu ka?','About how many minutes on foot?'],d2:['わかりました。ありがとうございます！','Wakarimashita. Arigatō gozaimasu!','Got it. Thank you!'],
+  i0s:['学生さんなんですね。なぜこの仕事を選びましたか？','Gakusei-san nan desu ne. Naze kono shigoto o erabimashita ka?','You are a student. Why did you choose this job?'],i0:['なぜこの仕事を選びましたか？','Naze kono shigoto o erabimashita ka?','Why did you choose this job?'],i1:['なるほど。あなたの強みは何ですか？','Naruhodo. Anata no tsuyomi wa nan desu ka?','I see. What are your strengths?'],i2:['ありがとうございました。また連絡します。','Arigatō gozaimashita. Mata renraku shimasu.','Thank you. We will be in touch.']},
+ ko:{is:function(t){return /[가-힯]/.test(t)},
+  off:['죄송해요, 한국어로 말해 주세요.','Joesonghaeyo, hangugeoro malhae juseyo.','Sorry, please speak in Korean.'],
+  model:[['김치찌개 하나 주세요.','Gimchijjigae hana juseyo.','One kimchi stew, please.'],['안녕하세요. 저는 민수예요. 만나서 반가워요.','Annyeonghaseyo. Jeoneun Minsu-yeyo. Mannaseo bangawoyo.','Hello. I am Minsu. Nice to meet you.'],['쭉 가서 오른쪽으로 가세요.','Jjuk gaseo oreunjjogeuro gaseyo.','Go straight, then go to the right.'],['저는 학생이에요. 사람들과 일하는 걸 좋아해요.','Jeoneun haksaeng-ieyo. Saramdeulgwa ilhaneun geol joahaeyo.','I am a student. I like working with people.']],
+  items:[[/김치찌개/,'김치찌개','gimchijjigae','kimchi stew'],[/비빔밥/,'비빔밥','bibimbap','bibimbap'],[/김밥/,'김밥','gimbap','gimbap'],[/라면/,'라면','ramyeon','instant noodles'],[/커피/,'커피','keopi','coffee'],[/치킨/,'치킨','chikin','fried chicken']],
+  ok1:['{i} 하나요? 알겠습니다. 더 필요한 거 있으세요?','{ir} hanayo? Algesseumnida. Deo piryohan geo isseuseyo?','One {ie}? Got it. Anything else?'],mid:['여기서 드실 거예요, 포장이에요?','Yeogiseo deusil geoyeyo, pojang-ieyo?','Eating here or takeaway?'],end:['감사합니다. 오천 원이에요.','Gamsahamnida. Ocheon won-ieyo.','Thank you. That is 5,000 won.'],
+  unk:['죄송해요, 다시 말씀해 주세요. 김치찌개, 비빔밥, 김밥이 있어요.','Joesonghaeyo, dasi malsseumhae juseyo. Gimchijjigae, bibimbap, gimbap-i isseoyo.','Sorry, please say it again. We have kimchi stew, bibimbap and gimbap.'],bye:['또 오세요!','Tto oseyo!','Please come again!'],
+  polite:/주세요|부탁|감사/,politeTip:'End with 주세요 to order politely: 김치찌개 주세요.',
+  mist:[[/줘[.!]?$/,'줘 is casual. In a shop or restaurant say 주세요.'],[/이다[.!]?$/,'Use 이에요 / 예요 or 입니다 when speaking politely, not 이다.']],
+  name:function(t){var m=t.match(/(?:저는|제 이름은|저 )\s*([^\s,.]+)/);if(!m)return '';var n=m[1].replace(/(이에요|예요|입니다|이라고 해요|이라고|이야|이에|에요)$/,'');return n},stud:/학생|대학/,
+  m0:['{n} 씨, 만나서 반가워요! 무슨 일을 하세요?','{n} ssi, mannaseo bangawoyo! Museun ireul haseyo?','Nice to meet you, {n}! What do you do?'],m0n:['만나서 반가워요! 무슨 일을 하세요?','Mannaseo bangawoyo! Museun ireul haseyo?','Nice to meet you! What do you do?'],nameTip:'Give your name with 저는 …예요: 저는 민수예요.',
+  m1s:['학생이시군요! 싱가포르는 좋아하세요?','Haksaeng-isigunyo! Singgaporeuneun joahaseyo?','You are a student! Do you like Singapore?'],m1:['멋지네요! 싱가포르는 좋아하세요?','Meotjineyo! Singgaporeuneun joahaseyo?','Nice! Do you like Singapore?'],
+  m2:['{n} 씨, 저도 좋아해요. 이야기해서 즐거웠어요!','{n} ssi, jeodo joahaeyo. Iyagihaeseo jeulgeowosseoyo!','{n}, I like it too. It was fun talking!'],m2n:['저도 좋아해요. 이야기해서 즐거웠어요!','Jeodo joahaeyo. Iyagihaeseo jeulgeowosseoyo!','I like it too. It was fun talking!'],
+  dirs:[[/직진|쭉|곧장|똑바로|계속 가/,'쭉','jjuk','straight'],[/오른쪽|우회전/,'오른쪽','oreunjjok','right'],[/왼쪽|좌회전/,'왼쪽','oenjjok','left']],
+  d0:['{w}요? 알겠어요. 먼가요?','{wr}-yo? Algesseoyo. Meongayo?','{we}? Okay. Is it far?'],d0n:['죄송해요, 잘 모르겠어요. 오른쪽이에요, 왼쪽이에요?','Joesonghaeyo, jal moreugesseoyo. Oreunjjogieyo, oenjjogieyo?','Sorry, I do not follow. Right or left?'],d1:['걸어서 몇 분쯤 걸려요?','Georeoseo myeot bunjjeum geollyeoyo?','About how many minutes on foot?'],d2:['알겠어요. 감사합니다!','Algesseoyo. Gamsahamnida!','Got it. Thank you!'],
+  i0s:['학생이시군요. 왜 이 일을 하고 싶어요?','Haksaeng-isigunyo. Wae i ireul hago sipeoyo?','You are a student. Why do you want this job?'],i0:['왜 이 일을 하고 싶어요?','Wae i ireul hago sipeoyo?','Why do you want this job?'],i1:['그렇군요. 본인의 장점은 뭐예요?','Geureokunyo. Bonin-ui jangjeomeun mwoyeyo?','I see. What are your strengths?'],i2:['면접 보러 와 주셔서 감사합니다. 연락드릴게요.','Myeonjeop boreo wa jusyeoseo gamsahamnida. Yeollakdeurilgeyo.','Thank you for coming. We will contact you.']},
+ es:{is:function(t){return /[áéíóúñ¿¡]/i.test(t)||/(^|[\s,.!?])(el|la|los|las|un|una|quiero|quisiera|me|mi|por|favor|hola|gracias|soy|llamo|es|de|en|para|que|y|yo|muy|bien|buenas|estudio|trabajo|derecha|izquierda|recto|sigue|gira|café|agua|tengo|tu|con|al|del|paella|tortilla|cinco|diez|tres|dos|cuatro|seis|minutos?|lejos|cerca|sí|no|vale|ok|okay)([\s,.!?]|$)/i.test(t)},
+  off:['Perdona, no te entiendo. ¿Puedes hablar en español?','','Sorry, I do not understand. Can you speak Spanish?'],
+  model:[['Quisiera una paella, por favor.','','I would like a paella, please.'],['Hola, me llamo Carlos. Mucho gusto.','','Hi, my name is Carlos. Nice to meet you.'],['Sigue todo recto y gira a la derecha.','','Go straight on and turn right.'],['Soy estudiante y me gusta trabajar en equipo.','','I am a student and I like teamwork.']],
+  items:[[/paella/i,'una paella','','a paella'],[/tortilla/i,'una tortilla','','a tortilla'],[/bocadillo|sándwich|sandwich/i,'un bocadillo','','a sandwich'],[/café/i,'un café','','a coffee'],[/zumo|jugo/i,'un zumo','','a juice'],[/agua/i,'un agua','','a water'],[/tacos?/i,'unos tacos','','some tacos']],
+  ok1:['Muy bien, {i}. ¿Algo más?','','Very good, {ie}. Anything else?'],mid:['¿Para tomar aquí o para llevar?','','Eating here or to take away?'],end:['Son cinco euros. ¡Gracias, que aproveche!','','That is five euros. Thanks, enjoy your meal!'],
+  unk:['Perdona, ¿qué quieres? Tenemos paella, tortilla y café.','','Sorry, what would you like? We have paella, tortilla and coffee.'],bye:['¡Hasta luego!','','See you later!'],
+  polite:/por favor|gracias|quisiera|me pone|me pones|podría/i,politeTip:'Add por favor to sound polite: Una paella, por favor.',
+  mist:[[/\bquiero\b/i,'Quiero is a bit blunt. Quisiera… or ¿Me pone…, por favor? sounds more polite.'],[/\byo llamo\b/i,'Say me llamo (not yo llamo): Me llamo Carlos.'],[/estoy estudiante|estoy un estudiante/i,'For roles and jobs use soy: soy estudiante (estoy is for temporary states).'],[/gira (izquierda|derecha)/i,'Add the article: gira a la derecha / a la izquierda.']],
+  name:function(t){var m=t.match(/(?:me llamo|mi nombre es|soy)\s+([A-Za-zÀ-ÿ]+)/i);if(!m)return '';var n=m[1];return /^(un|una|de|muy|estudiante|el|la|nuevo|nueva)$/i.test(n)?'':n},stud:/estudiante|universidad|estudio/i,
+  m0:['¡Mucho gusto, {n}! ¿A qué te dedicas?','','Nice to meet you, {n}! What do you do?'],m0n:['¡Mucho gusto! ¿A qué te dedicas?','','Nice to meet you! What do you do?'],nameTip:'Give your name with me llamo…: Me llamo Carlos.',
+  m1s:['¡Eres estudiante! ¿Te gusta Singapur?','','You are a student! Do you like Singapore?'],m1:['¡Qué interesante! ¿Te gusta Singapur?','','How interesting! Do you like Singapore?'],
+  m2:['{n}, a mí también. ¡Ha sido un placer hablar contigo!','','{n}, me too. It was a pleasure talking!'],m2n:['¡A mí también! ¡Ha sido un placer hablar contigo!','','Me too! It was a pleasure talking!'],
+  dirs:[[/todo recto|recto|derecho/i,'todo recto','','straight on'],[/derecha/i,'a la derecha','','to the right'],[/izquierda/i,'a la izquierda','','to the left']],
+  d0:['{w}, ¿verdad? ¿Está lejos?','','{we}, right? Is it far?'],d0n:['Perdona, no entiendo bien. ¿A la derecha o a la izquierda?','','Sorry, I do not follow well. Right or left?'],d1:['¿Cuántos minutos andando?','','How many minutes on foot?'],d2:['Vale, ¡muchas gracias!','','Okay, thank you very much!'],
+  i0s:['Eres estudiante. ¿Por qué quieres este trabajo?','','You are a student. Why do you want this job?'],i0:['¿Por qué quieres este trabajo?','','Why do you want this job?'],i1:['Entiendo. ¿Cuáles son tus puntos fuertes?','','I see. What are your strengths?'],i2:['Gracias por venir. Te contactaremos pronto.','','Thanks for coming. We will contact you soon.']},
+ fr:{is:function(t){return /[àâçéèêëîïôùûœ]/i.test(t)||/(^|[\s'’,.!?])(le|la|les|un|une|des|je|j|voudrais|veux|plaît|merci|bonjour|salut|suis|appelle|et|de|du|pour|avec|très|bien|moi|toi|étudiant|droite|gauche|droit|café|thé|croissant|crêpe|cinq|dix|trois|deux|quatre|six|minutes?|loin|près|oui|non|ok|okay)([\s'’,.!?]|$)/i.test(t)},
+  off:['Pardon, je ne comprends pas. Tu peux parler en français ?','','Sorry, I do not understand. Can you speak French?'],
+  model:[['Je voudrais un croissant, s’il vous plaît.','','I would like a croissant, please.'],['Bonjour, je m’appelle Marc. Enchanté.','','Hello, my name is Marc. Pleased to meet you.'],['Allez tout droit, puis tournez à droite.','','Go straight, then turn right.'],['Je suis étudiant et j’aime travailler en équipe.','','I am a student and I like teamwork.']],
+  items:[[/croissant/i,'un croissant','','a croissant'],[/baguette/i,'une baguette','','a baguette'],[/crêpe|crepe/i,'une crêpe','','a crêpe'],[/café/i,'un café','','a coffee'],[/thé/i,'un thé','','a tea'],[/sandwich/i,'un sandwich','','a sandwich'],[/omelette/i,'une omelette','','an omelette']],
+  ok1:['Très bien, {i}. Et avec ça ?','','Very good, {ie}. Anything else?'],mid:['Sur place ou à emporter ?','','Eat in or take away?'],end:['Ça fait cinq euros. Merci, bonne journée !','','That is five euros. Thanks, have a nice day!'],
+  unk:['Pardon, vous désirez ? Nous avons des croissants, des crêpes et du café.','','Sorry, what would you like? We have croissants, crêpes and coffee.'],bye:['À bientôt !','','See you soon!'],
+  polite:/s['’]il (vous|te) pla[iî]t|merci|voudrais|pourrais/i,politeTip:'Add s’il vous plaît: Un croissant, s’il vous plaît.',
+  mist:[[/je veux/i,'Je veux is blunt. Say je voudrais… (I would like…).'],[/je suis \d+ ans?/i,'French uses avoir for age: j’ai 22 ans (not je suis).'],[/je suis appel+e?/i,'Use je m’appelle + name: Je m’appelle Marc.']],
+  name:function(t){var m=t.match(/(?:je m['’]appelle|moi,? c['’]est|je suis)\s+([A-Za-zÀ-ÿ-]+)/i);if(!m)return '';var n=m[1];return /^(un|une|très|content|contente|ravi|ravie|heureux|heureuse|fatigué|fatiguée|de|en|à|le|la|étudiant|étudiante)$/i.test(n)?'':n},stud:/étudiant|université|fac\b/i,
+  m0:['Enchanté, {n} ! Tu fais quoi dans la vie ?','','Pleased to meet you, {n}! What do you do?'],m0n:['Enchanté ! Tu fais quoi dans la vie ?','','Pleased to meet you! What do you do?'],nameTip:'Give your name with je m’appelle…: Je m’appelle Marc.',
+  m1s:['Tu es étudiant ! Tu aimes Singapour ?','','You are a student! Do you like Singapore?'],m1:['Super ! Tu aimes Singapour ?','','Great! Do you like Singapore?'],
+  m2:['{n}, moi aussi. C’était un plaisir de parler avec toi !','','{n}, me too. It was a pleasure talking!'],m2n:['Moi aussi. C’était un plaisir de parler avec toi !','','Me too. It was a pleasure talking!'],
+  dirs:[[/tout droit/i,'tout droit','','straight on'],[/droite/i,'à droite','','to the right'],[/gauche/i,'à gauche','','to the left']],
+  d0:['{w}, c’est bien ça ? C’est loin ?','','{we}, is that right? Is it far?'],d0n:['Pardon, je ne comprends pas bien. À droite ou à gauche ?','','Sorry, I do not follow well. Right or left?'],d1:['C’est à combien de minutes à pied ?','','How many minutes on foot is it?'],d2:['D’accord, merci beaucoup !','','Okay, thank you very much!'],
+  i0s:['Vous êtes étudiant. Pourquoi voulez-vous ce poste ?','','You are a student. Why do you want this job?'],i0:['Pourquoi voulez-vous ce poste ?','','Why do you want this job?'],i1:['Je vois. Quelles sont vos qualités ?','','I see. What are your strengths?'],i2:['Merci d’être venu. Nous vous recontacterons bientôt.','','Thanks for coming. We will contact you soon.']},
+ en:{is:function(t){return /[A-Za-z]/.test(t)&&!CJK.test(t)},
+  off:['Sorry, can you say that in English?','','Your partner asks you to switch to English.'],
+  model:[['Can I have one chicken rice, please?','','A polite way to order.'],['Hi, my name is Aisha. Nice to meet you.','','Introduce yourself and be friendly.'],['Go straight, then turn right at the traffic light.','','Clear directions.'],['I am a student and I enjoy working in a team.','','A confident intro.']],
+  items:[[/chicken rice/i,'chicken rice','','chicken rice'],[/laksa/i,'laksa','','laksa'],[/kopi|coffee/i,'kopi','','coffee'],[/teh|tea/i,'teh','','tea'],[/toast|kaya/i,'kaya toast','','kaya toast'],[/milo/i,'Milo','','Milo']],
+  ok1:['Okay, {i}. Anything else?','','Confirming your order.'],mid:['Eat here or takeaway?','','In Singapore, “tapao” also means takeaway.'],end:['That is five dollars. Thank you, enjoy!','','Closing the order.'],
+  unk:['Sorry, what would you like? We have chicken rice, laksa and kopi.','','Your partner did not catch the dish.'],bye:['See you again!','','A friendly goodbye.'],
+  polite:/please|thank|can i have|could i|i would like|i\'d like/i,politeTip:'Add please or start with “Can I have…”: Can I have one chicken rice, please?',
+  mist:[[/\\bi want (a|an|one|two|some|chicken|laksa|kopi|teh|milo|kaya)\\b/i,'“I want” sounds blunt when ordering. Try “Can I have…” or “I would like…”.'],[/i very like/i,'Say “I really like…” or “I like it very much”, not “I very like”.'],[/i am agree|i am agreed/i,'Say “I agree”, without “am”.']],
+  name:function(t){var m=t.match(/(?:my name is|i am|i['’]m|call me|this is)\s+([A-Za-z]+)/i);if(!m)return '';var n=m[1];return /^(a|an|the|from|in|studying|working|so|very|good|fine|happy|student|new|here|just|not)$/i.test(n)?'':n[0].toUpperCase()+n.slice(1)},stud:/student|university|uni\b|school/i,
+  m0:['Nice to meet you, {n}! What do you do?','','Using your name to sound friendly.'],m0n:['Nice to meet you! What do you do?','','Try telling your name.'],nameTip:'Give your name: My name is Aisha.',
+  m1s:['A student! Do you like Singapore?','','Reacting to what you said.'],m1:['Cool! Do you like Singapore?','','Keeping the chat going.'],
+  m2:['{n}, me too. It was great chatting with you!','','A friendly goodbye.'],m2n:['Me too. It was great chatting with you!','','A friendly goodbye.'],
+  dirs:[[/straight|go on|keep going|continue|forward|ahead|walk on/i,'straight','','straight'],[/right/i,'right','','right'],[/left/i,'left','','left']],
+  d0:['{w}, okay. Is it far?','','Checking your direction.'],d0n:['Sorry, I am lost. Left or right?','','Your partner needs a clearer direction.'],d1:['How many minutes on foot?','','Asking how far.'],d2:['Okay, thank you so much!','','Thanking you.'],
+  i0s:['You are a student. Why do you want this job?','','Reacting to what you said.'],i0:['Why do you want this job?','','A classic interview question.'],i1:['I see. What are your strengths?','','Another classic question.'],i2:['Thank you for coming. We will contact you soon.','','Closing the interview.']}
+};
+
+KB.zh.far=/\d|[一二三四五六七八九十两]|分钟|分|远|近|走路|很快|马上|半/;KB.zh.farM='走路大概五分钟。';
+KB.ja.far=/\d|[一二三四五六七八九十]|分|遠|近|すぐ|歩|少し|ちょっと|徒歩/;KB.ja.farM='歩いて五分ぐらいです。';
+KB.ko.far=/\d|[일이삼사오육십]|분|멀|가까|걸어|정도|금방|바로/;KB.ko.farM='걸어서 5분쯤 걸려요.';
+KB.es.far=/\d|cinco|diez|tres|minuto|lejos|cerca/i;KB.es.farM='Unos cinco minutos andando.';
+KB.fr.far=/\d|cinq|dix|trois|minute|loin|près/i;KB.fr.farM='C’est à cinq minutes à pied.';
+KB.en.far=/\d|two|four|five|six|seven|eight|nine|ten|fifteen|twenty|three|min|half|few|far|near|close|short|long|quick|walk/i;KB.en.farM='About five minutes on foot.';
+var NICE=['Nice, that sounded natural.','Clear and polite. Keep going.','Good. Try a slightly longer sentence next time.'];
+function fill(a,v){return a.map(function(s){return s.replace(/\{(\w+)\}/g,function(_,k){return v[k]==null?'':v[k]})})}
+/* relevance checks + model answers per language */
+var TIME=/\d|lima|sepuluh|empat|minit|ஐந்து|பத்து|மூன்று|நான்கு|நிமிட|[௧-௯]|two|four|six|seven|eight|nine|fifteen|twenty|half an|a few|[一二三四五六七八九十两일이삼사오육십]|minute|minuto|cinq|cinco|five|ten\b|diez|three|tres|dix|trois|分/i;
+var RX={
+ zh:{o1:/不用|不要|没有|没了|没啦|够了|就这|这样|再来|还要|再要|加|谢谢|好的|好|可以|行|要|不了|不需要|免了|没事|算了|ok|OK|对|是的|有|先这样/,o2:/堂食|打包|带走|外带|这里|在这|堂|这边|带回|拿走|dabao|tapao|takeaway/i,m1:/学生|工作|上班|读书|老师|工程|医生|设计|学习|实习|公司|学校|大学|做|老板|销售|零售|店员|服务员|厨师|经理|护士|会计|程序员|自由职业|当兵|在读|念书|研究生|本科|理工|职员|上课/,m2:/喜欢|爱|不错|很好|还行|不喜欢|热|美食|漂亮|干净|好吃|还可以|还好|一般|挺|方便|拥挤|贵|安全|舒服|棒|赞|好玩|美/,i1:/因为|喜欢|想|希望|学习|经验|兴趣|机会|热爱|需要|赚钱|挣钱|锻炼|练习|提高|提升|能力|有趣|附近|近/,i2:/优点|擅长|善于|能|会|认真|负责|沟通|团队|细心|学得快|耐心|勤奋|努力|诚实|可靠|友善|开朗|快|灵活|守时|细节|服务|积极/},
+ ja:{o1:/大丈夫|結構|以上|いいえ|ありません|ないです|なし|いらない|いりません|それだけ|それで|はい|うん|お願い|追加|あと|ください|ありがとう|ok|OK|十分|平気/i,o2:/店内|持ち帰|テイクアウト|ここで|食べて|ここ|店で|持って帰|お持ち|to go/i,m1:/学生|仕事|働|会社|先生|勉強|大学|エンジニア|デザイナー|医者|看護|インターン|アルバイト|バイト|販売|店員|会社員|営業|研究|大学院|院生|フリーター|自営|シェフ|マネージャー/,m2:/好き|大好き|いい|嫌い|暑|食べ物|おいしい|きれい|楽しい|まあまあ|普通|便利|蒸し暑|混|高い|安全|面白|素敵|最高|楽/,i1:/から|ので|好き|学び|経験|興味|したい|ため|知りたい|お金|稼|練習|成長|近い|やりたい/,i2:/強み|得意|できる|責任|コミュニケーション|チーム|丁寧|頑張|学ぶ|真面目|努力|誠実|正直|笑顔|柔軟|素早|細かい|接客|積極/},
+ ko:{o1:/없어요|없습니다|괜찮아요|괜찮습니다|아니요|아뇨|아니|네|예|응|추가|더|주세요|감사|됐어요|됐습니다|그게 다|그것만|충분|오케이|ok|OK/i,o2:/여기|포장|가져|먹고|매장|테이크아웃|안에서|가지고|들고/,m1:/학생|일|회사|직장|선생|공부|대학|엔지니어|디자이너|의사|근무|인턴|판매|알바|아르바이트|영업|간호사|연구|대학원|프리랜서|자영업|요리사|매니저|군대|병역/,m2:/좋아|싫|덥|음식|좋네|맛있|예뻐|깨끗|그냥|보통|괜찮|편리|습|복잡|비싸|안전|재미|멋|최고|살기/,i1:/때문|좋아|배우|경험|관심|싶|위해|알고|돈|벌|연습|성장|가까/,i2:/장점|잘해|잘하|책임|소통|팀|꼼꼼|열심|배우|성실|노력|정직|친절|유연|빠르|적극|세심|서비스/},
+ es:{o1:/\bno\b|nada|eso es todo|sí|\bsi\b|gracias|también|más|otro|otra|por favor|vale/i,o2:/aquí|aqui|llevar|tomar|para/i,m1:/estudi|trabaj|empresa|profesor|ingenier|diseñ|médic|universidad|prácticas|soy/i,m2:/gusta|encanta|\bsí\b|\bno\b|calor|comida|bonit|genial/i,i1:/porque|me gusta|quiero|aprender|experiencia|interés|oportunidad|pasión/i,i2:/fuerte|responsable|equipo|comunic|aprendo|trabajador|organizad|soy/i},
+ fr:{o1:/\bnon\b|rien|c['’]est tout|oui|merci|aussi|plus|encore|s['’]il/i,o2:/sur place|emporter|ici/i,m1:/étudi|travaill|entreprise|professeur|ingénieur|designer|médecin|université|fac|stage|je suis/i,m2:/aime|adore|oui|non|chaud|nourriture|joli|génial|cuisine|propre/i,i1:/parce|j['’]aime|je veux|apprendre|expérience|intérêt|opportunité|passion|car\b/i,i2:/point fort|points forts|responsable|équipe|communic|j['’]apprends|travailleur|organisé|sérieux|je suis/i},
+ en:{o1:/\bno\b|\bnope\b|\bnah\b|\bnone\b|dowan|do ?n[o'’]?t (want|need)|\bdont\b|\bdun\b|no need|no more|enough|that['’]?s (all|it)|that is all|nothing|\byes\b|\byeah\b|\byep\b|\byup\b|\bya\b|sure|thanks|thank|also|more|another|please|okay|\bok\b|\bcan\b|\badd\b|extra/i,o2:/here|takeaway|take away|take-away|tapao|tapau|dabao|dine|eat in|stay|pack|to go|\bgo\b/i,m1:/student|work|job|engineer|teacher|design|doctor|nurse|study|university|uni\b|intern|school|retail|sales|nus|ntu|smu|poly|army|nsf|waiter|chef|manager|freelanc|business|unemploy|between jobs|accountant|developer|coder|clerk|part.?time|full.?time/i,m2:/like|love|yes|\bno\b|hot|food|great|nice|good|clean|beautiful|\bok\b|okay|fine|not bad|so so|cool|humid|crowded|expensive|shiok|safe|small|busy/i,i1:/because|cause|\bcos\b|like|want|learn|experience|interest|opportunity|passion|need|money|earn|save|gain|skill|practi[sc]e|improve|love|enjoy|fun|near|close/i,i2:/strength|good at|i am|i can|responsible|team|communic|learn|hard.?working|organi[sz]ed|reliable|patient|friendly|fast learner|quick|diligent|honest|punctual|detail|flexible|adaptable|positive|careful|energetic|service|people|skills|try my best/i}
+};
+var MD={
+ zh:{more:['不用了，谢谢。','Bú yòng le, xièxie.','No need, thanks.'],eat:['打包，谢谢。','Dǎbāo, xièxie.','Takeaway, thanks.'],job:['我是学生。','Wǒ shì xuésheng.','I am a student.'],like:['我很喜欢，这里的美食很多。','Wǒ hěn xǐhuān, zhèlǐ de měishí hěn duō.','I like it a lot, there is so much good food.'],reason:['因为我喜欢和人交流，也想学习新东西。','Yīnwèi wǒ xǐhuān hé rén jiāoliú, yě xiǎng xuéxí xīn dōngxi.','Because I like talking with people and want to learn new things.'],strength:['我的优点是认真负责，也善于沟通。','Wǒ de yōudiǎn shì rènzhēn fùzé, yě shànyú gōutōng.','My strength is that I am responsible and good at communicating.'],far:['走路大概五分钟。','Zǒulù dàgài wǔ fēnzhōng.','About five minutes on foot.']},
+ ja:{more:['以上でお願いします。','Ijō de onegai shimasu.','That is all, please.'],eat:['持ち帰りでお願いします。','Mochikaeri de onegai shimasu.','Takeaway, please.'],job:['私は学生です。','Watashi wa gakusei desu.','I am a student.'],like:['大好きです。食べ物がおいしいです。','Daisuki desu. Tabemono ga oishii desu.','I love it. The food is delicious.'],reason:['人と話すのが好きで、新しいことを学びたいからです。','Hito to hanasu no ga suki de, atarashii koto o manabitai kara desu.','Because I like talking with people and want to learn new things.'],strength:['私の強みは責任感があって、コミュニケーションが得意なことです。','Watashi no tsuyomi wa sekininkan ga atte, komyunikēshon ga tokui na koto desu.','My strength is that I am responsible and good at communicating.'],far:['歩いて五分ぐらいです。','Aruite gofun gurai desu.','About five minutes on foot.']},
+ ko:{more:['아니요, 괜찮아요.','Aniyo, gwaenchanayo.','No, that is fine.'],eat:['포장해 주세요.','Pojanghae juseyo.','Takeaway, please.'],job:['저는 학생이에요.','Jeoneun haksaeng-ieyo.','I am a student.'],like:['좋아해요. 음식이 맛있어요.','Joahaeyo. Eumsigi masisseoyo.','I like it. The food is tasty.'],reason:['사람들과 이야기하는 걸 좋아하고 새로운 걸 배우고 싶어서요.','Saramdeulgwa iyagihaneun geol joahago saeroun geol baeugo sipeoseoyo.','Because I like talking with people and want to learn new things.'],strength:['제 장점은 책임감이 있고 소통을 잘하는 거예요.','Je jangjeomeun chaegimgami itgo sotongeul jalhaneun geoyeyo.','My strength is that I am responsible and communicate well.'],far:['걸어서 5분쯤 걸려요.','Georeoseo obun jjeum geollyeoyo.','About five minutes on foot.']},
+ es:{more:['No, nada más, gracias.','','No, nothing else, thanks.'],eat:['Para llevar, por favor.','','To take away, please.'],job:['Soy estudiante.','','I am a student.'],like:['Me gusta mucho, la comida es muy buena.','','I like it a lot, the food is very good.'],reason:['Porque me gusta hablar con la gente y quiero aprender cosas nuevas.','','Because I like talking with people and want to learn new things.'],strength:['Mi punto fuerte es que soy responsable y trabajo bien en equipo.','','My strength is that I am responsible and work well in a team.'],far:['Unos cinco minutos andando.','','About five minutes on foot.']},
+ fr:{more:['Non, ce sera tout, merci.','','No, that will be all, thanks.'],eat:['À emporter, s’il vous plaît.','','To take away, please.'],job:['Je suis étudiant.','','I am a student.'],like:['J’aime beaucoup, la cuisine est très bonne.','','I like it a lot, the food is very good.'],reason:['Parce que j’aime parler avec les gens et je veux apprendre de nouvelles choses.','','Because I like talking with people and want to learn new things.'],strength:['Mon point fort est que je suis responsable et que je travaille bien en équipe.','','My strength is that I am responsible and work well in a team.'],far:['C’est à cinq minutes à pied.','','It is five minutes on foot.']},
+ en:{more:['No, that is all, thanks.','','Say you do not need anything else.'],eat:['Takeaway, please.','','Say you want it to go.'],job:['I am a student.','','Say what you do.'],like:['I like it a lot. The food is great.','','Say if you like Singapore.'],reason:['Because I enjoy talking to people and I want to learn new things.','','Give a reason for wanting the job.'],strength:['My strength is that I am responsible and I work well in a team.','','Name one strength.'],far:['About five minutes on foot.','','Say how far it is.']}
+};
+var STEPTXT=[['Order a dish politely.','Say if you want anything else.','Say eat in or takeaway.'],['Say hello and tell your name.','Say what you do, for example a student.','Say if you like Singapore.'],['Say which way to go: straight, left or right.','Say whether it is far.','Say how many minutes it takes.'],['Introduce yourself in one or two sentences.','Give a reason you want the job.','Say one strength you have.']];
+
+KB.zh.huh=['不好意思，我没听清楚，能再说一遍吗？','Bù hǎoyìsi, wǒ méi tīng qīngchu, néng zài shuō yí biàn ma?','Sorry, I did not catch that. Can you say it again?'];
+KB.ja.huh=['すみません、聞き取れませんでした。もう一度お願いします。','Sumimasen, kikitoremasen deshita. Mō ichido onegai shimasu.','Sorry, I did not catch that. Once more, please.'];
+KB.ko.huh=['죄송해요, 잘 못 들었어요. 다시 말씀해 주세요.','Joesonghaeyo, jal mot deureosseoyo. Dasi malsseumhae juseyo.','Sorry, I did not hear that well. Please say it again.'];
+KB.es.huh=['Perdona, no te he entendido. ¿Puedes repetirlo?','','Sorry, I did not understand. Can you repeat it?'];
+KB.fr.huh=['Pardon, je n’ai pas compris. Tu peux répéter ?','','Sorry, I did not understand. Can you repeat?'];
+KB.en.huh=['Sorry, I did not catch that. Can you say it again?','','Your partner could not read that.'];
+/* ===== Singapore languages: Malay + Tamil (drafts, native-speaker review pending) ===== */
+KB.ms={is:function(t){if(!/[A-Za-z]/.test(t)||/[஀-௿]/.test(t)||CJK.test(t))return false;var my=/\b(saya|aku|awak|nak|mahu|terima kasih|boleh|tolong|maaf|nama|di mana|belok|lurus|kiri|kanan|tak|tidak|dan|ini|itu|dengan|untuk|suka|makan|minum|sila|jalan|kerja|belajar)\b/i.test(t),en=/\b(the|please|thank you|thanks|my name is|i am|i want|i would|how are you|where is|hello|what|and|you)\b/i.test(t);return my||!en},
+ off:['Maaf, saya tak faham. Sila cakap dalam bahasa Melayu.','','Sorry, I do not understand. Please speak Malay.'],
+ model:[['Kak, saya nak nasi lemak satu, terima kasih.','','Sis, I would like one nasi lemak, thank you.'],['Hai, nama saya Danial. Selamat berkenalan.','','Hi, my name is Danial. Nice to meet you.'],['Jalan terus, kemudian belok kanan di lampu isyarat.','','Go straight, then turn right at the traffic light.'],['Saya seorang pelajar dan saya suka bekerja dalam pasukan.','','I am a student and I like working in a team.']],
+ items:[[/nasi lemak/i,'nasi lemak','','coconut rice with sides'],[/mee goreng|mi goreng/i,'mee goreng','','fried noodles'],[/mee rebus|mi rebus/i,'mee rebus','','noodles in gravy'],[/teh tarik/i,'teh tarik','','pulled milk tea'],[/kopi/i,'kopi','','coffee'],[/teh/i,'teh','','tea']],
+ ok1:['Baik, {i}. Nak apa-apa lagi?','','Okay, {ie}. Anything else?'],mid:['Makan sini atau bungkus?','','Eat here or takeaway? (“tapau” also works.)'],end:['Semuanya lima dolar. Terima kasih!','','That is five dollars. Thank you!'],
+ unk:['Maaf, nak makan apa? Kami ada nasi lemak, mee goreng dan teh tarik.','','Sorry, what would you like? We have nasi lemak, mee goreng and teh tarik.'],bye:['Baik, jumpa lagi!','','Okay, see you again!'],
+ polite:/tolong|terima kasih|minta|sila|boleh/i,politeTip:'Add tolong or terima kasih to sound polite: Nasi lemak satu, tolong.',
+ mist:[[/\bsaya adalah\b/i,'In everyday Malay, skip adalah: Saya seorang pelajar.'],[/\bapa kabar\b/i,'In Singapore Malay, say apa khabar (apa kabar is the Indonesian spelling).']],
+ name:function(t){var m=t.match(/(?:nama saya(?: ialah| adalah)?|panggil saya|saya ialah|nama aku)\s+([A-Za-z]+)/i);if(!m)return '';var n=m[1];return /^(seorang|pelajar|suka|dari|di|tinggal|bekerja|belajar|sangat|baru|tak|tidak|nak|mahu|ialah|adalah|dan)$/i.test(n)?'':n[0].toUpperCase()+n.slice(1)},stud:/pelajar|universiti|belajar|sekolah|mahasiswa/i,
+ m0:['Selamat berkenalan, {n}! Awak bekerja atau belajar?','','Nice to meet you, {n}! Do you work or study?'],m0n:['Selamat berkenalan! Awak bekerja atau belajar?','','Nice to meet you! Do you work or study?'],nameTip:'Give your name with nama saya…: Nama saya Danial.',
+ m1s:['Oh, awak pelajar! Awak suka Singapura?','','Oh, you are a student! Do you like Singapore?'],m1:['Bagus! Awak suka Singapura?','','Nice! Do you like Singapore?'],
+ m2:['{n}, saya pun suka. Seronok berbual dengan awak!','','{n}, I like it too. Nice chatting with you!'],m2n:['Saya pun suka. Seronok berbual dengan awak!','','I like it too. Nice chatting with you!'],
+ dirs:[[/lurus|terus/i,'Jalan terus','','go straight'],[/kanan/i,'belok kanan','','turn right'],[/kiri/i,'belok kiri','','turn left']],
+ d0:['{w}, betul? Jauh tak?','','{we}, right? Is it far?'],d0n:['Maaf, saya tak faham. Kiri atau kanan?','','Sorry, I do not follow. Left or right?'],d1:['Berapa minit jalan kaki?','','How many minutes on foot?'],d2:['Baik, terima kasih banyak!','','Okay, thank you so much!'],
+ i0s:['Awak pelajar. Kenapa awak nak kerja ini?','','You are a student. Why do you want this job?'],i0:['Kenapa awak nak kerja ini?','','Why do you want this job?'],i1:['Baik. Apa kelebihan awak?','','Good. What are your strengths?'],i2:['Terima kasih kerana datang. Kami akan hubungi awak.','','Thanks for coming. We will contact you.']};
+KB.ms.far=/\d|lima|sepuluh|tiga|empat|enam|minit|jauh|dekat/i;KB.ms.farM='Jalan kaki lima minit sahaja.';
+KB.ms.huh=['Maaf, saya tak dengar dengan jelas. Boleh ulang?','','Sorry, I did not hear that clearly. Can you repeat?'];
+RX.ms={o1:/tak|tidak|tiada|cukup|itu saja|sahaja|ya\b|terima kasih|lagi|tambah|boleh|nak|mahu|tolong/i,o2:/sini|bungkus|tapau|bawa balik|makan/i,m1:/pelajar|belajar|kerja|bekerja|syarikat|guru|jurutera|doktor|universiti|sekolah|intern|latihan/i,m2:/suka|sayang|seronok|bagus|panas|makanan|cantik|bersih|sedap|tak suka/i,i1:/sebab|kerana|suka|nak|mahu|belajar|pengalaman|minat|peluang/i,i2:/kelebihan|pandai|rajin|bertanggungjawab|komunikasi|pasukan|teliti|sabar|cepat belajar|boleh/i};
+MD.ms={more:['Tak ada, terima kasih.','','No, nothing else, thanks.'],eat:['Bungkus, tolong.','','Takeaway, please.'],job:['Saya seorang pelajar.','','I am a student.'],like:['Saya suka sangat. Makanan di sini sedap.','','I like it a lot. The food here is delicious.'],reason:['Sebab saya suka berbual dengan orang dan nak belajar benda baru.','','Because I like talking to people and want to learn new things.'],strength:['Kelebihan saya ialah bertanggungjawab dan boleh bekerja dalam pasukan.','','My strength is that I am responsible and can work in a team.'],far:['Jalan kaki lima minit sahaja.','','About five minutes on foot.']};
+
+KB.ta={is:function(t){return /[஀-௿]/.test(t)},
+ off:['மன்னிக்கவும், எனக்குப் புரியவில்லை. தமிழில் சொல்லுங்கள்.','Mannikkavum, enakku puriyavillai. Tamizhil sollunga.','Sorry, I do not understand. Please reply in Tamil script (tap Need help? for a starter).'],
+ model:[['எனக்கு ஒரு தோசை வேணும், நன்றி.','Enakku oru dosai venum, nandri.','I would like one dosa, thank you.'],['வணக்கம், என் பெயர் அருண். சந்தித்ததில் மகிழ்ச்சி.','Vanakkam, en peyar Arun. Santhithathil magizhchi.','Hello, my name is Arun. Nice to meet you.'],['நேராகப் போங்கள், பிறகு வலது பக்கம் திரும்புங்கள்.','Neraaga pongal, piragu valadhu pakkam thirumbungal.','Go straight, then turn right.'],['நான் ஒரு மாணவன். குழுவாக வேலை செய்யப் பிடிக்கும்.','Naan oru maanavan. Kuzhuvaaga velai seyya pidikkum.','I am a student. I like working in a team.']],
+ items:[[/தோசை/,'தோசை','dosai','dosa'],[/இட்லி/,'இட்லி','idli','idli'],[/பிரியாணி/,'பிரியாணி','biriyani','biryani'],[/தேநீர்|டீ/,'தேநீர்','theneer','tea'],[/காபி|காப்பி/,'காபி','kaapi','coffee']],
+ ok1:['சரி, {i}. வேற ஏதாவது வேணுமா?','Sari, {ir}. Vera edhaavadhu venumaa?','Okay, {ie}. Anything else?'],mid:['இங்கே சாப்பிடுறீங்களா, பார்சலா?','Inge saapiduringalaa, parcelaa?','Eat here or takeaway?'],end:['ஐந்து டாலர். நன்றி!','Ainthu dollar. Nandri!','That is five dollars. Thank you!'],
+ unk:['மன்னிக்கவும், என்ன வேணும்? தோசை, இட்லி, பிரியாணி இருக்கு.','Mannikkavum, enna venum? Dosai, idli, biriyani irukku.','Sorry, what would you like? We have dosa, idli and biryani.'],bye:['சரி, மீண்டும் சந்திப்போம்!','Sari, meendum santhippom!','Okay, see you again!'],
+ polite:/நன்றி|தாருங்கள்|கொடுங்கள்|குடுங்க|தயவுசெய்து/,politeTip:'Add நன்றி or end with தாருங்கள் (please give): ஒரு தோசை தாருங்கள்.',
+ mist:[[/(^|\s)நீ(\s|$)/,'Use நீங்கள் (polite you) with someone you do not know, not நீ.'],[/நான் பெயர்/,'Say என் பெயர் … (my name is …), not நான் பெயர்.']],
+ name:function(t){var m=t.match(/(?:என் பெயர்|என்னுடைய பெயர்|நான்)\s+([஀-௿]+)/);if(!m)return '';var n=m[1];return /^(ஒரு|மாணவன்|மாணவி|மாணவர்|இங்கே|சிங்கப்பூர்|வேலை|நல்ல)$/.test(n)?'':n},stud:/மாணவ|பல்கலை|கல்லூரி|படிக்/,
+ m0:['சந்தித்ததில் மகிழ்ச்சி, {n}! நீங்கள் என்ன செய்கிறீர்கள்?','Santhithathil magizhchi, {n}! Neengal enna seigireergal?','Nice to meet you, {n}! What do you do?'],m0n:['சந்தித்ததில் மகிழ்ச்சி! நீங்கள் என்ன செய்கிறீர்கள்?','Santhithathil magizhchi! Neengal enna seigireergal?','Nice to meet you! What do you do?'],nameTip:'Give your name with என் பெயர்…: என் பெயர் அருண்.',
+ m1s:['ஓ, நீங்கள் மாணவரா! சிங்கப்பூர் பிடிக்குமா?','Oh, neengal maanavaraa! Singapore pidikkumaa?','Oh, you are a student! Do you like Singapore?'],m1:['நல்லது! சிங்கப்பூர் பிடிக்குமா?','Nalladhu! Singapore pidikkumaa?','Nice! Do you like Singapore?'],
+ m2:['{n}, எனக்கும் பிடிக்கும். பேசியதில் மகிழ்ச்சி!','{n}, enakkum pidikkum. Pesiyathil magizhchi!','{n}, I like it too. Nice chatting with you!'],m2n:['எனக்கும் பிடிக்கும். பேசியதில் மகிழ்ச்சி!','Enakkum pidikkum. Pesiyathil magizhchi!','I like it too. Nice chatting with you!'],
+ dirs:[[/நேராக|நேரே/,'நேராகப் போங்கள்','neraaga pongal','go straight'],[/வலது/,'வலது பக்கம்','valadhu pakkam','right side'],[/இடது/,'இடது பக்கம்','idathu pakkam','left side']],
+ d0:['{w}, சரியா? தூரமா?','{wr}, sariyaa? Thooramaa?','{we}, right? Is it far?'],d0n:['மன்னிக்கவும், புரியவில்லை. இடதா, வலதா?','Mannikkavum, puriyavillai. Idathaa, valathaa?','Sorry, I do not follow. Left or right?'],d1:['நடந்தால் எத்தனை நிமிடம்?','Nadanthaal eththanai nimidam?','How many minutes on foot?'],d2:['சரி, மிக்க நன்றி!','Sari, mikka nandri!','Okay, thank you so much!'],
+ i0s:['நீங்கள் மாணவர். இந்த வேலை ஏன் வேணும்?','Neengal maanavar. Intha velai aen venum?','You are a student. Why do you want this job?'],i0:['இந்த வேலை ஏன் வேணும்?','Intha velai aen venum?','Why do you want this job?'],i1:['சரி. உங்கள் பலம் என்ன?','Sari. Ungal balam enna?','Okay. What is your strength?'],i2:['வந்ததற்கு நன்றி. நாங்கள் உங்களைத் தொடர்புகொள்வோம்.','Vandhadharku nandri. Naangal ungalai thodarbu kolvom.','Thanks for coming. We will contact you.']};
+KB.ta.far=/\d|[௧-௯]|ஐந்து|பத்து|மூன்று|நான்கு|நிமிட|தூரம்|பக்கம்|கிட்ட/;KB.ta.farM='நடந்தால் ஐந்து நிமிடம்.';
+KB.ta.huh=['மன்னிக்கவும், சரியாகக் கேட்கவில்லை. மீண்டும் சொல்லுங்கள்.','Mannikkavum, sariyaaga ketkavillai. Meendum sollunga.','Sorry, I did not hear that well. Please say it again.'];
+RX.ta={o1:/வேண்டாம்|இல்லை|போதும்|அவ்வளவு|ஆமா|ஆம்|நன்றி|இன்னும்|வேற|மேலும்|வேணும்|கொடுங்கள்|தாருங்கள்/,o2:/இங்கே|இங்க|பார்சல்|கொண்டு|சாப்பிடு|எடுத்து/,m1:/மாணவ|வேலை|படிக்|நிறுவன|ஆசிரிய|பொறியாளர்|மருத்துவர்|பல்கலை|பள்ளி|பயிற்சி|செய்கிறேன்/,m2:/பிடிக்கும்|பிடிக்காது|நல்ல|சூடு|உணவு|அழகு|சுத்தம்|பிடித்/,i1:/ஏனென்றால்|ஏன்னா|பிடிக்க|பிடிக்கும்|விரும்ப|கற்|அனுபவம்|ஆர்வம்|வாய்ப்பு|ஆசை/,i2:/பலம்|திறமை|பொறுப்ப|குழு|தொடர்பு|கவனம்|பொறுமை|கற்றுக்|சுறுசுறுப்பு/};
+MD.ta={more:['வேண்டாம், நன்றி.','Venaam, nandri.','No, thank you.'],eat:['பார்சல் தாருங்கள்.','Parcel thaarungal.','Takeaway, please.'],job:['நான் ஒரு மாணவன்.','Naan oru maanavan.','I am a student.'],like:['எனக்கு ரொம்பப் பிடிக்கும். உணவு சுவையா இருக்கு.','Enakku rombap pidikkum. Unavu suvaiyaa irukku.','I like it a lot. The food is tasty.'],reason:['மனிதர்களிடம் பேசப் பிடிக்கும், புதிதாகக் கற்றுக்கொள்ளவும் ஆசை.','Manitharkalidam pesa pidikkum, puthithaaga katrukkollavum aasai.','I like talking with people and want to learn new things.'],strength:['நான் பொறுப்பானவன், குழுவாக வேலை செய்வேன்.','Naan poruppaanavan, kuzhuvaaga velai seivaen.','I am responsible and I work well in a team.'],far:['நடந்தால் ஐந்து நிமிடம்.','Nadanthaal ainthu nimidam.','About five minutes on foot.']};
+
+function gib(t){
+  t=t.trim();
+  if(!/[a-zà-ÿ\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af\u0b80-\u0bff\d]/i.test(t))return true;
+  if(/(.)\1{3,}/.test(t))return true;
+  var tl=t.toLowerCase();
+  if(/asdf|qwer|zxcv|sdfg|dfgh|fghj|ghjk|hjkl|wert|erty|rtyu|qwrt/.test(tl))return true;
+  var w=tl.match(/[a-zà-ÿ]+/g)||[];
+  for(var i=0;i<w.length;i++){if(w[i].length>=4&&!/[aeiouyàâéèêëîïôùûáíóúñ]/.test(w[i]))return true;if(/[bcdfghjklmnpqrstvwxz]{6,}/.test(w[i]))return true}
+  return false;
+}
+function lev(a,b){var m=[],i,j;for(i=0;i<=a.length;i++){m[i]=[i]}for(j=1;j<=b.length;j++)m[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
+function fuzzyItem(txt,k){
+  var tk=txt.toLowerCase().match(/[a-zà-ÿ]+/g)||[];
+  for(var j=0;j<k.items.length;j++){
+    var base=k.items[j][1].toLowerCase().split(' ').filter(function(x){return !/^(un|una|unos|une|el|la|a|an)$/.test(x)})[0]||'';
+    if(base.length<5)continue;
+    for(var t=0;t<tk.length;t++){if(tk[t].length>=4&&lev(tk[t],base)<=(base.length>=8?2:1))return {it:k.items[j],base:base}}
+  }
+  return null;
+}
+function dymItem(txt,k){
+  for(var j=0;j<k.items.length;j++){var n=k.items[j][1];if(n.length<2)continue;var c=0;for(var x=0;x<n.length;x++){if(txt.indexOf(n[x])>=0)c++}if(c>=Math.ceil(n.length/2)&&c>0)return k.items[j]}
+  return null;
+}
+
+var ASKN={zh:['你叫什么名字？','Nǐ jiào shénme míngzi?','What is your name?'],ja:['お名前は何ですか？','Onamae wa nan desu ka?','What is your name?'],ko:['이름이 뭐예요?','Ireumi mwoyeyo?','What is your name?'],es:['¿Cómo te llamas?','','What is your name?'],fr:['Comment tu t’appelles ?','','What is your name?'],en:['And what is your name?','','Could you tell me your name?']};
+var GREET=/^(hai|selamat|salam|vanakkam|வணக்கம்|hi|hello|hey|hola|buenas|bonjour|salut|你好|您好|嗨|こんにちは|はじめまして|안녕|안녕하세요|yo)\W*$/i;
+function bareName(t){t=t.trim().replace(/[.!！。]+$/,'');if(GREET.test(t))return '';if(/^[A-Za-zÀ-ÿ]{2,14}$/.test(t))return t[0].toUpperCase()+t.slice(1);if(st.lang==='ta'&&/^[\u0B80-\u0BFF]{2,10}$/.test(t)&&!/^(ஆம்|இல்லை|நன்றி|வணக்கம்|சரி)/.test(t))return t;if(st.lang==='zh'&&/^[\u4e00-\u9fff]{2,3}$/.test(t)&&!/^(我|你|他|她|请|谢|不|没|好|对|还|很|太|挺|可|一般|喜|爱|是|有|做|在|想|会|能|吧|啊|呢|嗯|行|也|学|工|上)/.test(t))return t;if(st.lang==='ja'&&/^[\u3040-\u30ff\u4e00-\u9fff]{2,5}$/.test(t)&&!/^(はい|いいえ|ありがとう|すみません)/.test(t))return t;if(st.lang==='ko'&&/^[\uac00-\ud7af]{2,4}$/.test(t)&&!/(요|다|까|죠|네|아니)$/.test(t)&&!/^(네|아니|좋|감사|고마|괜찮|맞|안녕)/.test(t))return t;return ''}
+
+var AVC={
+ zh:{bg:'#FFE3D6',skin:'#F6D7BD',hair:'#1F1B26',shirt:'#E9675C',back:'M14 31 Q13 11 32 11 Q51 11 50 31 L50 45 Q50 47.5 46.5 47.5 L17.5 47.5 Q14 47.5 14 45 Z',front:'M17.5 29.5 Q15.5 12 32 12 Q48.5 12 46.5 29.5 L46 23.8 Q32 21 18 23.8 Z',extra:'<rect x="40.5" y="19.5" width="6" height="2.6" rx="1.3" fill="#F2B84B" transform="rotate(-18 43.5 20.8)"/>',brow:'#1F1B26'},
+ ja:{bg:'#E6E4FF',skin:'#F7DBC4',hair:'#2B2127',shirt:'#F3B6C8',back:'M14.5 31 Q14 11.5 32 11.5 Q50 11.5 49.5 31 L49 40 Q48 43 45 41 L19 41 Q16 43 15 40 Z M47 22 Q58 26 56 44 Q55 52 50 52 Q53 42 47 33 Z',front:'M15.5 30 Q14 12 32 12 Q50 12 48.5 30 Q47 21 36 18.5 Q26 21 21 28 Q18 30 15.5 30 Z',extra:'<circle cx="49" cy="23.5" r="2.4" fill="#E9675C"/>',brow:'#2B2127'},
+ ko:{bg:'#DDF3EA',skin:'#F5D6BB',hair:'#2A1E18',shirt:'#9FCDB4',back:'M14.5 31 Q14 11 32 11 Q50 11 49.5 31 L50 46 Q50 48 47 48 L17 48 Q14 48 14.5 46 Z',front:'M15 31 Q14.5 12.5 32 12.5 Q49.5 12.5 49 31 Q46 22 36.5 16.5 L32 17 L27.5 16.5 Q18 22 15 31 Z',extra:'<rect x="19" y="20" width="7" height="2.4" rx="1.2" fill="#F2B84B" transform="rotate(28 22.5 21.2)"/>',brow:'#2A1E18'},
+ es:{bg:'#FFF0C7',skin:'#DDA67E',hair:'#3A2113',shirt:'#F2B84B',back:'M13 32 Q12 10.5 32 10.5 Q52 10.5 51 32 Q53 40 50 47 Q46.5 53 51 55 L13 55 Q17.5 53 14 47 Q11 40 13 32 Z',front:'M15.5 30 Q15 12.5 32 12.5 Q49 12.5 48.5 30 Q44 20.5 32 20 Q20 20.5 15.5 30 Z',extra:'<circle cx="17.5" cy="43.5" r="2.4" fill="none" stroke="#F2B84B" stroke-width="1.3"/><circle cx="46.5" cy="43.5" r="2.4" fill="none" stroke="#F2B84B" stroke-width="1.3"/>',brow:'#3A2113'},
+ fr:{bg:'#DCE6FF',skin:'#F5D9C8',hair:'#8C4B2C',shirt:'#5C76D6',back:'M14 31 Q13 11 32 11 Q51 11 50 31 L50 41 Q50 44 46 44 L18 44 Q14 44 14 41 Z',front:'M15 31 Q14 12 32 12 Q50 12 49 31 Q45 20 35 17.5 Q27 24 15 31 Z',extra:'<path d="M23 49 Q32 54.5 41 49 L41 53 Q32 58 23 53 Z" fill="#F6F3EC"/>',brow:'#8C4B2C'},
+ en:{bg:'#D9F2EE',skin:'#F6D9C3',hair:'#6B4A2B',shirt:'#4CC9B0',back:'M15.5 29 Q13.5 9 32 8.5 Q50.5 9 48.5 29 Q47.5 21 32 19 Q16.5 21 15.5 29 Z',front:'M16.5 27 Q14.5 10.5 32 9.5 Q49.5 10.5 47.5 27 Q46.5 20 44.5 17.5 L41.5 22.5 L38 18.5 L33.5 24 L29 18.5 L25 22.5 L21 18 Q18 20 16.5 27 Z',extra:'<g fill="none" stroke="#1D1714" stroke-width="1.5"><circle cx="26.3" cy="32" r="4.6"/><circle cx="37.7" cy="32" r="4.6"/><path d="M30.9 31.6 L33.1 31.6"/></g>',brow:'#1D1714'}
+};
+ASKN.ms=['Siapa nama awak?','','What is your name?'];ASKN.ta=['உங்கள் பெயர் என்ன?','Ungal peyar enna?','What is your name?'];
+AVC.ms={bg:'#EBDDF7',skin:'#D9A67E',hair:'#6C4A9C',shirt:'#F2B84B',back:'M12.5 33 Q11.5 8.5 32 8.5 Q52.5 8.5 51.5 33 Q52.5 47 47.5 54 L16.5 54 Q11.5 47 12.5 33 Z',front:'M15 31.5 Q14.5 13.5 32 13 Q49.5 13.5 49 31.5 Q47 22 32 21 Q17 22 15 31.5 Z',extra:'',brow:'#3A2113'};
+AVC.ta={bg:'#FFE8D0',skin:'#B98059',hair:'#1B1414',shirt:'#E2557E',back:'M13 32 Q12 10.5 32 10.5 Q52 10.5 51 32 Q53 40 50 47 Q46.5 53 51 55 L13 55 Q17.5 53 14 47 Q11 40 13 32 Z',front:'M15.5 30 Q15 12.5 32 12.5 Q49 12.5 48.5 30 Q44 20.5 32 20 Q20 20.5 15.5 30 Z',extra:'<circle cx="32" cy="23.4" r="1.3" fill="#C62F4B"/>',brow:'#1B1414'};
+
+function avatarSVG(l){
+  var c=AVC[l]||AVC.en;
+  return '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="64" height="64" fill="'+c.bg+'"/>'+
+  '<path d="'+c.back+'" fill="'+c.hair+'"/>'+
+  '<path d="M6 66 Q9 49.5 32 48.5 Q55 49.5 58 66 Z" fill="'+c.shirt+'"/>'+
+  '<rect x="27.5" y="41" width="9" height="9" rx="3" fill="'+c.skin+'"/>'+
+  '<ellipse cx="32" cy="31" rx="14" ry="15.5" fill="'+c.skin+'"/>'+
+  '<ellipse cx="18" cy="33" rx="2.2" ry="3" fill="'+c.skin+'"/><ellipse cx="46" cy="33" rx="2.2" ry="3" fill="'+c.skin+'"/>'+
+  '<path d="'+c.front+'" fill="'+c.hair+'"/>'+c.extra+
+  '<ellipse cx="26.3" cy="32.5" rx="1.8" ry="2.2" fill="#2A2230"/><ellipse cx="37.7" cy="32.5" rx="1.8" ry="2.2" fill="#2A2230"/>'+
+  '<circle cx="26.9" cy="31.6" r=".6" fill="#fff"/><circle cx="38.3" cy="31.6" r=".6" fill="#fff"/>'+
+  '<path d="M23.5 28 Q26.3 26.4 29 28 M35 28 Q37.7 26.4 40.5 28" stroke="'+c.brow+'" stroke-width="1.2" fill="none" stroke-linecap="round"/>'+
+  '<circle cx="22.8" cy="37.6" r="2.6" fill="#F08A8A" opacity=".38"/><circle cx="41.2" cy="37.6" r="2.6" fill="#F08A8A" opacity=".38"/>'+
+  '<path d="M29 38.2 Q32 41.2 35 38.2" stroke="#8A3D3D" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
+}
+function newStats(){return {off:0,topic:0,mist:0,pol:0,help:0,n:0,cnt:0,len:0,issues:[],last:null}}
+function fm(a){return a[0]+(a[1]?' ('+a[1]+')':'')}
+function answerFor(sc,step){
+  var k=KB[st.lang],M=MD[st.lang];
+  var t=[[k.model[0],M.more,M.eat],[k.model[1],M.job,M.like],[k.model[2],M.far,M.far],[k.model[3],M.reason,M.strength]][sc];
+  return t[Math.min(step,2)];
+}
+var NUMW=['one','two','three','four','five','six','seven','eight','nine','ten','fifteen','twenty'];
+var NOTYPO=['for','the','then','than','tea','too','ton','net','tan','see','sit','fine','fire','live','give','file','tree','free','sex','sir','tin','ate','nice','nine','one','won','own','tow','top','toe','tie','ten','tem'];
+var META=/^\s*(what|huh|sorry|pardon|hello|hmm+|eh|ha|help( me)?|stuck|repeat( please| that)?|(can|could) you (please )?(repeat|say (that )?again|say it slower|slow down|translate)|say (that )?again|(i )?(do ?n[o'’]?t|dun) (understand|get it|get that|know)|i have no idea|no idea|slow(er)?( please)?|meaning|what (does|do) (that|it|this) mean|what did you say|what is that|translate|in english( please)?|english( please)?)\s*[.!?]*\s*$/i;
+var DIRW=['straight','left','right','forward','ahead'];
+var DIRSTOP=['let','lets','lest','light','fight','might','night','sight','tight','eight','lift','loft','soft','less','list','rights','lefty','after','head','read','road'];
+function typoDir(t){var w=t.match(/[A-Za-z]+/g)||[];for(var j=0;j<w.length;j++){var l=w[j].toLowerCase();if(l.length<3||DIRW.indexOf(l)>=0||DIRSTOP.indexOf(l)>=0)continue;var c=[];for(var i=0;i<DIRW.length;i++){var n=DIRW[i];if(Math.abs(l.length-n.length)<=1&&lev(l,n)<=(n.length>=7?2:1))c.push(n)}if(c.length===1)return [w[j],c[0]]}return null}
+function typoNum(t){var w=t.match(/[A-Za-z]+/g)||[];for(var j=0;j<w.length;j++){var l=w[j].toLowerCase();if(l.length<3||NUMW.indexOf(l)>=0||(NOTYPO.indexOf(l)>=0&&l!=='tem'))continue;var c=[];for(var i=0;i<NUMW.length;i++){var n=NUMW[i];if(Math.abs(l.length-n.length)<=1&&lev(l,n)<=1)c.push(n)}if(c.length===1)return [w[j],c[0]]}return null}
+function demoReply(txt){
+  var k=KB[st.lang],R=RX[st.lang],M=MD[st.lang],sc=st.scen,S=st.stats,step=st.step,tip='',line,adv=true,flag=false;
+  function issue(t,m,kind){tip=t;flag=true;S[kind]++;if(S.issues.indexOf(t)<0)S.issues.push(t);if(m)S.last=m}
+  if(META.test(txt)&&!(/^\s*hello\s*[.!?]*\s*$/i.test(txt)&&st.step===0&&sc!==2)){var pm=st.msgs[st.msgs.length-3];if(pm&&pm.t){return {line:[pm.t,pm.r||'',pm.e||''],tip:'No problem. Here is the line again with the English meaning. Try replying in '+L[st.lang].n+', or tap Need help? for a starter.',meta:true,help:/help|know|idea|stuck/i.test(txt)}}}
+  if(gib(txt)){S.off++;S.issues.push('Write a real sentence.');return {line:k.huh,tip:'That did not look like a real sentence. Tap Need help? if you are stuck.'}}
+  var rp=rpMatch(txt);
+  if(rp&&!/^(very|bye|so|no|that|had|really|many|little|ha|haha|la|lah|wah|aiya|aiyo|ok|okay)$/i.test(rp[1])){S.mist++;S.cnt++;S.len+=txt.length;var rpi='You repeated “'+rp[1]+'”.';if(S.issues.indexOf(rpi)<0)S.issues.push(rpi);var pm2=st.msgs[st.msgs.length-3];return {line:pm2&&pm2.t?[pm2.t,pm2.r||'',pm2.e||'']:k.huh,tip:'You repeated “'+rp[1]+'”. Say each word once and use a short sentence. Tap Need help? for a model.'}}
+  if(sc===2&&st.step>=1&&st.lang==='en'){var tn=typoNum(txt);if(tn){S.mist++;S.cnt++;S.len+=txt.length;var ti='Spelling: did you mean “'+tn[1]+'”?';if(S.issues.indexOf(ti)<0)S.issues.push(ti);return {line:k.d1,tip:'Did you mean “'+tn[1]+'”? Check the spelling and try again.'}}}
+  if(sc===2&&st.step>=1&&/^\s*[\d௧-௯]+\s*\S{0,8}\s*$/.test(txt)){}else if(!k.is(txt)){S.off++;S.issues.push('Use '+L[st.lang].n+' in the chat.');S.last=k.model[sc];return {line:k.off,tip:'Try it in '+L[st.lang].n+'. A model line: '+fm(k.model[sc])}}
+  S.cnt++;S.len+=txt.length;
+  for(var i=0;i<k.mist.length;i++){if(k.mist[i][0].test(txt)){issue(k.mist[i][1],k.model[sc],'mist');break}}
+  var nm=k.name(txt);if(nm&&k.stud.test(nm))nm='';
+  function openOK(t){return CJK.test(t)?t.replace(/\s/g,'').length>=4:t.trim().split(/\s+/).length>=3}
+  function off(re,reask,model,hint,open){
+    if(re.test(txt)||(open&&openOK(txt)))return false;
+    line=reask;adv=false;issue(hint+' Model: '+fm(model),model,'topic');return true}
+  if(sc===0){
+    var it=null,typo=null,dym=null,typoW=null;for(var j=0;j<k.items.length;j++){if(k.items[j][0].test(txt)){it=k.items[j];break}}
+    if(!it&&sc===0&&step<=1){if(CJK.test(txt)&&st.lang!=='en'&&!/[a-z]/i.test(txt)){dym=dymItem(txt,k)}else{var fz=fuzzyItem(txt,k);if(fz){dym=fz.it;typoW=fz.base}}}
+    if(step===0){
+      if(dym){line=k.unk;adv=false;if(typoW)issue('Did you mean “'+dym[1]+'”? Check the spelling and try again.',k.model[0],'mist');else issue('Did you mean '+dym[1]+(dym[2]?' ('+dym[2]+')':'')+'? Check the characters.',k.model[0],'topic')}
+      else if(it){st.item=it;line=fill(k.ok1,{i:it[1],ir:it[2],ie:it[3]});if(R.o2.test(txt)&&!typo&&!flag){line=k.end;st.step+=2}if(typo)issue('Spelling: it is "'+typo+'".',k.model[0],'mist');else if(!k.polite.test(txt)&&!flag){issue(k.politeTip,k.model[0],'pol')}}
+      else{line=k.unk;adv=false;issue('Name the dish you want. Model: '+fm(k.model[0]),k.model[0],'topic')}
+    }else if(step===1){if(!it&&off(R.o1,(st.item?fill(k.ok1,{i:st.item[1],ir:st.item[2],ie:st.item[3]}):k.ok1),M.more,'Answer the question: anything else?'))adv=false;else line=k.mid}
+    else if(step===2){if(off(R.o2,k.mid,M.eat,'Say eat in or takeaway.'))adv=false;else line=k.end}
+    else line=k.bye;
+  }else if(sc===1){
+    if(step===0){if(!nm&&!flag)nm=bareName(txt);if(nm){st.name=nm;line=fill(k.m0,{n:nm})}else{line=ASKN[st.lang];adv=false;issue(k.nameTip,k.model[1],'topic')}}
+    else if(step===1){if(!off(R.m1,(st.name?fill(k.m0,{n:st.name}):k.m0n),M.job,'Tell your partner what you do.',1))line=k.stud.test(txt)?k.m1s:k.m1}
+    else if(step===2){if(!off(R.m2,k.m1,M.like,'Answer: do you like Singapore?',1))line=fill(st.name?k.m2:k.m2n,{n:st.name})}
+    else line=k.bye;
+  }else if(sc===2){
+    var d=null,dl=[];for(var q=0;q<k.dirs.length;q++){if(k.dirs[q][0].test(txt)){dl.push(k.dirs[q])}}if(dl.length){d=dl[0];if(dl.length>1)d=[null,dl.map(function(x){return x[1]}).join(', '),dl.map(function(x){return x[2]}).join(', '),dl.map(function(x){return x[3]}).join(', ')]}
+    if(step===0){if(d)line=fill(k.d0,{w:d[1],wr:d[2],we:d[3]});else{line=k.d0n;adv=false;var tdr=st.lang==='en'?typoDir(txt):null;if(tdr)issue('Did you mean “'+tdr[1]+'”? Check the spelling and try again.',k.model[2],'mist');else issue('Give a direction. Model: '+fm(k.model[2]),k.model[2],'topic')}}
+    else if(step===1){if(k.far.test(txt)){var tm=TIME.test(txt);line=tm?k.d2:k.d1;if(tm)st.step++}else{line=k.d1;adv=false;issue('Answer how far it is. Model: '+fm(M.far),M.far,'topic')}}
+    else if(step===2){if(TIME.test(txt))line=k.d2;else{line=k.d1;adv=false;issue('Say how many minutes. Model: '+fm(M.far),M.far,'topic')}}
+    else line=k.bye;
+  }else{
+    if(step===0)line=k.stud.test(txt)?k.i0s:k.i0;
+    else if(step===1){if(!off(R.i1,k.i0,M.reason,'Give a reason why you want the job.',1))line=k.i1}
+    else if(step===2){if(!off(R.i2,k.i1,M.strength,'Tell your partner one strength.',1))line=k.i2}
+    else line=k.bye;
+  }
+  if(adv){st.step++;S.n++;st.fail=0}else{st.fail=(st.fail||0)+1}
+  if(!tip){tip=txt.length<(CJK.test(txt)?5:14)?NICE[2]:NICE[S.n%2]}
+  return {line:line,tip:tip};
+}
+/* help ladder: hint first, then reveal the answer */
+function startOf(a,roman){
+  var s=roman?a[1]:a[0];if(!s)return '';
+  if(CJK.test(a[0])&&!roman)return s.slice(0,Math.min(4,Math.ceil(s.length/3)+1))+'…';
+  var w=s.split(' ');return w.slice(0,Math.min(3,Math.max(1,Math.ceil(w.length/3)))).join(' ')+' …';
+}
+function showHelp(level){
+  var box=$('#help');
+  if(st.step>=3){box.innerHTML='<div class="helpcard"><b>You finished this situation.</b><p>Tap Get feedback to see your score.</p></div>';return}
+  var k=KB[st.lang],sc=st.scen,a=answerFor(sc,st.step),kw='';
+  if(level===1)st.stats.help++;
+  if(sc===0&&st.step===0)kw=k.items.slice(0,4).map(function(x){return '<span class="kw"><b>'+esc(x[1])+'</b>'+(x[2]?' '+esc(x[2]):'')+' <em>'+esc(x[3])+'</em></span>'}).join('');
+  if(sc===2&&st.step===0)kw=k.dirs.map(function(x){return '<span class="kw"><b>'+esc(x[1])+'</b>'+(x[2]?' '+esc(x[2]):'')+' <em>'+esc(x[3])+'</em></span>'}).join('');
+  var h='<div class="helpcard"><b>'+esc(STEPTXT[sc][Math.min(st.step,2)])+'</b>';
+  if(kw)h+='<div class="kws">'+kw+'</div>';
+  if(level===1){
+    h+='<p>Start with: <strong>'+esc(startOf(a))+'</strong>'+(a[1]?' <i>'+esc(startOf(a,true))+'</i>':'')+'</p>';
+    h+='<div class="hr"><button class="btn sm" type="button" id="hShow">Show answer</button><button class="btn ghost sm" type="button" id="hClose">Close</button></div>';
+  }else{
+    h+='<p class="ans"><strong>'+esc(a[0])+'</strong>'+(a[1]?'<br><i>'+esc(a[1])+'</i>':'')+'<br><span>'+esc(a[2])+'</span></p>';
+    h+='<div class="hr"><button class="btn sm" type="button" id="hUse">Use this answer</button><button class="btn ghost sm" type="button" id="hClose">Close</button></div>';
+  }
+  box.innerHTML=h+'</div>';
+  var c=$('#hClose');if(c)c.addEventListener('click',function(){box.innerHTML=''});
+  var s=$('#hShow');if(s)s.addEventListener('click',function(){showHelp(2)});
+  var u=$('#hUse');if(u)u.addEventListener('click',function(){$('#inp').value=a[0];box.innerHTML='';$('#inp').focus()});
+}
+function fallback(){
+  var u=st.msgs[st.msgs.length-2],p=st.msgs[st.msgs.length-1];
+  var r=demoReply(u&&u.t?u.t:'');
+  p.t=r.line[0];p.r=r.line[1];p.e=r.line[2];if(r.meta)p.show=true;
+  if(u)u.tip=r.tip;
+  render();
+  if(st.fail>=2&&st.step<3)showHelp(1);
+  if(r.help&&st.step<3)showHelp(1);
+}
+async function send(txt){
+  txt=(txt||'').trim();if(!txt||st.busy)return;
+  if(GATED&&st.used>=FREE_MSGS){showUpsell('limit');return}
+  st.used++;var hb2=$('#help');if(hb2)hb2.innerHTML='';
+  st.busy=true;
+  st.msgs.push({role:'u',t:txt});st.msgs.push({role:'p',t:''});render();
+  var k=L[st.lang];
+  if(!sampleFn){setTimeout(function(){fallback();st.busy=false},900);return}
+  var prompt='You are '+k.who+', a friendly '+k.n+' conversation partner for a '+st.level.toLowerCase()+' learner in Singapore. Scenario: '+SC[st.scen]+'. Stay in role and keep it natural. '+
+   'Reply with exactly four parts separated by " || ": (1) your next turn in '+k.n+', one or two short sentences, '+(st.level==='Beginner'?'simple words':'natural everyday phrasing')+'; (2) the romanization of part 1 for Mandarin, Japanese, Korean or Tamil, otherwise a single hyphen; (3) the English meaning of part 1; (4) one short English tip on how the learner could have said their last message more naturally, or "Nice, that sounded natural." if it was fine. Plain text only, no markdown, no extra parts.\n\nConversation so far:\n'+transcript()+'\n\nWrite the partner\'s next turn now.';
+  try{
+    var r=await sampleFn(prompt,{cache:false,modelTier:'quick',onText:function(o){applyReply(o.text,false)}});
+    applyReply(r.text,true);
+  }catch(e){
+    if(e&&e.code==='not_granted'){sampleFn=null;setStatus()}
+    fallback();
+  }
+  st.busy=false;
+}
+$('#form').addEventListener('submit',function(e){e.preventDefault();var i=$('#inp'),v=i.value;i.value='';send(v)});
+
+$('#helpBtn').addEventListener('click',function(){if(!sampleFn)showHelp(1)});
+/* feedback */
+$('#fbBtn').addEventListener('click',async function(){
+  var slot=$('#fbslot');
+  var said=st.msgs.filter(function(m){return m.role==='u'});
+  if(!said.length){slot.innerHTML='<div class="fbcard">Say something first, then ask for feedback.</div>';return}
+  var data={score:4.6,good:'You answered in full sentences and kept the conversation moving.',fix:'Add one more detail to each answer so your partner has more to react to.',better:''};
+  if(!sampleFn){
+    var S=st.stats,kk=KB[st.lang],g=[],lnm=L[st.lang].n;
+    var sc5=5-0.8*S.off-0.5*S.topic-0.4*S.mist-0.3*S.pol-0.2*S.help;
+    if(S.cnt>0&&S.len/S.cnt<(CJK.test(said[0].t)?4:10))sc5-=0.3;
+    if(S.n<3&&st.step<3)sc5=Math.min(sc5,4.0);
+    if(st.step===0)sc5=Math.min(sc5,2.0);else if(st.step===1)sc5=Math.min(sc5,3.4);
+    if(S.cnt===0)sc5=1.0;
+    sc5=Math.max(1,Math.min(5,sc5));
+    if(S.n>=1)g.push('You kept the chat going for '+S.n+' turn'+(S.n>1?'s':'')+'.');
+    if(st.step>=3)g.push('You finished the whole situation.');
+    if(st.item&&st.scen===0)g.push('You got your order across ('+st.item[3]+').');
+    if(st.name&&st.scen===1)g.push('You introduced yourself as '+st.name+'.');
+    if(S.cnt>0&&!S.off&&!S.topic&&!S.mist&&!S.pol)g.push('Every reply was in '+lnm+', on topic and error-free.');
+    if(S.help)g.push('You used help '+S.help+' time'+(S.help>1?'s':'')+', which is a good way to pick up new phrases.');
+    if(!g.length)g.push(S.cnt===0?'Nothing to score yet. There was no real '+lnm+' sentence in this chat.':'You gave it a go in '+lnm+'.');
+    var fx=S.cnt===0?'Write a real sentence in '+lnm+'. Tap Need help? for a starter, or Show answer to see a model.':S.issues.length?'Work on: '+S.issues.slice(0,2).join(' '):'Next time, add one extra detail to each answer.';
+    if(S.n<3&&st.step<3)fx+=' Chat for 3 or more turns to get a fuller score.';
+    data={score:Math.round(sc5*10)/10,good:g.join(' '),fix:fx,better:S.last||kk.model[st.scen]};
+  }
+  slot.innerHTML='<div class="fbcard"><span class="typing"><i></i><i></i><i></i></span></div>';
+  if(sampleFn){
+    try{
+      var k=L[st.lang];
+      var j=await sampleFn.json('A '+st.level.toLowerCase()+' learner practised '+k.n+' in this scenario: '+SC[st.scen]+'.\nConversation:\n'+transcript()+'\n\nGive feedback on the learner\'s lines only. Return JSON with keys: score (number from 1 to 5, one decimal), good (one sentence in English on what worked), fix (one sentence in English on the most useful thing to improve), better (the learner\'s last line rewritten more naturally in '+k.n+', or empty string if it was already natural).',{cache:false,modelTier:'quick'});
+      if(j&&typeof j==='object'){data={score:Number(j.score)||4.5,good:j.good||data.good,fix:j.fix||data.fix,better:j.better||''}}
+    }catch(e){if(e&&e.code==='not_granted'){sampleFn=null;setStatus()}}
+  }
+  var goalsRow=sampleFn?'':'<div><dt>Goals reached: '+Math.min(st.step,3)+' of 3</dt><dd>'+STEPTXT[st.scen].map(function(t,i){return (st.step>i?'\u2713 ':'\u25CB ')+esc(t.replace(/\.$/,''))}).join('<br>')+'</dd></div>';var worked='<div><dt>What worked</dt><dd>'+esc(data.good)+'</dd></div>';
+  var rest=GATED?'<div class="lock"><b>Full feedback is part of the pilot</b><span>See what to try next and a more natural way to say it.</span><button class="btn sm" type="button" id="fbJoin">Unlock for $3</button></div>':'<div><dt>Try next</dt><dd>'+esc(data.fix)+'</dd></div>'+(data.better?'<div><dt>A more natural line</dt><dd>'+(Array.isArray(data.better)?'<strong>'+esc(data.better[0])+'</strong>'+(data.better[1]?'<div class="fbr">'+esc(data.better[1])+'</div>':'')+(data.better[2]?'<div class="fbe">'+esc(data.better[2])+'</div>':''):esc(data.better))+'</dd></div>':'');
+  slot.innerHTML='<div class="fbcard"><div class="score">'+esc(data.score.toFixed(1))+'<small> / 5</small></div><dl>'+goalsRow+worked+rest+'</dl></div>';
+  var fj=$('#fbJoin');if(fj)fj.addEventListener('click',function(){go('join')});
+  slot.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+});
+$('#resetBtn').addEventListener('click',start);
+$('#log').addEventListener('click',function(e){var b=e.target.closest('.msg.p');if(!b)return;var m=st.msgs[+b.dataset.i];if(m&&m.t){var top=this.scrollTop;m.show=!m.show;render();this.scrollTop=top}});
+$('#hintSw').addEventListener('click',function(){st.hints=!st.hints;this.setAttribute('aria-pressed',st.hints);render()});
+
+/* capabilities */
+try{
+  if(window.claude&&claude.use){
+    claude.use('sample').then(function(s){sampleFn=s||null;setStatus()}).catch(function(){});
+    claude.use('dictation').then(function(d){
+      if(!d)return;var mic=$('#mic');mic.hidden=false;
+      d.onFinal(function(o){var i=$('#inp');i.value=(i.value+' '+o.text).trim()});
+      d.onPartial(function(o){$('#inp').placeholder=o.text});
+      d.onState(function(o){mic.classList.toggle('on',o.state==='listening');if(o.state!=='listening')$('#inp').placeholder='Type your reply here'});
+      mic.addEventListener('click',function(){if(mic.classList.contains('on')){d.stop()}else{d.start().catch(function(){})}});
+    }).catch(function(){});
+  }
+}catch(e){}
+
+/* join flow */
+function codeFor(name){
+  var l=name.toUpperCase().replace(/[^A-Z]/g,'').slice(0,3);while(l.length<3)l+='L';
+  var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))%900;
+  return l+'-'+(h+100);
+}
+function copyFrom(id,okId){
+  var ta=$('#'+id),ok=$('#'+okId);
+  function done(){ok.textContent='Copied'}
+  function manual(){ta.select();try{document.execCommand('copy');done()}catch(e){ok.textContent='Select the text and copy it'}}
+  try{navigator.clipboard.writeText(ta.value).then(done,manual)}catch(e){manual()}
+}
+document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){copyFrom(b.dataset.copy,b.dataset.copy==='msgJoin'?'okJoin':'okRef')})});
+$('#joinForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=$('#jn').value.trim(),lang=$('#jl').value,ref=$('#jr').value.trim();
+  if(!name)return;
+  var code=codeFor(name);
+  $('#msgJoin').value='Hi, I am '+name+'. I would like to join the LangoLink founding pilot ($3 for 4 weeks) to practise '+lang+'.'+(ref?' Referred by: '+ref+'.':'')+' My referral code is '+code+'. Please send me the PayNow details.';
+  $('#myCode').textContent=code;
+  var wa=$('#waBtn');if(WA_NUMBER){wa.href='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent($('#msgJoin').value);wa.hidden=false}
+  $('#msgRef').value='I joined the LangoLink pilot to practise speaking '+lang+'. It is $3 for 4 weeks. If you join, put my code '+code+' as who sent you.';
+  $('#joinForm').hidden=true;$('#joinDone').hidden=false;
+  $('#joinDone').scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+});
+
+/* touch and hover feel */
+document.addEventListener('pointerdown',function(e){
+  var t=e.target.closest&&e.target.closest('.btn,.chip,.round');if(!t||reduce)return;
+  var r=t.getBoundingClientRect(),d=Math.max(r.width,r.height)*2,s=document.createElement('span');
+  s.className='rip';s.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
+  t.appendChild(s);setTimeout(function(){s.remove()},600);
+});
+document.querySelectorAll('.card').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')})});
+if(!reduce&&window.matchMedia&&matchMedia('(hover:hover)').matches){
+  var dm=$('.demo');
+  dm.addEventListener('pointermove',function(e){var r=dm.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;dm.style.transform='perspective(900px) rotateY('+(x*7)+'deg) rotateX('+(-y*7)+'deg)'});
+  dm.addEventListener('pointerleave',function(){dm.style.transform=''});
+}
+var navEl=$('nav');window.addEventListener('scroll',function(){navEl.classList.toggle('scrolled',window.scrollY>8)},{passive:true});
+
+
+function rpMatch(t){var m;
+  if(/[஀-௿]/.test(t)){m=t.match(/(?:^|\s)([஀-௿]{2,})\s+\1(?=$|[\s,.!?])/);return m}
+  if(CJK.test(t)){m=t.match(/([我是你他她的了有在])\1/);return m}
+  return t.match(/(?:^|[^A-Za-zÀ-ÿ])([A-Za-zÀ-ÿ]+)\s+\1(?![A-Za-zÀ-ÿ])/i)}
+
+/* ---------- Singapore edition: flag switch ---------- */
+AVC.ms.bg='#E3F3EE';AVC.ms.shirt='#17785F';AVC.ms.back='M0 0';AVC.ms.front='M0 0';
+AVC.ms.extra='<path fill-rule="evenodd" fill="#1F8F73" d="M32 5.5 C47 5.5 53 16 52.5 31 C52.5 41 55.5 47 61 53 L61 65 L3 65 L3 53 C8.5 47 11.5 41 11.5 31 C11 16 17 5.5 32 5.5 Z M20 31.8 a12 13.6 0 1 0 24 0 a12 13.6 0 1 0 -24 0 Z"/><path d="M20.6 24.5 Q32 11.5 43.4 24.5" fill="none" stroke="#17785F" stroke-width="1.6" stroke-linecap="round"/><path d="M14.5 50 Q32 58 49.5 50" fill="none" stroke="#17785F" stroke-width="1.4" stroke-linecap="round" opacity=".7"/><circle cx="32" cy="9.6" r="1.1" fill="#CDEFE4"/>';
+AVC.ms.brow='#3A2113';
+var SGMODE=false;window.__sg=function(){return SGMODE};
+var SGNAT={zh:'华语',ms:'Bahasa Melayu',ta:'தமிழ்',en:''};
+var SC_ALL=SC.slice(),SC_SG=['Order at a hawker stall','Meet a new neighbour','Find the MRT station','Café job interview'];
+var ORDER_ALL=ORDER.slice(),ORDER_SG=['zh','ms','ta','en'];
+var BASE_EN=L.en.op.slice(),BASE_ZH=L.zh.op.slice();
+var OP_SG={
+ en:[BASE_EN[0],['Hi! I am Sam, I just moved into your block. What is your name?','','A new HDB neighbour says hello.'],BASE_EN[2],['Thanks for coming in to the cafe. Can you walk me through your background?','','The cafe manager opens the interview.']],
+ zh:[['早安！要吃什么？有鸡饭、叻沙和炒饭哦。','Zǎo ān! Yào chī shénme? Yǒu jīfàn, lèshā hé chǎofàn o.','Morning! What will you have? We have chicken rice, laksa and fried rice.'],['你好！我是新搬来的邻居小美，你叫什么名字？','Nǐ hǎo! Wǒ shì xīn bān lái de línjū Xiǎo Měi, nǐ jiào shénme míngzi?','Hi! I am Xiao Mei, your new neighbour. What is your name?'],BASE_ZH[2],['欢迎来咖啡店面试。请先做个简单的自我介绍。','Huānyíng lái kāfēidiàn miànshì. Qǐng xiān zuò gè jiǎndān de zìwǒ jièshào.','Welcome to the cafe interview. Please start with a short self-introduction.']]};
+var OP_GEN={
+ en:[['Hi, welcome! What can I get you?','','A cafe worker asks for your order.'],BASE_EN[1],['Excuse me, how do I get to the station from here?','','A visitor asks you for directions.'],BASE_EN[3]],
+ zh:BASE_ZH};
+var FLV={
+ sg:{en:{items:KB.en.items,m0:KB.en.model[0],unk:KB.en.unk,mid:KB.en.mid,pt:KB.en.politeTip},zh:{items:KB.zh.items,m0:KB.zh.model[0],unk:KB.zh.unk,pt:KB.zh.politeTip}},
+ gen:{en:{items:[[/sandwich/i,'a sandwich','','a sandwich'],[/burger/i,'a burger','','a burger'],[/salad/i,'a salad','','a salad'],[/pizza/i,'pizza','','pizza'],[/coffee|latte/i,'a coffee','','a coffee'],[/tea/i,'a tea','','a tea']],m0:['Can I have a sandwich, please?','','A polite way to order.'],unk:['Sorry, what would you like? We have sandwiches, burgers and coffee.','','Your partner did not catch the dish.'],mid:['For here or to go?','','Eat in or take away?'],pt:'Add please or start with “Can I have…”: Can I have a sandwich, please?'},
+  zh:{items:[[/饺子/,'饺子','jiǎozi','dumplings'],[/炒饭/,'炒饭','chǎofàn','fried rice'],[/面/,'面条','miàntiáo','noodles'],[/包子/,'包子','bāozi','steamed buns'],[/咖啡/,'咖啡','kāfēi','coffee'],[/茶/,'茶','chá','tea']],m0:['老板，我要一份饺子，谢谢。','Lǎobǎn, wǒ yào yí fèn jiǎozi, xièxie.','Boss, I would like one serving of dumplings, thanks.'],unk:['你想吃什么？有饺子、炒饭和面条。','Nǐ xiǎng chī shénme? Yǒu jiǎozi, chǎofàn hé miàntiáo.','What would you like? We have dumplings, fried rice and noodles.'],pt:'Add 请 or 谢谢 to sound polite: 请给我一份饺子。'}}};
+var DEMOS_ALL=demos.slice();
+var DEMOS_SG=[
+ {l:'Mandarin',p:'你想喝点什么？',u:'我要一杯咖啡，谢谢。',f:'Clear. Add 请问 at the start to sound softer.'},
+ {l:'Malay',p:'Nak minum apa?',u:'Teh tarik satu, tolong.',f:'Natural. Add "kurang manis" for less sugar.'},
+ {l:'Tamil',p:'என்ன வேணும்?',u:'ஒரு தேநீர் தாருங்கள்.',f:'Polite and clear. Add நன்றி to finish.'},
+ {l:'English',p:'Kopi or teh?',u:'Teh peng, less sweet, please.',f:'Very local. In a formal place say "iced tea, less sugar".'}];
+function swapHTML(el,html){if(!el)return;if(el.dataset.orig==null)el.dataset.orig=el.innerHTML;el.innerHTML=html==null?el.dataset.orig:html}
+function sgToast(msg){var t=document.getElementById('sgToast');if(!t){t=document.createElement('div');t.id='sgToast';t.className='sgtoast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('show')},3200)}
+function applyMode(on,quiet){
+  SGMODE=on;var r=document.documentElement;if(on)r.setAttribute('data-sg','1');else r.removeAttribute('data-sg');
+  SC.splice.apply(SC,[0,SC.length].concat(on?SC_SG:SC_ALL));
+  ORDER.splice.apply(ORDER,[0,ORDER.length].concat(on?ORDER_SG:ORDER_ALL));
+  if(ORDER.indexOf(st.lang)<0)st.lang='zh';
+  L.en.op=(on?OP_SG:OP_GEN).en;L.zh.op=(on?OP_SG:OP_GEN).zh;
+  var V=on?FLV.sg:FLV.gen;
+  KB.en.items=V.en.items;KB.en.model[0]=V.en.m0;KB.en.unk=V.en.unk;KB.en.mid=V.en.mid;KB.en.politeTip=V.en.pt;
+  KB.zh.items=V.zh.items;KB.zh.model[0]=V.zh.m0;KB.zh.unk=V.zh.unk;KB.zh.politeTip=V.zh.pt;
+  demos.splice.apply(demos,[0,demos.length].concat(on?DEMOS_SG:DEMOS_ALL));
+  swapHTML($('.hero .eyebrow'),on?'Singapore edition · speak it with your own people':null);
+  swapHTML($('.hero p.lead'),on?'Order at a hawker stall, chat with a new neighbour, ask the way to the MRT. Practise it in English, Mandarin, Malay or Tamil before the real moment.':null);
+  swapHTML($('.proof'),on?'<span>English</span><span>华语 Mandarin</span><span>Bahasa Melayu</span><span>தமிழ் Tamil</span>':null);
+  var gs=['你好','Selamat','வணக்கம்','Hello'];document.querySelectorAll('.glyphs span').forEach(function(s,i){if(s.dataset.orig==null)s.dataset.orig=s.textContent;s.textContent=on?gs[i]:s.dataset.orig});
+  var pl=document.querySelectorAll('#plans .plist')[0];if(pl){swapHTML(pl.children[0],on?'All 4 Singapore languages':null);swapHTML(pl.children[1],on?'2 situations: hawker stall, meet a neighbour':null)}
+  swapHTML($('#jl'),on?'<option>Mandarin</option><option>Malay</option><option>Tamil</option><option>English</option>':null);
+  var ft=document.querySelectorAll('footer span')[0];swapHTML(ft,on?'LangoLink · made in Singapore, for Singaporeans':null);
+  swapHTML($('#try .sec-head .eyebrow'),on?'Singapore edition':null);
+  var lh=$('#langs').previousElementSibling;if(lh)swapHTML(lh,on?'Singapore languages':null);
+  var w=$('#sgWrap'),b=$('#sgBtn'),tip=$('#sgTip');w.classList.toggle('on',on);b.setAttribute('aria-pressed',on);tip.textContent=on?'Back to all 6 languages':'Try me!';
+  document.title=on?'LangoLink · Singapore Edition':'LangoLink';
+  try{var full=/full/.test(location.hash),h=(full?'full':'')+(full&&on?'-':'')+(on?'sg':'');history.replaceState(null,'',location.pathname+location.search+(h?'#'+h:''))}catch(e){}
+  buildSetup();start();
+  dt.forEach(clearTimeout);dt=[];di=0;runDemo();
+  if(!quiet)sgToast(on?'Singapore edition: English · 华语 · Bahasa Melayu · தமிழ்':'Back to all 6 languages');
+}
+$('#sgBtn').addEventListener('click',function(){applyMode(!SGMODE)});
+(function(){var w=$('#sgWrap');setTimeout(function(){if(!SGMODE)w.classList.add('hint')},1800);setTimeout(function(){w.classList.remove('hint')},6500)})();
+applyMode(/sg/.test(location.hash),true);
+window.addEventListener('hashchange',function(){var w=/sg/.test(location.hash);if(w!==SGMODE)applyMode(w,true)});
+
+start();setStatus();
+})();
+</script>
+</body></html>
